@@ -20,7 +20,7 @@ const Mores = ({account: {token}}) => {
             <IconButton
               icon="account-circle"
               size={30}
-              onPress={() => (token ? navigate('Profile') : navigate('Login'))}
+              onPress={() => (!token ? navigate('Profile') : navigate('Login'))}
             />
           ),
           headerTitle: () => <Subheading>More</Subheading>,

@@ -29,6 +29,7 @@ const img = {
   feedback: require('../assets/images/form/feedback.jpg'),
   survey: require('../assets/images/form/survey.jpg'),
   usflag: require('../assets/images/usflag.png'),
+  user: require('../assets/images/icons/user.png'),
 };
 
 export default img;

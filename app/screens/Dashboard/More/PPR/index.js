@@ -21,16 +21,10 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {config, publicToken} from '../config';
+import {api, publicToken} from '../../../../api';
 import axios from 'axios';
-import moment from 'moment';
-// import {StackActions, NavigationActions} from 'react-navigation';
-import Wrapper from '../components/Wrapper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import SnackbarComponent from '../components/Snackbar';
-import {getDeviceId} from 'react-native-device-info';
-import {ThemeContext} from '../components/ThemeContext';
-// import AuthComponent from '../components/AuthModal';
+import Wrapper from '../../../../components/Background';
+import {ThemeContext} from '../../../../context/ThemeContext';
 
 
 function mapStateToProps(state) {
@@ -42,22 +36,6 @@ function mapStateToProps(state) {
 const {width} = Dimensions.get('screen');
 
 class PersonalPrayRequest extends Component {
-  static navigationOptions = ({navigation}) => {
-    const item = navigation.getParam('back', 'ProfileHomeScreen');
-    return {
-      headerLeft: (
-        <IconButton
-          icon="arrow-back"
-          onPress={() => navigation.navigate(item)}
-          size={30}
-        />
-      ),
-      headerTitle: (
-        <Paragraph style={classes.title}>Personal Prayer Request</Paragraph>
-      ),
-    };
-  };
-
   state = {
     loading: false,
     login: false,
@@ -70,17 +48,6 @@ class PersonalPrayRequest extends Component {
     msg: '',
     type: '',
   };
-
-  handleAuthClose = (visible, msg, type) => {
-    this.setState({
-      login: false,
-      visible,
-      msg,
-      type,
-    });
-  };
-
-
 
   handlePrayrequest = async () => {
     try {
@@ -110,7 +77,7 @@ class PersonalPrayRequest extends Component {
           email,
           body,
         },
-        url: config.personalPrayer,
+        url: api.personalPrayer,
         headers: { 'x-auth-token': account.token, publicToken},
       });
 
@@ -136,30 +103,9 @@ class PersonalPrayRequest extends Component {
     }
   };
 
-  handleAdd = () => {
-    // const resetAction = StackActions.reset({
-    //   index: 0,
-    //   actions: [
-    //     NavigationActions.navigate({
-    //       routeName: 'AddPersonalPrayerRequestScreen',
-    //     }),
-    //   ],
-    // });
-
-    // this.props.navigation.dispatch(resetAction);
-  };
-
-  handleClose = () => {
-    this.setState({visible: false, msg: ''});
-  };
-
   render() {
-    const {navigation} = this.props;
     const {
       subject,
-      visible,
-      type,
-      msg,
       email,
       phoneNumber,
       body,
@@ -229,16 +175,7 @@ class PersonalPrayRequest extends Component {
                   Submit
                 </Button>
               </KeyboardAvoidingView>
-
-              {/* login modal  */}
-              {/* <AuthComponent open={login} handleClose={this.handleAuthClose} /> */}
             </Wrapper>
-            <SnackbarComponent
-              visible={visible}
-              msg={msg}
-              type={type}
-              handleClose={this.handleClose}
-            />
           </View>
         )}
       </ThemeContext.Consumer>

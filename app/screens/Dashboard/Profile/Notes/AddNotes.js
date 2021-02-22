@@ -9,11 +9,8 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import Axios from 'axios';
-import {config, publicToken} from '../config';
-import SnackbarComponent from "../components/Snackbar";
-
-
-import {ThemeContext} from '../components/ThemeContext';
+import {api, publicToken} from '../../../../api';
+import {ThemeContext} from '../../../../context/ThemeContext';
 
 
 
@@ -82,7 +79,7 @@ class AddNotes extends Component {
         return;
       }
 
-      const notes = await Axios.post(config.note, 
+      const notes = await Axios.post(api.note, 
         {
           title,
           body
@@ -188,13 +185,6 @@ class AddNotes extends Component {
                 onPress={this.handleAddNotes}
               />
             </View> */}
-
-            <SnackbarComponent
-              visible={visible}
-              type={type}
-              msg={msg}
-              handleClose={this.handleClose}
-            />
           </KeyboardAvoidingView>
         )}
       </ThemeContext.Consumer>

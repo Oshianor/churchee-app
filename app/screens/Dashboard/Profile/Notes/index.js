@@ -17,9 +17,9 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import Axios from 'axios';
-import { config, publicToken } from '../config';
+import { api, publicToken } from '../../../../api';
 import moment from "moment";
-import {ThemeContext} from '../components/ThemeContext';
+import {ThemeContext} from '../../../../context/ThemeContext';
 
 
 function mapStateToProps(state) {
@@ -30,12 +30,6 @@ function mapStateToProps(state) {
 
 
 class Notes extends Component {
-  static navigationOptions = ({navigation}) => {
-    return {
-      headerTitle: <Paragraph style={classes.title}>Private Notes</Paragraph>,
-    };
-  };
-
   state = {
     loading: true,
     notes: [],
@@ -47,7 +41,7 @@ class Notes extends Component {
     try {
       const {account} = this.props;
 
-      const notes = await Axios.get(config.note, {
+      const notes = await Axios.get(api.note, {
         headers: { 'x-auth-token': account.token, publicToken},
       });
 
@@ -70,7 +64,7 @@ class Notes extends Component {
         isRefreshing: true,
       });
 
-      const notes = await Axios.get(config.note, {
+      const notes = await Axios.get(api.note, {
         headers: { 'x-auth-token': account.token, publicToken},
       });
       

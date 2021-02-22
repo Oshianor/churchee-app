@@ -21,7 +21,7 @@ import {connect} from 'react-redux';
 import { api, publicToken } from "../../../../api";
 import axios from "axios";
 import moment from "moment";
-import Wrapper from '../components/Wrapper';
+import Wrapper from '../../../../components/Background';
 // import SnackbarComponent from '../components/Snackbar';
 import { getDeviceId, getUniqueId } from 'react-native-device-info';
 import {ThemeContext} from '../../../../context/ThemeContext';

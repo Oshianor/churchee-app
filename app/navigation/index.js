@@ -12,6 +12,7 @@ import Forms from './Dashboard/More/Forms';
 import Media from './Dashboard/More/Media';
 import PrayerRequest from './Dashboard/More/PrayerRequest';
 import PPR from './Dashboard/More/PPR';
+import Profile from "./Dashboard/Profile"
 const Stack = createStackNavigator();
 
 const Navigation = () => {
@@ -65,6 +66,11 @@ const Navigation = () => {
           headerTitle: () => <Subheading>Setting</Subheading>,
         })}
         component={Setting}
+      />
+      <Stack.Screen
+        name="Profile"
+        options={{headerShown: false}}
+        component={Profile}
       />
     </Stack.Navigator>
   );

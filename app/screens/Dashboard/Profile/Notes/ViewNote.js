@@ -20,10 +20,9 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import Axios from 'axios';
-import { config, publicToken } from '../config';
+import { api, publicToken } from '../../../../api';
 import moment from "moment";
-import SnackBarComponent from '../components/Snackbar';
-import {ThemeContext} from '../components/ThemeContext';
+import {ThemeContext} from '../../../../context/ThemeContext';
 
 
 
@@ -33,9 +32,6 @@ function mapStateToProps(state) {
     account: state.account,
   };
 }
-
-
-const screen = Dimensions.get('screen');
 
 
 class NoteDetail extends Component {
@@ -104,7 +100,7 @@ class NoteDetail extends Component {
       const { account, navigation } = this.props;
       const { item } = this.state;
 
-      const deleteNote = await Axios.delete(config.note + "/" + item._id, { headers: { "x-auth-token": account.token, publicToken } });
+      const deleteNote = await Axios.delete(api.note + "/" + item._id, { headers: { "x-auth-token": account.token, publicToken } });
 
       this.setState({
         visible: true,
@@ -136,7 +132,7 @@ class NoteDetail extends Component {
 
   render() {
     const { navigation} = this.props;
-    const {item, visible, type, msg} = this.state;
+    const {item} = this.state;
     
     return (
       <ThemeContext.Consumer>
@@ -146,12 +142,6 @@ class NoteDetail extends Component {
           <Title>{item.title}</Title>
           <Paragraph style={classes.text}>{item.body}</Paragraph>
         </ScrollView>
-        <SnackBarComponent
-          handleClose={this.handleClose}
-          visible={visible}
-          type={type}
-          msg={msg}
-        />
         <Provider>
           <Portal>
             <FAB.Group
