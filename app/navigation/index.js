@@ -12,7 +12,8 @@ import Forms from './Dashboard/More/Forms';
 import Media from './Dashboard/More/Media';
 import PrayerRequest from './Dashboard/More/PrayerRequest';
 import PPR from './Dashboard/More/PPR';
-import Profile from "./Dashboard/Profile"
+import Profile from "./Dashboard/Profile";
+import FindChurch from "../screens/Onboarding/findChurch"
 const Stack = createStackNavigator();
 
 const Navigation = () => {
@@ -22,6 +23,11 @@ const Navigation = () => {
         name="Onboarding"
         options={{headerShown: false}}
         component={Onboarding}
+      />
+      <Stack.Screen
+        name="FindChurch"
+        options={{headerShown: false}}
+        component={FindChurch}
       />
       <Stack.Screen
         name="Dashboard"

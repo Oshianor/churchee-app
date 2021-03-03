@@ -1,9 +1,5 @@
 import React, {Component} from 'react';
-import {
-  IconButton,
-  Paragraph,
-	Title,
-} from 'react-native-paper';
+import { Paragraph, Title, Subheading} from 'react-native-paper';
 import {
   View,
   Dimensions,
@@ -311,35 +307,21 @@ class EventDetail extends Component {
           <View style={[classes.root, {backgroundColor: theme.background}]}>
             <ScrollView contentContainerStyle={classes.container}>
               <Wrapper>
-                <Title style={[classes.titleScreen, fslg]}>
-                  {item.title}
-                </Title>
-                <Image
-                  source={{uri: api.img + item.img}}
-                  style={classes.img}
-                />
+                <Title style={[classes.titleScreen, fslg]}>{item.title}</Title>
+                <Image source={{uri: api.img + item.img}} style={classes.img} />
                 <View style={classes.rootDetail}>
                   <View style={classes.sideleft}>
-                    <IconButton icon="date-range" size={25} />
+                    <Icon name="calendar" size={25} />
                     <Paragraph>
-                      {/* {item.recursive
-                        ? moment()
-                            .day(item.recuringDate)
-                            .format('MMMM DD, YYYY')
-                        : moment(item.startDate).format('MMMM DD, YYYY')} */}
                       {moment(item.startDate).format('MMMM DD, YYYY')}
                     </Paragraph>
                   </View>
                   <View style={classes.sideright}>
-                    <IconButton icon="alarm-on" size={25} />
-                    <Paragraph>
-                      {moment(item.time).format('HH:MMA')}
-                    </Paragraph>
+                    <Icon name="timer-outline" size={25} />
+                    <Paragraph>{moment(item.time).format('HH:MMA')}</Paragraph>
                   </View>
                 </View>
-                <Paragraph style={[classes.para, fssm]}>
-                  {item.body}
-                </Paragraph>
+                <Paragraph style={[classes.para, fssm]}>{item.body}</Paragraph>
                 <View style={classes.bottom}>
                   <TouchableOpacity onPress={this.onShare}>
                     <View style={classes.sideleft}>
@@ -356,20 +338,6 @@ class EventDetail extends Component {
                   </TouchableOpacity>
                   <TouchableOpacity onPress={this.handleSaveEvent}>
                     <View style={classes.sideleft}>
-                      {/* <IconButton
-                        icon={
-                          savedEvents.includes(item._id)
-                            ? 'favorite'
-                            : 'favorite-border'
-                        }
-                        size={30}
-                        style={classes.icons}
-                        color={
-                          savedEvents.includes(item._id)
-                            ? baseColor
-                            : theme.icon
-                        }
-                      /> */}
                       <Icon
                         name={
                           savedEvents.includes(item._id)
@@ -404,8 +372,6 @@ class EventDetail extends Component {
                   </TouchableOpacity>
                 </View>
               </Wrapper>
-              {/* login modal  */}
-              {/* <AuthComponent open={login} handleClose={this.handleClose} /> */}
             </ScrollView>
           </View>
         )}
@@ -423,7 +389,7 @@ const classes = StyleSheet.create({
     flex: 1,
   },
   rootDetail: {
-    paddingRight: 10,
+    paddingHorizontal: 10,
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',

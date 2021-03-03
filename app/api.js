@@ -1,11 +1,12 @@
-export const baseUrl = 'https://api.churchee.app/api';
+// export const baseUrl = 'https://api.churchee.app/api';
 // const baseUrl = 'http://192.168.8.151:3000/api';
-// const baseUrl = 'http://localhost:9090/api';
+const baseUrl = 'http://localhost:9090/api/v1';
 
-export const publicToken = '539f106f-8149-426e-b0d2-8de76e9bd0a2';
+// export const publicToken = '539f106f-8149-426e-b0d2-8de76e9bd0a2';
 
-export const config = {
-  login: baseUrl + '/auth/member',
+export const api = {
+  createAccount: baseUrl + '/user/member',
+  login: baseUrl + '/auth/both',
   getMe: baseUrl + '/member/me',
   live: baseUrl + '/live/mobile',
   logout: baseUrl + '/auth/mobile/logout',
@@ -17,7 +18,6 @@ export const config = {
   img: 'https://dlvr7v2twt32x.cloudfront.net/',
   backups: baseUrl + '/backups',
   refreshToken: baseUrl + '/auth/refreshToken/mobile',
-  createAccount: baseUrl + '/member',
   createAcctMethod: baseUrl + '/methods',
   emailExist: baseUrl + '/email',
   sermon: baseUrl + '/sermon/member',
@@ -46,4 +46,6 @@ export const config = {
   savedItem: baseUrl + '/member/savedItem',
   favouriteMedia: baseUrl + '/favourite/media',
   dailyVerse: baseUrl + '/dailyverse/today',
+  country: baseUrl + '/country',
+  church: baseUrl + '/user/find-church',
 };

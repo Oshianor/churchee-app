@@ -39,14 +39,14 @@ class Book extends Component {
         this.setState({
           loading: true,
         });
-        const books = await axios.get(api.bibleBook, { headers: { publicToken } });
+        const books = await axios.get(api.bibleBook);
 
         console.log('books', books);
-        updateBooks(books.data);
+        updateBooks(books.data.data);
         // setBook(books.data[0].id);
         this.setState({
           loading: false,
-          books: books.data,
+          books: books.data.data,
         });
       }
     } catch (error) {

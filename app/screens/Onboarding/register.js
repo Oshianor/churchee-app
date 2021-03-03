@@ -35,9 +35,9 @@ const Register = ({navigation: {navigate, goBack}}) => {
   // const account = useSelector(({account}) => account);
   const {loading} = useSelector(({feedback}) => feedback);
   const [value, setValue] = React.useState({
-    fullName: '',
-    email: '',
-    password: '',
+    name: 'Josh welback',
+    email: 'same@gmail.com',
+    password: 'opendoor',
   });
 
   const handleLogin = async () => {
@@ -56,7 +56,7 @@ const Register = ({navigation: {navigate, goBack}}) => {
         return;
       }
 
-      if (value.fullName === '') {
+      if (value.name === '') {
         dispatch(
           feedbackAction.launch({
             open: true,
@@ -82,33 +82,34 @@ const Register = ({navigation: {navigate, goBack}}) => {
         ...value,
       });
 
-      await AsyncStorage.setItem('token', login.headers['x-auth-token']);
-      await AsyncStorage.setItem(
-        'refreshToken',
-        login.data.content.refreshToken,
-      );
-
-      // get the user data
-      const user = await axios.get(api.getMe, {
-        headers: {
-          'x-auth-token': login.headers['x-auth-token'],
-        },
-      });
-
-      console.log('user', user);
-
+      console.log('login', login);
+      
+      const church = await AsyncStorage.getItem('church');
+      await AsyncStorage.setItem('token', JSON.stringify(login.headers['x-auth-token']));
       dispatch(accountAction.updateToken(login.headers['x-auth-token']));
-      dispatch(
-        accountAction.updateRefreshToken(login.data.content.refreshToken),
-      );
-      dispatch(accountAction.updateUserData(user.data));
+      dispatch(accountAction.updateUserData(login.data.data));
 
       setValue({
         email: '',
         password: '',
       });
 
-      navigate('Dashboard');
+      dispatch(
+        feedbackAction.launch({
+          open: true,
+          severity: 'w',
+          msg: login.data.msg,
+          loading: false,
+        }),
+      );
+
+
+      if (church) {
+        dispatch(accountAction.updateChurchData(JSON.parse(church)));
+        navigate('Dashboard');
+      } else {
+        navigate('FindChurch');
+      }
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);
@@ -116,7 +117,7 @@ const Register = ({navigation: {navigate, goBack}}) => {
         feedbackAction.launch({
           open: true,
           severity: 'w',
-          msg: error.response.data,
+          msg: error.response.data.msg,
           loading: false,
         }),
       );
@@ -165,9 +166,9 @@ const Register = ({navigation: {navigate, goBack}}) => {
               <TextInput
                 style={[classes.TextInput, {color: theme.text}]}
                 placeholderTextColor={'#bbbbbb'}
-                placeholder="Full Name"
-                onChangeText={(fullName) => setValue({...value, fullName})}
-                value={value.fullName}
+                placeholder="Name"
+                onChangeText={(name) => setValue({...value, name})}
+                value={value.name}
               />
             </View>
             <View

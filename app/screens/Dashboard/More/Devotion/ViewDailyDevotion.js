@@ -161,12 +161,10 @@ const DailyDevotionDetails = ({ route, navigation, account }) => {
               <View style={classes.rootDetail}>
                 <View style={classes.sideleft}>
                   <Icon name="calendar" size={25} />
-                  <Paragraph>
-                    {moment(date).format('MMMM DD, YYYY')}
-                  </Paragraph>
+                  <Paragraph>{moment(date).format('MMMM DD, YYYY')}</Paragraph>
                 </View>
                 <View style={classes.sideright}>
-                  <IconButton icon="alarm-on" size={25} />
+                  <IconButton icon="alarm" size={25} />
                   <Paragraph>{moment(date).format('hh:mmA')}</Paragraph>
                 </View>
               </View>
@@ -174,7 +172,7 @@ const DailyDevotionDetails = ({ route, navigation, account }) => {
               <View style={{flexDirection: 'row'}}>
                 {video && (
                   <Button
-                    icon="tv"
+                    icon="television"
                     mode="outlined"
                     onPress={() =>
                       navigation.navigate('VideoPlayerScreen', {
@@ -205,9 +203,7 @@ const DailyDevotionDetails = ({ route, navigation, account }) => {
             <View style={classes.bottom}>
               <IconButton onPress={onShare} icon="share" size={35} />
               <IconButton
-                icon={
-                  favourite.includes(_id) ? 'favorite' : 'favorite-border'
-                }
+                icon={favourite.includes(_id) ? 'heart' : 'heart-outline'}
                 size={35}
                 onPress={handleAddFavourite}
                 color={favourite.includes(_id) ? baseColor : theme.icon}

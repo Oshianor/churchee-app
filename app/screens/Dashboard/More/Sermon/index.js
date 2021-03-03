@@ -20,7 +20,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
 import moment from 'moment';
-import { api, publicToken} from '../../../../api';
+import { api} from '../../../../api';
 import Wrapper from '../../../../components/Background';
 import {ThemeContext} from '../../../../context/ThemeContext';
 import {sermonAction} from '../../../../store/actions';
@@ -32,6 +32,9 @@ const { width, height } = Dimensions.get('screen');
 const Sermon = ({navigation: {navigate}}) => {
   const dispatch = useDispatch();
   const sermon = useSelector(({sermon}) => sermon);
+  const {
+    church: {publicToken},
+  } = useSelector(({account}) => account);
   const [loading, setLoading] = React.useState(false);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
 
@@ -44,10 +47,20 @@ const Sermon = ({navigation: {navigate}}) => {
       try {
         setLoading(true);
 
-        const sermon = await axios.get(api.sermon, {headers: {publicToken}});
+        const resSermon = await axios.get(api.sermon, {
+          headers: {publicToken},
+        });
+
+        console.log('resSermon', resSermon);
 
         setLoading(false);
-        dispatch(sermonAction.setSermon(sermon.data));
+        dispatch(
+          sermonAction.setSermon({
+            sermon: resSermon.data.data,
+            total: sermon.data.total,
+            page: sermon.data.pages,
+          }),
+        );
       } catch (error) {
         setLoading(false);
         console.log(error.response);
@@ -60,11 +73,19 @@ const Sermon = ({navigation: {navigate}}) => {
       setIsRefreshing(true);
       dispatch(sermonAction.setSermonPage(1));
 
-      const sermon = await axios.get(api.getEvent, {headers: {publicToken}});
+      const resSermon = await axios.get(api.sermon, {headers: {publicToken}});
+
+        console.log('resSermon', resSermon);
 
       setIsRefreshing(false);
 
-      dispatch(sermonAction.setSermon(sermon.data));
+      dispatch(
+        sermonAction.setSermon({
+          sermon: resSermon.data.data,
+          total: sermon.data.total,
+          page: sermon.data.pages,
+        }),
+      );
       // setSermon(sermon.data);
     } catch (error) {
       setIsRefreshing(false);
@@ -88,7 +109,7 @@ const Sermon = ({navigation: {navigate}}) => {
 
       dispatch(sermonAction.setSermonPage(num));
 
-      const listData = data.concat(sermon.data.sermon);
+      const listData = data.concat(sermon.data.data);
 
       dispatch(
         sermonAction.setSermon({
@@ -124,9 +145,9 @@ const Sermon = ({navigation: {navigate}}) => {
               // extraData={this.state}
               keyExtractor={(item) => item._id}
               refreshing={isRefreshing}
-              ListFooterComponent={renderFooter.bind(this)}
+              // ListFooterComponent={renderFooter.bind(this)}
               onRefresh={handleRefreshData}
-              onEndReached={handleLoadMore}
+              // onEndReached={handleLoadMore}
               onEndReachedThreshold={0.4}
               numColumns={2}
               columnWrapperStyle={classes.contain}

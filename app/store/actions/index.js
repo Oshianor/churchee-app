@@ -5,6 +5,7 @@ import bibleAction from './bible';
 import devotionAction from './devotion';
 import mediaAction from './media';
 import sermonAction from './sermon';
+import countryAction from './country';
 
 export {
   accountAction,
@@ -14,4 +15,5 @@ export {
   devotionAction,
   mediaAction,
   sermonAction,
+  countryAction,
 };

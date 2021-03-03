@@ -1,6 +1,7 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import BackButton from "../../custom/BackButton";
+import { Subheading} from 'react-native-paper';
 const Stack = createStackNavigator();
 
 import Event from '../../../screens/Dashboard/Event';

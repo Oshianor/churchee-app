@@ -1,7 +1,7 @@
 import {
   UPDATE_AUTH_TOKEN,
-  UPDATE_AUTH_REFRESH_TOKEN,
   UPDATE_USER_DATA,
+  UPDATE_CHURCH_DATA,
 } from '../types';
 
 const updateToken = (token) => {
@@ -11,10 +11,10 @@ const updateToken = (token) => {
   };
 };
 
-const updateRefreshToken = (token) => {
+const updateChurchData = (data) => {
   return {
-    type: UPDATE_AUTH_REFRESH_TOKEN,
-    payload: token,
+    type: UPDATE_CHURCH_DATA,
+    payload: data,
   };
 };
 
@@ -28,6 +28,6 @@ const updateUserData = (user) => {
 
 export default {
   updateToken,
-  updateRefreshToken,
+  updateChurchData,
   updateUserData,
 };

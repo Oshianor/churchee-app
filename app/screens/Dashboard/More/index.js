@@ -19,12 +19,26 @@ const MoreScreen = ({ navigation: { navigate } }) => {
     <ThemeContext.Consumer>
       {({theme, baseColor}) => (
         <View style={[classes.root, {backgroundColor: theme.background}]}>
-          <Wrapper>
+          <Wrapper root={{justifyContent: 'flex-start'}}>
             <TouchableOpacity
               style={classes.surface}
-              onPress={() =>
-                navigate('Devotion')
-              }>
+              onPress={() => navigate('FindChurch')}>
+              <View style={classes.left}>
+                <Icon
+                  name="account-group-outline"
+                  color={theme.icon}
+                  style={classes.icon}
+                  size={25}
+                />
+                <Subheading style={classes.Subheading}>
+                  Join Congregation
+                </Subheading>
+              </View>
+              <Icon name="chevron-right" color={theme.icon} size={25} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={classes.surface}
+              onPress={() => navigate('Devotion')}>
               <View style={classes.left}>
                 <Icon
                   name="book"
@@ -40,9 +54,7 @@ const MoreScreen = ({ navigation: { navigate } }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={classes.surface}
-              onPress={() =>
-                navigate('Hymn')
-              }>
+              onPress={() => navigate('Hymn')}>
               <View style={classes.left}>
                 <Icon
                   name="book-open"
@@ -74,9 +86,7 @@ const MoreScreen = ({ navigation: { navigate } }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={classes.surface}
-              onPress={() =>
-                navigate('PPR')
-              }>
+              onPress={() => navigate('PPR')}>
               <View style={classes.left}>
                 <AwesomeIcon
                   name="hands"
@@ -92,9 +102,7 @@ const MoreScreen = ({ navigation: { navigate } }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={classes.surface}
-              onPress={() =>
-                navigate('Media')
-              }>
+              onPress={() => navigate('Media')}>
               <View style={classes.left}>
                 <Icon
                   name="folder-multiple-image"
@@ -107,9 +115,7 @@ const MoreScreen = ({ navigation: { navigate } }) => {
               <Icon name="chevron-right" color={theme.icon} size={25} />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() =>
-                navigate('Form')
-              }
+              onPress={() => navigate('Form')}
               style={classes.surface}>
               <View style={classes.left}>
                 <Icon

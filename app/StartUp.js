@@ -1,7 +1,6 @@
 import React from 'react';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import Navigation from './navigation';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
   configureFonts,
   DefaultTheme as PaperTheme,
@@ -14,12 +13,29 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Platform, PermissionsAndroid} from 'react-native';
 import axios from 'axios';
 import {api} from './api';
-import {ThemeContext} from "./context/ThemeContext" 
-
+import {ThemeContext} from "./context/ThemeContext";
+import { accountAction } from "./store/actions"
+import {navigationRef} from './RootNavigation';
+import * as RootNavigation from './RootNavigation';
 
 const StartUp = () => {
   const dispatch = useDispatch();
   const setting = useSelector(({setting}) => setting);
+
+  React.useEffect(() => {
+    handleGetChurch();
+  }, []);
+
+  const handleGetChurch = async () => {
+    const church = await AsyncStorage.getItem("church");
+
+    console.log('Uncut church', church);
+    if (church) {
+      dispatch(accountAction.updateChurchData(JSON.parse(church)));
+    } else {
+      RootNavigation.navigate('FindChurch');
+    }
+  }
 
   return (
     <ThemeContext.Consumer>
@@ -43,6 +59,7 @@ const StartUp = () => {
             fonts: configureFonts(fontConfig),
           }}>
           <NavigationContainer
+            ref={navigationRef}
             theme={{
               dark: theme.mode,
               colors: {
@@ -53,7 +70,7 @@ const StartUp = () => {
                 border: theme.background,
               },
             }}>
-              <Navigation />
+            <Navigation />
           </NavigationContainer>
           <FeedBack />
           <Preloader />

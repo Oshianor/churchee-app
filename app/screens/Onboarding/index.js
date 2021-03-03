@@ -34,8 +34,8 @@ const Login = ({navigation: {navigate, goBack}}) => {
   const dispatch = useDispatch();
   const {loading} = useSelector(({feedback}) => feedback);
   const [value, setValue] = React.useState({
-    email: '',
-    password: ''
+    email: 'test@gmail.com',
+    password: 'opendoor12345'
   });
 
   const handleLogin = async () => {
@@ -65,21 +65,17 @@ const Login = ({navigation: {navigate, goBack}}) => {
         ...value,
       });
 
-      await AsyncStorage.setItem('token', login.headers['x-auth-token']);
-
-      // get the user data
-      const user = await axios.get(api.getMe, {
-        headers: {'x-auth-token': login.headers['x-auth-token']},
-      });
-
-      console.log('user', user);
+      await AsyncStorage.setItem('token', JSON.stringify(login.headers['x-auth-token']));
 
       dispatch(accountAction.updateToken(login.headers['x-auth-token']));
-      dispatch(accountAction.updateUserData(user.data));
+      dispatch(accountAction.updateUserData(login.data.data));
 
       dispatch(
         feedbackAction.launch({
-          loading: true
+          loading: false,
+          open: true,
+          severity: 's',
+          msg: login.data.msg,
         }),
       );
 
@@ -88,7 +84,6 @@ const Login = ({navigation: {navigate, goBack}}) => {
         password: '',
       });
 
-      // navigate('Dashboard');
       goBack();
     } catch (error) {
       console.log('error', error);
@@ -97,7 +92,7 @@ const Login = ({navigation: {navigate, goBack}}) => {
         feedbackAction.launch({
           open: true,
           severity: 'w',
-          msg: error.response.data,
+          msg: error.response.data.msg,
           loading: false,
         }),
       );

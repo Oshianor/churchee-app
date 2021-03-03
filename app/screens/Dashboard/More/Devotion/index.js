@@ -26,6 +26,7 @@ const Devotion = ({ navigation}) => {
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const dispatch = useDispatch();
   const devotion = useSelector(({devotion}) => devotion);
+  const { church: { publicToken } } = useSelector(({account}) => account);
 
   React.useEffect(() => {
     handleData();
@@ -35,11 +36,15 @@ const Devotion = ({ navigation}) => {
     try {
       setLoading(true);
 
-      const devotion = await axios.get(api.getDevotion, { headers: { publicToken } });
+      const resDevotion = await axios.get(api.getDevotion, { headers: { publicToken } });
 
-      console.log('devotion', devotion);
+      console.log('resDevotion', resDevotion);
 
-     dispatch(devotionAction.setDevotion(devotion.data));
+     dispatch(
+       devotionAction.setDevotion({
+         data: resDevotion.data.data,
+       }),
+     );
 
       setLoading(false);
     } catch (error) {
@@ -53,9 +58,15 @@ const Devotion = ({ navigation}) => {
     try {
       setIsRefreshing(true);
 
-      const devotion = await axios.get(api.getDevotion, { headers: { publicToken } });
+      const resDevotion = await axios.get(api.getDevotion, {
+        headers: {publicToken},
+      });
 
-      dispatch(devotionAction.setDevotion(devotion.data));
+      dispatch(
+        devotionAction.setDevotion({
+          data: resDevotion.data.data,
+        }),
+      );
       setIsRefreshing(true);
     } catch (error) {
       this.setState({

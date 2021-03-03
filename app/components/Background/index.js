@@ -5,11 +5,11 @@ import img from '../../images';
 const Wrapper = (props) => (
   <ImageBackground
     source={img.bgImg}
-    style={{
+    style={[{
       flex: 1,
       resizeMode: 'cover',
       justifyContent: "center"
-    }}>
+    }, props.root]}>
     {props.children}
   </ImageBackground>
 );

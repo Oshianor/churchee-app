@@ -62,11 +62,14 @@ class PrayRequest extends Component {
 
   handleData = async () => {
     try {
+      const { account } = this.props;
       this.setState({
         loading: true,
       });
 
-      const pray = await axios.get(api.getPR, { headers: { publicToken } });
+      const pray = await axios.get(api.getPR, {
+        headers: {publicToken: account.church.publicToken},
+      });
 
       this.setState({
         loading: false,
@@ -86,12 +89,15 @@ class PrayRequest extends Component {
 
   handleRefreshData = async () => {
     try {
+      const {account} = this.props;
       this.setState({
         isRefreshing: true,
         pageNumber: 1,
       });
 
-      const pray = await axios.get(api.getPR, { headers: { publicToken } });
+      const pray = await axios.get(api.getPR, {
+        headers: {publicToken: account.church.publicToken},
+      });
 
       this.setState({
         isRefreshing: false,
@@ -111,7 +117,8 @@ class PrayRequest extends Component {
 
   handleLoadMore = async () => {
     try {
-      const { pages, data, pageNumber } = this.state;
+      const { account } = this.props;
+      const {pages, data, pageNumber} = this.state;
 
       const num = Number(pageNumber) + 1;
 

@@ -79,17 +79,6 @@ const SermonDetail = ({ route, navigation: { navigate } }) => {
       {({theme, baseColor}) => (
         <View style={[classes.root, {backgroundColor: theme.background}]}>
           {youtubeId ? (
-            // <ImageBackground
-            //   source={{uri: api.img + img}}
-            //   style={classes.imgBack}>
-            //   <Icon
-            //     style={classes.icon}
-            //     color={theme.icon}
-            //     onPress={() => navigate('Youtube', {videoId: youtubeId})}
-            //     name="play-circle"
-            //     size={55}
-            //   />
-            // </ImageBackground>
             <Youtube videoId={youtubeId} />
           ) : (
             <Image source={{uri: api.img + img}} style={classes.img} />
@@ -123,7 +112,7 @@ const SermonDetail = ({ route, navigation: { navigate } }) => {
                 {video && (
                   <Button
                     mode="outlined"
-                    icon="tv"
+                    icon="television"
                     onPress={() =>
                       navigate('VideoPlayerScreen', {
                         video: video,

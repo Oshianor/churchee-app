@@ -47,12 +47,11 @@ class BiblePassage extends Component {
       });
       const passage = await axios.get(
         `${api.bibleChapter}?bookId=${bible.bookId.id}&chapter=${bible.chapterId}`,
-        { headers: { publicToken } }
       );
-      const bibleData = await axios.get(api.bible, { headers: { publicToken } });
+      const bibleData = await axios.get(api.bible);
 
       const types = [];
-      bibleData.data.forEach(element => {
+      bibleData.data.data.forEach(element => {
         types.push({ label: element.key, value: element.key });
       });
 
@@ -66,7 +65,7 @@ class BiblePassage extends Component {
 
       console.log('passage', passage);
       this.setState({
-        passage: passage.data.verse,
+        passage: passage.data.data.verse,
         types,
         chapters,
         chapter: bible.chapterId,
@@ -91,13 +90,12 @@ class BiblePassage extends Component {
       const passage = await axios.get(
         `${api.bibleChapter}?bookId=${bible.bookId.id}&chapter=${Number(
           chapter + 1,
-        )}`,
-        { headers: { publicToken } }
+        )}`
       );
 
       console.log('passage', passage);
       this.setState({
-        passage: passage.data.verse,
+        passage: passage.data.data.verse,
         chapter: Number(chapter + 1),
         loading: false,
       });
@@ -119,13 +117,12 @@ class BiblePassage extends Component {
       const passage = await axios.get(
         `${api.bibleChapter}?bookId=${bible.bookId.id}&chapter=${Number(
           chapter - 1,
-        )}`,
-        { headers: { publicToken } }
+        )}`
       );
 
       console.log('passage', passage);
       this.setState({
-        passage: passage.data.verse,
+        passage: passage.data.data.verse,
         chapter: Number(chapter - 1),
         loading: false,
       });
@@ -147,13 +144,12 @@ class BiblePassage extends Component {
       const passage = await axios.get(
         `${api.bibleChapter}?bookId=${bible.bookId.id}&chapter=${Number(
           chapter,
-        )}`,
-        { headers: { publicToken } }
+        )}`
       );
 
       console.log('passage', passage);
       this.setState({
-        passage: passage.data.verse,
+        passage: passage.data.data.verse,
         chapter: Number(chapter),
         loading: false,
       });
@@ -174,13 +170,12 @@ class BiblePassage extends Component {
       const passage = await axios.get(
         `${api.bibleChapter}?bookId=${bible.bookId.id}&chapter=${Number(
           chapter,
-        )}`,
-        { headers: { publicToken } }
+        )}`
       );
 
       console.log('passage', passage);
       this.setState({
-        passage: passage.data.verse,
+        passage: passage.data.data.verse,
         chapter: Number(chapter),
         loading: false,
       });
@@ -199,13 +194,12 @@ class BiblePassage extends Component {
           loading: true,
         });
         const passage = await axios.get(
-          `${api.bibleChapter}?bibleId=${type}&bookId=${bible.bookId.id}&chapter=${bible.chapterId}`,
-          { headers: { publicToken } }
+          `${api.bibleChapter}?bibleId=${type}&bookId=${bible.bookId.id}&chapter=${bible.chapterId}`
         );
         console.log('passage--loading', passage);
         this.setState({
           type: type,
-          passage: passage.data.verse,
+          passage: passage.data.data.verse,
           loading: false,
         });
         return;
@@ -225,12 +219,11 @@ class BiblePassage extends Component {
         });
         const passage = await axios.get(
           `${api.bibleChapter}?bibleId=${type}&bookId=${bible.bookId.id}&chapter=${bible.chapterId}`,
-          { headers: { publicToken } }
         );
         console.log('passage--loading', passage);
         this.setState({
           type: type,
-          passage: passage.data.verse,
+          passage: passage.data.data.verse,
           loading: false,
         });
         return;

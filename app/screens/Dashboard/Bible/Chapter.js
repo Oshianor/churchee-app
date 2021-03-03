@@ -39,14 +39,13 @@ class BibleChapter extends Component {
       });
       const chapter = await axios.get(
         `${api.bibleChapter}?bookId=${bible.bookId.id}`,
-        { headers: { publicToken }}
       );
 
       // chapter.data.splice(0, 1);
 
       console.log('chapter', chapter);
       this.setState({
-        chapters: chapter.data,
+        chapters: chapter.data.data,
         loading: false
       });
       // setChapter(chapter.data[1].id);

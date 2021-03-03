@@ -9,6 +9,7 @@ export const SET_HEADERS = "SET_HEADERS";
 export const UPDATE_USER_DATA = 'UPDATE_USER_DATA';
 export const UPDATE_AUTH_TOKEN = 'UPDATE_AUTH_TOKEN';
 export const UPDATE_AUTH_REFRESH_TOKEN = 'UPDATE_AUTH_REFRESH_TOKEN';
+export const UPDATE_CHURCH_DATA = 'UPDATE_CHURCH_DATA';
 
 
 export const MEDIA_DATA = 'MEDIA_DATA';
@@ -34,3 +35,8 @@ export const SERMON_CURRENT_PAGE = 'SERMON_CURRENT_PAGE';
 // feedback
 export const LAUNCH_FEEDBACK = 'LAUNCH_FEEDBACK';
 export const DISMISS_FEEDBACK = 'DISMISS_FEEDBACK';
+
+
+// country
+export const COUNTRY_DATA = 'COUNTRY_DATA';
+export const STATE_DATA = 'STATE_DATA';
