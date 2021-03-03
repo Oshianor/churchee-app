@@ -53,7 +53,7 @@ const MediaDetails = ({ navigation, route }) => {
       });
 
       setLoading(false);
-      setContent(mediaLoad.data.media);
+      setContent(mediaLoad.data.data);
       setImg(newData)
       setIndex(tracker)
     } catch (error) {

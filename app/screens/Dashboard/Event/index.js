@@ -112,7 +112,7 @@ class Event extends Component {
         loading: false,
         data: event.data.data,
         total: event.data.meta.total,
-        pages: event.data.meta.pagination.pages,
+        pages: event.data.meta.pages,
       });
     } catch (error) {
       this.setState({
@@ -143,7 +143,7 @@ class Event extends Component {
         isRefreshing: false,
         data: event.data.data,
         total: event.data.meta.total,
-        pages: event.data.meta.pagination.pages,
+        pages: event.data.meta.pages,
       });
 
       console.log('handleRefreshData', this.state);

@@ -1,15 +1,15 @@
 import React from 'react';
+import { TouchableOpacity } from "react-native"
 import {createStackNavigator} from '@react-navigation/stack';
-import {IconButton, Subheading} from 'react-native-paper';
-import {connect} from 'react-redux';;
+import {Subheading} from 'react-native-paper';
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import {useSelector} from 'react-redux';;
 import More from '../../../screens/Dashboard/More';
 const Stack = createStackNavigator();
 
-const mapStateToProps = (state) => ({
-  account: state.account,
-});
 
-const Mores = ({account: {token}}) => {
+const Mores = () => {
+  const {token} = useSelector(({ account }) => account);
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -17,11 +17,13 @@ const Mores = ({account: {token}}) => {
         component={More}
         options={({route, navigation: {navigate}}) => ({
           headerRight: () => (
-            <IconButton
-              icon="account-circle"
-              size={30}
-              onPress={() => (!token ? navigate('Profile') : navigate('Login'))}
-            />
+            <TouchableOpacity
+              style={{ marginRight: 10 }}
+              onPress={() =>
+                token ? navigate('Profile') : navigate("Onboarding", {screen: 'Login'})
+              }>
+              <Icon name={token ? "account-circle" : "login"} size={30} />
+            </TouchableOpacity>
           ),
           headerTitle: () => <Subheading>More</Subheading>,
         })}
@@ -30,4 +32,4 @@ const Mores = ({account: {token}}) => {
   );
 };
 
-export default connect(mapStateToProps)(Mores);
+export default Mores;

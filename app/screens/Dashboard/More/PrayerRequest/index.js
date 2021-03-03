@@ -15,7 +15,6 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
-  TouchableHighlight
 } from 'react-native';
 import {connect} from 'react-redux';
 import { api, publicToken } from "../../../../api";
@@ -44,7 +43,7 @@ class PrayRequest extends Component {
     pages: 0,
     total: 0,
     pageNumber: 1,
-    fullName: '',
+    name: '',
     body: '\n\n',
     visible: false,
     loadingButton: false,
@@ -67,15 +66,15 @@ class PrayRequest extends Component {
         loading: true,
       });
 
-      const pray = await axios.get(api.getPR, {
+      const pray = await axios.get(api.getPRWall, {
         headers: {publicToken: account.church.publicToken},
       });
 
       this.setState({
         loading: false,
-        data: pray.data.prayer,
-        total: pray.data.total,
-        pages: pray.data.pages,
+        data: pray.data.data,
+        total: pray.data.meta.total,
+        pages: pray.data.meta.pages,
       });
 
       console.log('handleData', this.state);
@@ -95,22 +94,24 @@ class PrayRequest extends Component {
         pageNumber: 1,
       });
 
-      const pray = await axios.get(api.getPR, {
+      const pray = await axios.get(api.getPRWall, {
         headers: {publicToken: account.church.publicToken},
       });
+      console.log('pray-refresh', pray);
+
 
       this.setState({
         isRefreshing: false,
-        data: pray.data.prayer,
-        total: pray.data.total,
-        pages: pray.data.pages,
+        data: pray.data.data,
+        total: pray.data.meta.total,
+        pages: pray.data.meta.pages,
       });
 
-      console.log('handleRefreshData', this.state);
     } catch (error) {
       this.setState({
         isRefreshing: false,
       });
+      console.log(error);
       console.log(error.response);
     }
   };
@@ -124,22 +125,24 @@ class PrayRequest extends Component {
 
       if (num > pages) return null;
 
-      const pray = await axios.get(api.getPR + '?pageNumber=' + num, { headers: { publicToken } });
+      const pray = await axios.get(api.getPR + '?page=' + num, {
+        headers: {publicToken: account.church.publicToken},
+      });
 
       this.setState({
         loading: true,
         pageNumber: num,
       });
 
-      console.log('handleLoadMore', pray);
+      console.log('pray', pray);
 
-      const listData = data.concat(pray.data.prayer);
+      const listData = data.concat(pray.data.data);
 
       this.setState({
         loading: false,
         data: listData,
-        total: pray.data.total,
-        pages: pray.data.pages,
+        total: pray.data.meta.total,
+        pages: pray.data.meta.pages,
       });
 
       console.log('handleLoadMore', this.state);
@@ -160,8 +163,8 @@ class PrayRequest extends Component {
 
   handlePrayrequest = async () => {
     try {
-      const { fullName, body } = this.state;
-      const { navigation } = this.props;
+      const { name, body } = this.state;
+      const { account } = this.props;
 
       this.setState({
         visible: false,
@@ -172,26 +175,25 @@ class PrayRequest extends Component {
       const prayer = await axios({
         method: 'post',
         data: {
-          fullName,
+          name,
           body,
         },
-        headers: { publicToken },
+        headers: {publicToken: account.church.publicToken},
         url: api.createAnonymousPR,
       });
 
       console.log('prayer', prayer);
+
+      this.handleData();
+
       this.setState({
         visible: true,
         loadingButton: false,
         msg: prayer.data.msg,
         type: 's',
         body: '\n\n\n',
-        fullName: '',
-        data: prayer.data.content.prayer,
-        total: prayer.data.content.total,
-        pages: prayer.data.content.pages,
+        name: '',
       });
-      // navigation.navigate('RegisterEmailExistScreen');
     } catch (error) {
       this.setState({
         visible: true,
@@ -212,11 +214,14 @@ class PrayRequest extends Component {
     console.log('deviceId', deviceId);
 
     try {
-      const pr = await axios.put(
+      const pr = await axios.patch(
         api.prayerView + '/' + prayerId,
-        { deviceId },
+        {deviceId},
         {
-          headers: { 'x-auth-token': account.token, publicToken },
+          headers: {
+            // 'x-auth-token': account.token,
+            publicToken: account.church.publicToken,
+          },
         },
       );
       console.log("pr", pr);
@@ -233,125 +238,127 @@ class PrayRequest extends Component {
 
   render() {
     const { navigation } = this.props;
-    const { data, isRefreshing, visible, type, msg, deviceId, fullName, body, loadingButton } = this.state;
+    const { data, isRefreshing, visible, type, msg, deviceId, name, body, loadingButton } = this.state;
 
     
     return (
       <ThemeContext.Consumer>
         {({theme, baseColor}) => (
-      <View style={[classes.root, {backgroundColor: theme.background}]}>
-        <Wrapper>
-          <View style={classes.form}>
-            <TextInput
-              mode="outlined"
-              label="Prayer Request"
-              placeholder="Type your prayer request here."
-              multiline
-              style={classes.TextInput}
-              spellCheck={true}
-              // autoFocus={true}
-              numberOfLines={5}
-              maxLength={225}
-              value={body}
-              onChangeText={body => this.setState({body})}
-            />
-            <View style={classes.textButton}>
-              <TextInput
-                label="Full Name (optional)"
-                mode="outlined"
-                style={classes.accNameTextField}
-                spellCheck={true}
-                value={fullName}
-                onChangeText={fullName => this.setState({fullName})}
-              />
-              <Button
-                contentStyle={classes.innerButton}
-                // style={classes.button}
-                mode="contained"
-                disabled={loadingButton}
-                color={baseColor}
-                dark={true}
-                style={classes.button}
-                uppercase
-                onPress={this.handlePrayrequest}>
-                Submit
-              </Button>
-            </View>
-          </View>
-
-          <FlatList
-            contentContainerStyle={classes.container}
-            data={data}
-            extraData={this.state}
-            keyExtractor={item => item._id}
-            renderItem={({item, index}) => (
-              <Surface
-                style={[
-                  classes.surface,
-                  {borderColor: theme.mode ? 'white' : '#0000006e'},
-                  index % 2 === 0 && {
-                    backgroundColor: !theme.mode ? '#e4e4e4' : 'black',
-                  },
-                ]}>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('PrayRequestDetailScreen', item)
-                  }>
-                  <View style={classes.left}>
-                    <Subheading>
-                      {item.fullName === '' ? 'Anonymous' : item.fullName}
-                    </Subheading>
-                  </View>
-                  <Paragraph style={classes.para}>
-                    {item.body.replace(/(\r\n|\n|\r)/gm, ' ').length > 200
-                      ? item.body
-                          .substring(0, 200)
-                          .replace(/(\r\n|\n|\r)/gm, ' ') + '...'
-                      : item.body.replace(/(\r\n|\n|\r)/gm, ' ')}
-                  </Paragraph>
-                </TouchableOpacity>
-                <View style={classes.bottom}>
-                  <View style={classes.split}>
-                    <TouchableHighlight onPress={this.handlePrayed(item._id)}>
-                      <View style={classes.split}>
-                        <IconButton
-                          icon="thumb-up"
-                          size={20}
-                          color={
-                            item.view.includes(deviceId)
-                              ? baseColor
-                              : theme.icon
-                          }
-                        />
-                        <Paragraph style={classes.count}>
-                          Click to pray
-                        </Paragraph>
-                      </View>
-                    </TouchableHighlight>
-                    <View
-                      style={{
-                        borderRightColor: theme.icon,
-                        borderRightWidth: 1,
-                        height: 15,
-                        marginLeft: 10,
-                      }}
-                    />
-                    <Caption style={classes.count}>{item.view.length}</Caption>
-                    <Paragraph>prayed</Paragraph>
-                  </View>
-                  <Caption>
-                    {moment(item.createdAt).format('MMM DD  HH:MM')}
-                  </Caption>
+          <View style={[classes.root, {backgroundColor: theme.background}]}>
+            <Wrapper>
+              <View style={classes.form}>
+                <TextInput
+                  mode="outlined"
+                  label="Prayer Request"
+                  placeholder="Type your prayer request here."
+                  multiline
+                  style={classes.TextInput}
+                  spellCheck={true}
+                  // autoFocus={true}
+                  numberOfLines={5}
+                  maxLength={225}
+                  value={body}
+                  onChangeText={(body) => this.setState({body})}
+                />
+                <View style={classes.textButton}>
+                  <TextInput
+                    label="Full Name (optional)"
+                    mode="outlined"
+                    style={classes.accNameTextField}
+                    spellCheck={true}
+                    value={name}
+                    onChangeText={(name) => this.setState({name})}
+                  />
+                  <Button
+                    contentStyle={classes.innerButton}
+                    // style={classes.button}
+                    mode="contained"
+                    disabled={loadingButton}
+                    color={baseColor}
+                    dark={true}
+                    style={classes.button}
+                    uppercase
+                    onPress={this.handlePrayrequest}>
+                    Submit
+                  </Button>
                 </View>
-              </Surface>
-            )}
-            refreshing={isRefreshing}
-            ListFooterComponent={this.renderFooter.bind(this)}
-            onRefresh={this.handleRefreshData}
-            onEndReached={this.handleLoadMore}
-            onEndReachedThreshold={0.4}
-          />
-          {/* <View style={classes.fab}>
+              </View>
+
+              <FlatList
+                contentContainerStyle={classes.container}
+                data={data}
+                extraData={this.state}
+                keyExtractor={(item) => item._id}
+                renderItem={({item, index}) => (
+                  <Surface
+                    style={[
+                      classes.surface,
+                      {borderColor: theme.mode ? 'white' : '#0000006e'},
+                      index % 2 === 0 && {
+                        backgroundColor: !theme.mode ? '#e4e4e4' : 'black',
+                      },
+                    ]}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate('PrayRequestDetailScreen', item)
+                      }>
+                      <View style={classes.left}>
+                        <Subheading>
+                          {item.name === '' ? 'Anonymous' : item.name}
+                        </Subheading>
+                      </View>
+                      <Paragraph style={classes.para}>
+                        {item.body.replace(/(\r\n|\n|\r)/gm, ' ').length > 200
+                          ? item.body
+                              .substring(0, 200)
+                              .replace(/(\r\n|\n|\r)/gm, ' ') + '...'
+                          : item.body.replace(/(\r\n|\n|\r)/gm, ' ')}
+                      </Paragraph>
+                    </TouchableOpacity>
+                    <View style={classes.bottom}>
+                      <View style={classes.split}>
+                        <TouchableOpacity onPress={this.handlePrayed(item._id)}>
+                          <View style={classes.split}>
+                            <IconButton
+                              icon="thumb-up"
+                              size={20}
+                              color={
+                                item.view.includes(deviceId)
+                                  ? baseColor
+                                  : theme.icon
+                              }
+                            />
+                            <Paragraph style={classes.count}>
+                              Click to pray
+                            </Paragraph>
+                          </View>
+                        </TouchableOpacity>
+                        <View
+                          style={{
+                            borderRightColor: theme.icon,
+                            borderRightWidth: 1,
+                            height: 15,
+                            marginLeft: 10,
+                          }}
+                        />
+                        <Caption style={classes.count}>
+                          {item.view.length}
+                        </Caption>
+                        <Paragraph>prayed</Paragraph>
+                      </View>
+                      <Caption>
+                        {moment(item.createdAt).format('MMM DD  HH:MM')}
+                      </Caption>
+                    </View>
+                  </Surface>
+                )}
+                refreshing={isRefreshing}
+                ListFooterComponent={this.renderFooter.bind(this)}
+                onRefresh={this.handleRefreshData}
+                onEndReached={this.handleLoadMore}
+                onEndReachedThreshold={0.4}
+              />
+              {/* <View style={classes.fab}>
           <FAB
             small
             icon="add"
@@ -362,9 +369,9 @@ class PrayRequest extends Component {
             onPress={this.handleAdd}
           />
         </View> */}
-        </Wrapper>
-      </View>
-      )}
+            </Wrapper>
+          </View>
+        )}
       </ThemeContext.Consumer>
     );
   }

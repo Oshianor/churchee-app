@@ -7,7 +7,7 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import {Surface, Subheading, Searchbar} from 'react-native-paper';
+import {Surface, Subheading, Searchbar, Caption} from 'react-native-paper';
 import Dropdown from '../../components/Dropdown';
 import {Church} from '../../components/Card';
 import {Button} from '../../components/Button';
@@ -168,7 +168,10 @@ const FindChurch = ({navigation: {navigate}, route}) => {
   return (
     <View style={classes.root}>
       <View style={classes.headerRoot}>
-        <Subheading style={classes.headerText}>Find a church</Subheading>
+        <Subheading style={classes.headerText}>
+          Search for your church within our platform
+        </Subheading>
+        <Caption>Join any congregation of your choice</Caption>
       </View>
       <Surface style={classes.surface}>
         <ScrollView style={classes.form}>
@@ -226,7 +229,10 @@ const FindChurch = ({navigation: {navigate}, route}) => {
           )}
         </ScrollView>
         <Surface style={classes.buttonRoot}>
-          <Button label="Join This Congregation" onPress={() => handleCompleted()} />
+          <Button
+            label="Join This Congregation"
+            onPress={() => handleCompleted()}
+          />
         </Surface>
       </Surface>
     </View>

@@ -10,15 +10,13 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import { config, publicToken} from '../config';
+import { api, publicToken} from '../../../api';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import moment from 'moment';
-import AsyncStorage from '@react-native-community/async-storage';
-import Wrapper from '../components/Wrapper';
-// import AuthComponent from '../components/AuthModal';
-import {ThemeContext} from '../components/ThemeContext';
-import SnackbarComponent from '../components/Snackbar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Wrapper from '../../../components/Background';
+import {ThemeContext} from '../../../context/ThemeContext';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -88,7 +86,7 @@ class Event extends Component {
     if (account.token) {
       try {
         const savedItem = await axios.put(
-          config.savedItem,
+          api.savedItem,
           {
             type: 'event',
             value: eventId,
@@ -140,7 +138,7 @@ class Event extends Component {
         loading: true,
       });
 
-      const event = await axios.get(config.savedEvents, {
+      const event = await axios.get(api.savedEvents, {
         headers: { 'x-auth-token': account.token, publicToken},
       });
 
@@ -167,7 +165,7 @@ class Event extends Component {
         pageNumber: 1,
       });
 
-      const event = await axios.get(config.savedEvents, {
+      const event = await axios.get(api.savedEvents, {
         headers: { 'x-auth-token': account.token, publicToken},
       });
 
@@ -271,17 +269,6 @@ class Event extends Component {
                 )}
               />
             </Wrapper>
-
-            {/* login modal  */}
-            {/* <AuthComponent open={login} handleClose={this.handleAuthClose} /> */}
-
-            {/* message from login modal */}
-            <SnackbarComponent
-              visible={visible}
-              type={type}
-              msg={msg}
-              handleClose={this.handleClose}
-            />
           </SafeAreaView>
         )}
       </ThemeContext.Consumer>

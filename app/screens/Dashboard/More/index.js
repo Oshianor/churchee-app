@@ -36,6 +36,23 @@ const MoreScreen = ({ navigation: { navigate } }) => {
               </View>
               <Icon name="chevron-right" color={theme.icon} size={25} />
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={classes.surface}
+              onPress={() => navigate('FindChurch')}>
+              <View style={classes.left}>
+                <Icon
+                  name="wechat"
+                  color={theme.icon}
+                  style={classes.icon}
+                  size={25}
+                />
+                <Subheading style={classes.Subheading}>
+                  Chat Room
+                </Subheading>
+              </View>
+              <Icon name="chevron-right" color={theme.icon} size={25} />
+            </TouchableOpacity>
             <TouchableOpacity
               style={classes.surface}
               onPress={() => navigate('Devotion')}>

@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Caption,
   Paragraph,
-  FAB,
 } from 'react-native-paper';
 import {
   View,
@@ -11,7 +10,7 @@ import {
 } from 'react-native';
 import moment from "moment";
 import {ThemeContext} from '../../../../context/ThemeContext';
-
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 
 
 const PrayRequestDetail = ({ route }) => {
@@ -26,15 +25,11 @@ const PrayRequestDetail = ({ route }) => {
         <Paragraph>{route.params.body}</Paragraph>
         <View
           style={{
-            marginVertical: 5,
+            marginVertical: 15,
             justifyContent: 'flex-start',
             alignItems: 'center',
           }}>
-          <FAB
-            small
-            icon="people"
-            // color="black"
-          />
+          <Icon name="account" size={25} />
           <Paragraph>Anonymous request</Paragraph>
         </View>
       </ScrollView>

@@ -2,35 +2,22 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {
   Button,
-  Title,
-  Paragraph,
   TextInput,
-  Caption,
-  Colors,
   Avatar,
-  IconButton,
   Subheading
 } from 'react-native-paper';
 import {View, StyleSheet, KeyboardAvoidingView, ScrollView, Keyboard, StatusBar, Dimensions, TouchableOpacity} from 'react-native';
 import Axios from 'axios';
-import {config, publicToken} from '../config';
-import AsyncStorage from '@react-native-community/async-storage';
-import SnackBarComponent from "../components/Snackbar";
-import {updateUserData,  updateToken, updateRefreshToken} from '../store/actions/index.action';
-import ImagePicker from 'react-native-image-picker';
-import {ThemeContext} from '../components/ThemeContext';
+import {api, publicToken} from '../../../api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import ImagePicker from 'react-native-image-picker';
+import {ThemeContext} from '../../../context/ThemeContext';
+import img from '../../../images';
 
 
 const mapStateToProps = (state) => ({
   account: state.account,
 })
-
-
-const mapDispatchToProps = {
-  updateUserData,
-  updateToken,
-  updateRefreshToken,
-};
 
 const screen = Dimensions.get("screen");
 
@@ -82,7 +69,7 @@ class ProfileEdit extends Component {
       fullName: account.user.fullName,
       bio: typeof account.user.bio === 'undefined' ? '' : account.user.bio,
       email: account.user.email,
-      img: account.user.img ? config.img + account.user.img.key : null,
+      img: account.user.img ? api.img + account.user.img.key : null,
       token
     });
   }
@@ -100,7 +87,7 @@ class ProfileEdit extends Component {
       });
 
       const profile = await Axios.put(
-        config.profile,
+        api.profile,
         {bio, fullName},
         { headers: { 'x-auth-token': token, publicToken}},
       );
@@ -115,7 +102,7 @@ class ProfileEdit extends Component {
       });
 
       // get the user data
-      const user = await Axios.get(config.getMe, {
+      const user = await Axios.get(api.getMe, {
         headers: {'x-auth-token': token, publicToken},
       });
 
@@ -149,7 +136,7 @@ class ProfileEdit extends Component {
 
 
       const changePassword = await Axios.put(
-        config.changePassword,
+        api.changePassword,
         { currentPassword, confirmNewPassword, newPassword },
         { headers: { 'x-auth-token': account.token, publicToken}},
       );
@@ -180,7 +167,7 @@ class ProfileEdit extends Component {
           // console.log('favouriteHymn', favouriteHymn);
 
           const backup = await Axios.put(
-            config.backups,
+            api.backups,
             {
               savedEvents: savedEvents ? JSON.parse(savedEvents) : [],
               favouriteDevotion: favouriteDevotion ? JSON.parse(favouriteDevotion) : [],
@@ -253,51 +240,51 @@ class ProfileEdit extends Component {
   handleImageLoad = () => {
     const {account} = this.props;
 
-    ImagePicker.showImagePicker(options, async (response) => {
-      console.log('Response = ', response);
+    // ImagePicker.showImagePicker(options, async (response) => {
+    //   console.log('Response = ', response);
 
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        // const source = {uri: response.uri};
+    //   if (response.didCancel) {
+    //     console.log('User cancelled image picker');
+    //   } else if (response.error) {
+    //     console.log('ImagePicker Error: ', response.error);
+    //   } else if (response.customButton) {
+    //     console.log('User tapped custom button: ', response.customButton);
+    //   } else {
+    //     // const source = {uri: response.uri};
 
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+    //     // You can also display the image using data:
+    //     // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
-        this.setState({
-          img: 'data:image/jpeg;base64,' + response.data,
-        });
-        try {
-          const profile = await Axios.put(
-            config.image,
-            {
-              img: 'data:image/jpeg;base64,' + response.data,
-            },
-            { headers: { 'x-auth-token': account.token, publicToken}},
-          );
+    //     this.setState({
+    //       img: 'data:image/jpeg;base64,' + response.data,
+    //     });
+    //     try {
+    //       const profile = await Axios.put(
+    //         api.image,
+    //         {
+    //           img: 'data:image/jpeg;base64,' + response.data,
+    //         },
+    //         { headers: { 'x-auth-token': account.token, publicToken}},
+    //       );
 
-          console.log('profile', profile);
+    //       console.log('profile', profile);
           
 
-          this.setState({
-            visible: true,
-            type: 's',
-            msg: profile.data
-          })
-        } catch (error) {
-          this.setState({
-            visible: true,
-            type: 'w',
-            msg: error.response.data,
-          });
-        }
+    //       this.setState({
+    //         visible: true,
+    //         type: 's',
+    //         msg: profile.data
+    //       })
+    //     } catch (error) {
+    //       this.setState({
+    //         visible: true,
+    //         type: 'w',
+    //         msg: error.response.data,
+    //       });
+    //     }
         
-      }
-    });
+    //   }
+    // });
   }
 
   render() {
@@ -318,7 +305,7 @@ class ProfileEdit extends Component {
 
     console.log('this.state', this.state);
     // const user = navigation.getParam('user', {});
-    
+    // require('../assets/icons/user.png');
     
     return (
       <ThemeContext.Consumer>
@@ -339,7 +326,7 @@ class ProfileEdit extends Component {
                   <Avatar.Image
                     size={150}
                     style={classes.img}
-                    source={require('../assets/icons/user.png')}
+                    source={img.user}
                   />
                 ) : (
                   <Avatar.Image
@@ -438,12 +425,6 @@ class ProfileEdit extends Component {
             )}
           </ScrollView>
         </KeyboardAvoidingView>
-        <SnackBarComponent
-          visible={visible}
-          type={type}
-          msg={msg}
-          handleClose={this.handleClose}
-        />
       </View>
       )}
       </ThemeContext.Consumer>
@@ -452,7 +433,7 @@ class ProfileEdit extends Component {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileEdit);
+export default connect(mapStateToProps)(ProfileEdit);
 
 const classes = StyleSheet.create({
   rooty: {

@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   Subheading,
   Searchbar,
@@ -8,130 +8,97 @@ import {
 } from 'react-native-paper';
 import {View, StyleSheet, FlatList, TouchableOpacity, SafeAreaView} from 'react-native';
 import axios from "axios";
-import { api, publicToken } from "../../../api";
-import { bibleAction } from "../../../store/actions";
-// import WrapperComponent from '../components/Wrapper';
+import { api } from "../../../api";
+import { bibleAction, feedbackAction } from "../../../store/actions";
 import {ThemeContext} from '../../../context/ThemeContext';
 
 
-function mapStateToProps(state) {
-  return {
-    bible: state.bible,
-  };
-}
+const Book = ({ navigation: { navigate } }) => {
+  const dispatch = useDispatch();
+  const {books, bookId} = useSelector(({bible}) => bible);
+  const [localBook, setLocalBook] = React.useState([]);
+  const [search, setSearch] = React.useState("");
 
-const mapDispatchToProps = (dispatch) => ({
-  updateBooks: (data) => dispatch(bibleAction.updateBooks(data)),
-  setBook: (data) => dispatch(bibleAction.setBook(data)),
-});
+  React.useEffect(() => {
+    handleGetBible();
+  }, [])
 
-class Book extends Component {
-  state = {
-    search: '',
-    loading: false,
-  };
 
-  async componentDidMount() {
+  const handleGetBible = async () => {
     try {
-      const { updateBooks, bible, setBook } = this.props;
-
       if (!bible.books) {
-        this.setState({
-          loading: true,
-        });
+        dispatch(feedbackAction.launch({ loading: true }));
         const books = await axios.get(api.bibleBook);
 
         console.log('books', books);
-        updateBooks(books.data.data);
-        // setBook(books.data[0].id);
-        this.setState({
-          loading: false,
-          books: books.data.data,
-        });
+        dispatch(bibleAction.updateBooks(books.data.data));
+        setLocalBook(books.data.data);
+        dispatch(feedbackAction.launch({loading: false}));
       }
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);
+        dispatch(feedbackAction.launch({loading: false}));
     }
   }
 
-  handleSelect = item => () => {
-    const { navigation, setBook } = this.props;
-
-    setBook({id: item.bookId, name: item.name });
-    navigation.navigate('BibleChapterScreen');
+  const handleSelect = item => () => {
+    dispatch(bibleAction.setBook({id: item.bookId, name: item.name}));
+    navigate('BibleChapterScreen');
   };
 
-  handleSearchText = search => {
-    const { books } = this.state;
-    const { updateBooks, bible } = this.props;
-    text = search.split(' ');
-    console.log('eeeee');
+  const handleSearchText = search => {
+    let text = search.split(' ');
 
     if (search !== '') {
-      const data = bible.books.filter(function(item) {
-        return text.every(function(el) {
+      const data = localBook.filter(function (item) {
+        return text.every(function (el) {
           return item.name.indexOf(el) > -1;
         });
       });
-      updateBooks(data);
+      dispatch(bibleAction.updateBooks(data));
     } else {
-      updateBooks(books);
+      dispatch(bibleAction.updateBooks(books));
     }
 
-    this.setState({
-      search: text,
-    });
+    setSearch(text);
   };
 
-  render() {
-    const { navigation, bible } = this.props;
-    const { search, loading } = this.state;
-    // const background = {
-    //   backgroundColor: setting.background,
-    // };
     return (
       <ThemeContext.Consumer>
         {({theme, baseColor}) => (
           <SafeAreaView
             style={[classes.root, {backgroundColor: theme.background}]}>
-            {/* <WrapperComponent> */}
-              {loading ? (
-                <ActivityIndicator />
-              ) : (
-                <React.Fragment>
-                  <Searchbar
-                    placeholder="Search"
-                    onChangeText={search => this.handleSearchText(search)}
-                    value={search}
-                  />
-                  <FlatList
-                    data={bible.books ? bible.books : []}
-                    extraData={bible}
-                    keyExtractor={item => item._id}
-                    renderItem={({item}) => (
-                      <TouchableOpacity
-                        style={classes.surface}
-                        onPress={this.handleSelect(item)}>
-                        <Subheading style={classes.Subheading}>
-                          {item.name}
-                        </Subheading>
-                        {bible.bookId === item.bookId ? (
-                          <IconButton icon="check" size={25} />
-                        ) : (
-                          <IconButton icon="chevron-right" size={25} />
-                        )}
-                      </TouchableOpacity>
+            <React.Fragment>
+              <Searchbar
+                placeholder="Search"
+                onChangeText={(search) => handleSearchText(search)}
+                value={search}
+              />
+              <FlatList
+                data={books ?? []}
+                extraData={bookId}
+                keyExtractor={(item) => item._id}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    style={classes.surface}
+                    onPress={handleSelect(item)}>
+                    <Subheading style={classes.Subheading}>
+                      {item.name}
+                    </Subheading>
+                    {bookId === item.bookId ? (
+                      <IconButton icon="check" size={25} />
+                    ) : (
+                      <IconButton icon="chevron-right" size={25} />
                     )}
-                  />
-                </React.Fragment>
-              )}
-            {/* </WrapperComponent> */}
+                  </TouchableOpacity>
+                )}
+              />
+            </React.Fragment>
           </SafeAreaView>
         )}
       </ThemeContext.Consumer>
     );
-  }
 }
 
 const classes = StyleSheet.create({
@@ -150,7 +117,4 @@ const classes = StyleSheet.create({
     elevation: 4,
   },
 });
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Book);
+export default Book;

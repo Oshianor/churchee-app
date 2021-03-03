@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
-import {config, publicToken, baseUrl} from '../../../../api';
+import {api, publicToken, baseUrl} from '../../../../api';
 import {mediaAction} from '../../../../store/actions';
 import {ThemeContext} from '../../../../context/ThemeContext';
 import moment from "moment"
@@ -25,6 +25,7 @@ const Media = ({navigation: { navigate }}) => {
   const [loading, setLoading] = React.useState(false);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const media = useSelector(({media}) => media);
+  const { church: { publicToken  } } = useSelector(({account}) => account);
   const dispatch = useDispatch();
 
 
@@ -38,7 +39,7 @@ const Media = ({navigation: { navigate }}) => {
     try {
       setLoading(true);
 
-      const mediaLoad = await axios.get(config.media, { headers: { publicToken } });
+      const mediaLoad = await axios.get(api.media, { headers: { publicToken } });
 
       console.log('mediaLoad', mediaLoad);
 
@@ -46,6 +47,7 @@ const Media = ({navigation: { navigate }}) => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
+      console.log(error);
       console.log(error.response);
     }
   };
@@ -55,7 +57,7 @@ const Media = ({navigation: { navigate }}) => {
       setIsRefreshing(true);
       dispatch(mediaAction.setMediaPage(1));
 
-      const mediaLoad = await axios.get(config.media, { headers: { publicToken } });
+      const mediaLoad = await axios.get(api.media, { headers: { publicToken } });
 
       dispatch(mediaAction.setMedia(mediaLoad.data));
 
@@ -66,32 +68,32 @@ const Media = ({navigation: { navigate }}) => {
     }
   };
 
-  const handleLoadMore = async () => {
-    try {
-      const num = Number(media.currentPage) + 1;
+  // const handleLoadMore = async () => {
+  //   try {
+  //     const num = Number(media.currentPage) + 1;
 
-      if (num > media.page) return null;
+  //     if (num > media.page) return null;
 
-      setLoading(true);
+  //     setLoading(true);
 
-      const mediaLoad = await axios.get(config.media + '?pageNumber=' + num, { headers: { publicToken } });
+  //     const mediaLoad = await axios.get(api.media + '?page=' + num, { headers: { publicToken } });
 
-      dispatch(mediaAction.setMediaPage(num));
+  //     dispatch(mediaAction.setMediaPage(num));
 
-      const listData = data.concat(mediaLoad.data.media);
+  //     const listData = data.concat(mediaLoad.data.data);
 
-      dispatch(mediaAction.setMedia({
-        media: listData,
-        total: mediaLoad.data.total,
-        pages: mediaLoad.data.pages,
-      }));
+  //     dispatch(mediaAction.setMedia({
+  //       media: listData,
+  //       total: mediaLoad.data.meta.total,
+  //       pages: mediaLoad.data.meta.pages,
+  //     }));
 
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.log(error.response);
-    }
-  };
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setLoading(false);
+  //     console.log(error.response);
+  //   }
+  // };
 
   const onShare = item => async () => {
     try {
@@ -136,9 +138,9 @@ const Media = ({navigation: { navigate }}) => {
             extraData={media}
             keyExtractor={item => item._id}
             refreshing={isRefreshing}
-            ListFooterComponent={renderFooter.bind(this)}
+            // ListFooterComponent={renderFooter.bind(this)}
             onRefresh={handleRefreshData}
-            onEndReached={handleLoadMore}
+            // onEndReached={handleLoadMore}
             onEndReachedThreshold={0.4}
             renderItem={({item}) => (
               <TouchableOpacity
@@ -151,7 +153,7 @@ const Media = ({navigation: { navigate }}) => {
                   </Subheading>
 
                   <Image
-                    source={{uri: config.img + item.img}}
+                    source={{uri: api.img + item.img}}
                     style={classes.swiper}
                   />
                   <View style={classes.headerShare}>

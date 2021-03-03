@@ -3,12 +3,12 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {Subheading} from 'react-native-paper';
 import BackButton from "../../custom/BackButton"
 import ProfileHome from '../../../screens/Dashboard/Profile';
-// import ProfileSavedEvent from '../../../screens/Dashboard/Profile/ProfileSavedEvent';
+import ProfileSavedEvent from '../../../screens/Dashboard/Profile/ProfileSavedEvent';
 import Notes from '../../../screens/Dashboard/Profile/Notes';
 import AddNotes from '../../../screens/Dashboard/Profile/Notes/AddNotes';
 import EditNotes from '../../../screens/Dashboard/Profile/Notes/EditNotes';
 import ViewNote from '../../../screens/Dashboard/Profile/Notes/ViewNote';
-// import ProfileEdit from '../../../screens/Dashboard/Profile/ProfileEdit';
+import ProfileEdit from '../../../screens/Dashboard/Profile/ProfileEdit';
 const Stack = createStackNavigator();
 
 
@@ -55,7 +55,7 @@ const Profile = () => {
         })}
         component={ViewNote}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="ProfileEditScreen"
         options={({route, navigation: {goBack}}) => ({
           headerLeft: () => <BackButton goBack={goBack} />,
@@ -70,7 +70,7 @@ const Profile = () => {
           headerTitle: () => <Subheading>Saved Events</Subheading>,
         })}
         component={ProfileSavedEvent}
-      /> */}
+      />
     </Stack.Navigator>
   );
 };

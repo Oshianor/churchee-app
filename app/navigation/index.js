@@ -26,7 +26,10 @@ const Navigation = () => {
       />
       <Stack.Screen
         name="FindChurch"
-        options={{headerShown: false}}
+        options={({route, navigation: {goBack}}) => ({
+          headerLeft: () => <BackButton goBack={goBack} />,
+          headerTitle: () => <Subheading>Join a congregation</Subheading>,
+        })}
         component={FindChurch}
       />
       <Stack.Screen

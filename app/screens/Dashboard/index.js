@@ -35,9 +35,9 @@ const Home = ({navigation: {navigate}}) => {
           <Wrapper>
             <ScrollView contentContainerStyle={classes.body}>
               <View style={classes.rootView}>
-                <View style={classes.section}>
+                {/* <View style={classes.section}>
                   <Header title="Event" name="eventSection" route="Event" />
-                </View>
+                </View> */}
 
                 <View style={classes.section}>
                   <Header title="Sermon" name="sermonSection" route="Sermon" />
@@ -49,6 +49,7 @@ const Home = ({navigation: {navigate}}) => {
                 </View>
 
                 <View style={classes.section}>
+                  <Header title="Event" name="eventSection" route="Event" />
                   <Header title="Media" name="mediaSection" route="Media" />
                 </View>
 
@@ -64,17 +65,6 @@ const Home = ({navigation: {navigate}}) => {
                 <View style={classes.section}>
                   <Header title="Form" name="formSection" route="Form" />
                   <Header title="Hymn" name="hymnSection" route="Hymn" />
-                </View>
-                <View style={classes.section}>
-                  <Header
-                    title="Chat"
-                    name="chatSection"
-                    route="Chat"
-                    imgStyle={{
-                      resizeMode: 'contain',
-                      aspectRatio: 1,
-                    }}
-                  />
                 </View>
               </View>
             </ScrollView>

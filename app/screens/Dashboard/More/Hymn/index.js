@@ -57,20 +57,22 @@ class Hymn extends Component {
 
   handleData = async () => {
     try {
+      const { account } = this.props;
       this.setState({
         loading: true,
       });
 
-      const hymn = await axios.get(api.getHymn, { headers: { publicToken } });
+      const hymn = await axios.get(api.getHymn, { headers: { publicToken: account.church.publicToken } });
 
       this.setState({
         loading: false,
-        data: hymn.data.hymn,
-        total: hymn.data.total,
-        pages: hymn.data.pages,
+        data: hymn.data.data,
+        total: hymn.data.meta.total,
+        pages: hymn.data.meta.pages,
       });
 
       console.log('hymn', hymn);
+
     } catch (error) {
       this.setState({
         loading: false,
@@ -86,13 +88,15 @@ class Hymn extends Component {
         pageNumber: 1,
       });
 
-      const hymn = await axios.get(api.getHymn, { headers: { publicToken } });
+      const hymn = await axios.get(api.getHymn, {
+        headers: {publicToken: account.church.publicToken},
+      });
 
       this.setState({
         isRefreshing: false,
-        data: hymn.data.hymn,
-        total: hymn.data.total,
-        pages: hymn.data.pages,
+        data: hymn.data.data,
+        total: hymn.data.meta.total,
+        pages: hymn.data.meta.pages,
       });
 
       console.log('handleRefreshData', this.state);
@@ -112,7 +116,9 @@ class Hymn extends Component {
 
       if (num > pages) return null;
 
-      const hymn = await axios.get(api.getHymn + '?pageNumber=' + num, { headers: { publicToken } });
+      const hymn = await axios.get(api.getHymn + '?pageNumber=' + num, {
+        headers: {publicToken: account.church.publicToken},
+      });
 
       this.setState({
         loading: true,
@@ -121,13 +127,13 @@ class Hymn extends Component {
 
       console.log('handleLoadMore', pray);
 
-      const listData = data.concat(hymn.data.hymn);
+      const listData = data.concat(hymn.data.data);
 
       this.setState({
         loading: false,
         data: listData,
-        total: hymn.data.total,
-        pages: hymn.data.pages,
+        total: hymn.data.meta.total,
+        pages: hymn.data.meta.pages,
       });
 
       console.log('handleLoadMore', this.state);
@@ -190,27 +196,9 @@ class Hymn extends Component {
       this.setState({
         login: true,
       });
-      navigation.navigate('Login');
+      navigation.navigate("Onboarding", {screen: 'Login'});
 
     }
-  };
-
-  handleClose = () => {
-    this.setState({
-      visible: false,
-      login: false,
-      msg: '',
-      type: '',
-    });
-  };
-
-  handleAuthClose = (visible, msg, type) => {
-    this.setState({
-      login: false,
-      visible,
-      msg,
-      type,
-    });
   };
 
   render() {
@@ -234,7 +222,7 @@ class Hymn extends Component {
                 contentContainerStyle={classes.container}
                 data={data}
                 extraData={this.state}
-                keyExtractor={item => item._id}
+                keyExtractor={(item) => item._id}
                 renderItem={({item}) => (
                   <View style={classes.surface}>
                     <TouchableOpacity
@@ -247,9 +235,7 @@ class Hymn extends Component {
                     </TouchableOpacity>
                     <IconButton
                       icon={
-                        favourite.includes(item._id)
-                          ? 'favorite'
-                          : 'favorite-border'
+                        favourite.includes(item._id) ? 'heart' : 'heart-outline'
                       }
                       color={
                         favourite.includes(item._id) ? baseColor : theme.icon
