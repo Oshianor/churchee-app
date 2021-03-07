@@ -26,7 +26,7 @@ const Book = ({ navigation: { navigate } }) => {
 
   const handleGetBible = async () => {
     try {
-      if (!bible.books) {
+      if (!books) {
         dispatch(feedbackAction.launch({ loading: true }));
         const books = await axios.get(api.bibleBook);
 

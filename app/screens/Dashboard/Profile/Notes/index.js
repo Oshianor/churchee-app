@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import Axios from 'axios';
-import { api, publicToken } from '../../../../api';
+import { api} from '../../../../api';
 import moment from "moment";
 import {ThemeContext} from '../../../../context/ThemeContext';
 
@@ -42,13 +42,13 @@ class Notes extends Component {
       const {account} = this.props;
 
       const notes = await Axios.get(api.note, {
-        headers: { 'x-auth-token': account.token, publicToken},
+        headers: { 'x-auth-token': account.token},
       });
 
       console.log('notes', notes);
 
       this.setState({
-        notes: notes.data === '' ? [] : notes.data,
+        notes: notes.data.data
       });
     } catch (error) {
       console.log('error', error);
@@ -65,12 +65,12 @@ class Notes extends Component {
       });
 
       const notes = await Axios.get(api.note, {
-        headers: { 'x-auth-token': account.token, publicToken},
+        headers: { 'x-auth-token': account.token},
       });
       
       this.setState({
         isRefreshing: false,
-        notes: notes.data === '' ? [] : notes.data,
+        notes: notes.data.data,
       });
 
       console.log('handleRefreshData', this.state);
@@ -82,12 +82,6 @@ class Notes extends Component {
     }
   };
 
-  renderFooter = () => {
-    const {isRefreshing} = this.state;
-    //it will show indicator at the bottom of the list when data is loading otherwise it returns null
-    if (!isRefreshing) return null;
-    return <ActivityIndicator style={{color: '#000'}} />;
-  };
 
   render() {
     const { navigation} = this.props;
@@ -104,7 +98,6 @@ class Notes extends Component {
           keyExtractor={item => item._id}
           extraData={this.state}
           refreshing={isRefreshing}
-          ListFooterComponent={this.renderFooter.bind(this)}
           onRefresh={this.handleRefreshData}
           renderItem={({item}) => (
             <Surface style={classes.surface}>
@@ -133,7 +126,7 @@ class Notes extends Component {
         <View style={classes.fab}>
           <FAB
             small
-            icon="add"
+            icon="plus"
             color="white"
             style={{
               backgroundColor: baseColor,
