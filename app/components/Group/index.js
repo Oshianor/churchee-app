@@ -1,0 +1,1 @@
+export { default as AvatarGroup } from "./components/avatar"

@@ -39,7 +39,7 @@ const MoreScreen = ({ navigation: { navigate } }) => {
 
             <TouchableOpacity
               style={classes.surface}
-              onPress={() => navigate('FindChurch')}>
+              onPress={() => navigate('Chat')}>
               <View style={classes.left}>
                 <Icon
                   name="wechat"

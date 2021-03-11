@@ -24,8 +24,8 @@ export default Radio;
 
 const classes = StyleSheet.create({
   radioRoot: {
-    width: 35,
-    height: 35,
+    width: 25,
+    height: 25,
     borderRadius: 40,
     borderWidth: .5,
     borderColor: colors.secondary.main,

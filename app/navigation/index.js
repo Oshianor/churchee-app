@@ -13,6 +13,7 @@ import Media from './Dashboard/More/Media';
 import PrayerRequest from './Dashboard/More/PrayerRequest';
 import PPR from './Dashboard/More/PPR';
 import Profile from "./Dashboard/Profile";
+import Chat from "./Dashboard/More/Chat"
 import FindChurch from "../screens/Onboarding/findChurch"
 const Stack = createStackNavigator();
 
@@ -80,6 +81,12 @@ const Navigation = () => {
         name="Profile"
         options={{headerShown: false}}
         component={Profile}
+      />
+
+      <Stack.Screen
+        name="Chat"
+        options={{headerShown: false}}
+        component={Chat}
       />
     </Stack.Navigator>
   );
