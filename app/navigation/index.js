@@ -15,9 +15,11 @@ import PPR from './Dashboard/More/PPR';
 import Profile from "./Dashboard/Profile";
 import Chat from "./Dashboard/More/Chat"
 import FindChurch from "../screens/Onboarding/findChurch"
+import {useSelector, useDispatch} from 'react-redux';
 const Stack = createStackNavigator();
 
 const Navigation = () => {
+  const {church} = useSelector(({account}) => account);
   return (
     <Stack.Navigator initialRouteName="Dashboard" headerMode="screen">
       <Stack.Screen
@@ -28,7 +30,7 @@ const Navigation = () => {
       <Stack.Screen
         name="FindChurch"
         options={({route, navigation: {goBack}}) => ({
-          headerLeft: () => <BackButton goBack={goBack} />,
+          headerLeft: () => church ? <BackButton goBack={goBack} /> : null,
           headerTitle: () => <Subheading>Join a congregation</Subheading>,
         })}
         component={FindChurch}

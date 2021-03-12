@@ -5,7 +5,11 @@ import {Subheading} from 'react-native-paper';
 import BackButton from '../../../custom/BackButton';
 import RoomHome from "../../../../screens/Dashboard/More/Chat"
 import RoomInfo from '../../../../screens/Dashboard/More/Chat/roomInfo';
-import CreateRoom from "../../../../screens/Dashboard/More/Chat/createRoom"
+import CreateRoom from "../../../../screens/Dashboard/More/Chat/createRoom";
+import AddModerator from "../../../../screens/Dashboard/More/Chat/AddModerator";
+import Search from "../../../../screens/Dashboard/More/Chat/search"
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import { TouchableOpacity } from 'react-native';
 const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 
@@ -28,6 +32,29 @@ const Room = () => {
           headerTitle: () => <Subheading>New Room</Subheading>,
         })}
         component={CreateRoom}
+      />
+      <Stack.Screen
+        name="AddModerator"
+        options={({navigation: {goBack, navigate}}) => ({
+          headerLeft: () => <BackButton goBack={goBack} />,
+          headerTitle: () => <Subheading>Add Moderator</Subheading>,
+          headerRight: () => (
+            <TouchableOpacity
+              style={{marginRight: 20}}
+              onPress={() => navigate('Search')}>
+              <Icon name="magnify" size={30} />
+            </TouchableOpacity>
+          ),
+        })}
+        component={AddModerator}
+      />
+      <Stack.Screen
+        name="Search"
+        options={({navigation: {goBack}}) => ({
+          headerLeft: () => <BackButton goBack={goBack} />,
+          headerTitle: () => <Subheading>Search</Subheading>,
+        })}
+        component={Search}
       />
     </Stack.Navigator>
   );

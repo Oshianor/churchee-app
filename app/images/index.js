@@ -16,6 +16,7 @@ const img = {
   chatSection: require('../assets/images/home/chat.png'),
   bgImg: require('../assets/images/icons/logo.png'),
   tithe: require('../assets/images/tithe.jpeg'),
+  findChurch: require('../assets/images/findChurch.png'),
   offering: require('../assets/images/offering.jpeg'),
   vows: require('../assets/images/vows.jpeg'),
   firstfruit: require('../assets/images/firstfruit.jpeg'),

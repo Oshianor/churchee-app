@@ -228,12 +228,14 @@ const FindChurch = ({navigation: {navigate}, route}) => {
             </View>
           )}
         </ScrollView>
-        <Surface style={classes.buttonRoot}>
-          <Button
-            label="Join This Congregation"
-            onPress={() => handleCompleted()}
-          />
-        </Surface>
+        {typeof churchList[0] !== 'undefined' && (
+          <Surface style={classes.buttonRoot}>
+            <Button
+              label="Join This Congregation"
+              onPress={() => handleCompleted()}
+            />
+          </Surface>
+        )}
       </Surface>
     </View>
   );

@@ -17,6 +17,7 @@ import {ThemeContext} from "./context/ThemeContext";
 import { accountAction } from "./store/actions"
 import {navigationRef} from './RootNavigation';
 import * as RootNavigation from './RootNavigation';
+import SplashScreen from 'react-native-splash-screen';
 
 const StartUp = () => {
   const dispatch = useDispatch();
@@ -24,12 +25,14 @@ const StartUp = () => {
 
   React.useEffect(() => {
     handleGetChurch();
+
+    SplashScreen.hide();
   }, []);
 
   const handleGetChurch = async () => {
     const church = await AsyncStorage.getItem("church");
 
-    console.log('Uncut church', church);
+    // console.log('Uncut church', church);
     if (church) {
       dispatch(accountAction.updateChurchData(JSON.parse(church)));
     } else {
