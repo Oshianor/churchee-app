@@ -7,7 +7,8 @@ import RoomHome from "../../../../screens/Dashboard/More/Chat"
 import RoomInfo from '../../../../screens/Dashboard/More/Chat/roomInfo';
 import CreateRoom from "../../../../screens/Dashboard/More/Chat/createRoom";
 import AddModerator from "../../../../screens/Dashboard/More/Chat/AddModerator";
-import Search from "../../../../screens/Dashboard/More/Chat/search"
+import Search from "../../../../screens/Dashboard/More/Chat/search";
+import RoomChat from '../../../../screens/Dashboard/More/Chat/roomChat';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import { TouchableOpacity } from 'react-native';
 const Stack = createStackNavigator();
@@ -55,6 +56,14 @@ const Room = () => {
           headerTitle: () => <Subheading>Search</Subheading>,
         })}
         component={Search}
+      />
+      <Stack.Screen
+        name="RoomChat"
+        options={({navigation: {goBack}}) => ({
+          headerLeft: () => <BackButton goBack={goBack} />,
+          // headerTitle: () => <Subheading>Search</Subheading>,
+        })}
+        component={RoomChat}
       />
     </Stack.Navigator>
   );

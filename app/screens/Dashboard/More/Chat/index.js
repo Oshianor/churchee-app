@@ -7,7 +7,7 @@ const ChatHome = ({ navigation: { navigate } }) => {
     <View style={classes.root}>
       <View style={classes.section}>
         <CreateRoom onPress={() => navigate('CreateRoom')} />
-        <Room onPress={() => navigate('RoomInfo')} />
+        <Room onPress={() => navigate('RoomChat')} />
       </View>
       <View style={classes.section}>
         <Room onPress={() => navigate('RoomInfo')} />
