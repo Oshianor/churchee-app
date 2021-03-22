@@ -6,7 +6,7 @@ import { colors } from '../../../theme';
 import {ThemeContext} from '../../../context/ThemeContext';
 
 
-const Church = ({_id, address, name, img, bio, selected, onPress, disabled}) => {
+const Church = ({_id, address, name, img, state, country, selected, onPress, disabled}) => {
   return (
     <ThemeContext.Consumer>
       {({theme, baseColor}) => (
@@ -32,7 +32,7 @@ const Church = ({_id, address, name, img, bio, selected, onPress, disabled}) => 
                 classes.detailsText,
                 {color: theme.mode ? '#fff' : '#101424'},
               ]}>
-              {bio}
+              {`${state} ${country}`}
             </Subheading>
           </View>
         </TouchableOpacity>

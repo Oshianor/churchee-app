@@ -4,10 +4,13 @@ import {
   HOMEPAGE,
   DEVOTION_DATA,
   UPDATE_CHURCH_DATA,
+  UPDATE_USER_LOCATION
 } from '../types';
 
 const initialstate = {
   token: null,
+  lat: 0,
+  lng: 0,
   live: null,
   devotion: [],
   sermon: [],
@@ -24,6 +27,10 @@ export default (state = initialstate, action) => {
     case UPDATE_USER_DATA:
       return Object.assign({}, state, {
         user: action.payload,
+      });
+    case UPDATE_USER_LOCATION:
+      return Object.assign({}, state, {
+        ...action.payload,
       });
     case UPDATE_CHURCH_DATA:
       return Object.assign({}, state, {

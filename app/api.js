@@ -1,6 +1,6 @@
-// export const baseUrl = 'https://api.churchee.app/api/v1';
+export const baseUrl = 'https://api.churchee.app/api/v1';
 // const baseUrl = 'http://192.168.8.151:3000/api';
-const baseUrl = 'http://localhost:9090/api/v1';
+// const baseUrl = 'http://localhost:9090/api/v1';
 
 // export const publicToken = '539f106f-8149-426e-b0d2-8de76e9bd0a2';
 

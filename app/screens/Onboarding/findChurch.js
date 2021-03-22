@@ -24,9 +24,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FindChurch = ({navigation: {navigate}, route}) => {
   const dispatch = useDispatch();
+  const { lat, lng } = useSelector(({account}) => account);
   const countryList = useSelector(({country: {country}}) => country);
   const stateList = useSelector(({country: {state}}) => state);
-  const [country, setCountry] = React.useState('');
+  const [country, setCountry] = React.useState("");
   const [state, setState] = React.useState('');
   const [search, setSearch] = React.useState('');
   const [churchList, setChurchList] = React.useState([]);
@@ -36,6 +37,11 @@ const FindChurch = ({navigation: {navigate}, route}) => {
   console.log('churchList', churchList);
   console.log('selected', selected);
   // console.log('country', country);
+
+  const regionMap = [
+    "United Kingdom",
+    "Canada"
+  ]
 
   React.useEffect(() => {
     handleCountry();
@@ -80,7 +86,7 @@ const FindChurch = ({navigation: {navigate}, route}) => {
   const handleGetChurch = async (state) => {
     try {
       const churchData = await axios.get(
-        `${api.church}?country=${country}&state=${state}`
+        `${api.church}?country=${country}&state=${state}&lat=${lat}&lng=${lng}`
       );
 
       setChurchList(churchData.data.data);
@@ -179,6 +185,7 @@ const FindChurch = ({navigation: {navigate}, route}) => {
             items={countryList}
             label="Select a country"
             labelRoot={{width: 110}}
+            placeholder="Select a country"
             value={country}
             onValueChange={(val) => {
               Platform.OS === 'android'
@@ -191,14 +198,19 @@ const FindChurch = ({navigation: {navigate}, route}) => {
             <Dropdown
               items={stateList}
               value={state}
-              label="Select a state"
+              label={
+                !regionMap.includes(country)
+                  ? 'Select a state'
+                  : 'Select a region'
+              }
+              placeholder="Select a state"
               onValueChange={
                 Platform.OS === 'android'
                   ? handleSelectStateChurch
                   : handleSelectState
               }
               onDonePress={handleSelectStateChurchIOS}
-              labelRoot={{width: 100}}
+              labelRoot={{width: regionMap.includes(country) ? 120 : 100}}
             />
           )}
 

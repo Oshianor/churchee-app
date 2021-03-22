@@ -18,6 +18,8 @@ import { accountAction } from "./store/actions"
 import {navigationRef} from './RootNavigation';
 import * as RootNavigation from './RootNavigation';
 import SplashScreen from 'react-native-splash-screen';
+import Geolocation from 'react-native-geolocation-service';
+
 
 const StartUp = () => {
   const dispatch = useDispatch();
@@ -25,10 +27,12 @@ const StartUp = () => {
 
   React.useEffect(() => {
     handleGetChurch();
+    requestLocationPermission();
 
     SplashScreen.hide();
   }, []);
 
+  
   const handleGetChurch = async () => {
     const church = await AsyncStorage.getItem("church");
 
@@ -39,6 +43,45 @@ const StartUp = () => {
       RootNavigation.navigate('FindChurch');
     }
   }
+
+  const requestLocationPermission = async () => {
+    if (Platform.OS === 'ios') {
+      Geolocation.requestAuthorization('always');
+      Geolocation.setRNConfiguration({
+        skipPermissionRequests: false,
+        authorizationLevel: 'whenInUse',
+      });
+
+      await handleLocation();
+    }
+
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+    }
+    await handleLocation();
+  };
+
+  const handleLocation = async () => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        console.log('position', position);
+
+        dispatch(
+          accountAction.setLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          }),
+        );
+      },
+      (error) => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
 
   return (
     <ThemeContext.Consumer>
