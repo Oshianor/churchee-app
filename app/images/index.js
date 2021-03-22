@@ -31,6 +31,8 @@ const img = {
   survey: require('../assets/images/form/survey.jpg'),
   usflag: require('../assets/images/usflag.png'),
   user: require('../assets/images/icons/user.png'),
+  GoogleIconDark: require('../assets/images/GoogleIconDark.png'),
+  GoogleIconLight: require('../assets/images/GoogleIconLight.png'),
 };
 
 export default img;

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>757004168289-d0lflgaq9ljffpv1jjp0kiv48d4cblbo.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.757004168289-d0lflgaq9ljffpv1jjp0kiv48d4cblbo</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDPPJ7iwLr4ElPiD5PFyX5V3WuGIZXI3U4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>757004168289</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.webspoons.churchee</string>
+	<key>PROJECT_ID</key>
+	<string>churchee-bdd1d</string>
+	<key>STORAGE_BUCKET</key>
+	<string>churchee-bdd1d.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:757004168289:ios:ca5287555873b2a23d8e20</string>
+	<key>DATABASE_URL</key>
+	<string>https://churchee-bdd1d.firebaseio.com</string>
+</dict>
+</plist>

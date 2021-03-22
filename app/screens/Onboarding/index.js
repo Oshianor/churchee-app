@@ -26,6 +26,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
 import {validateEmail} from '../../utils';
 import img from '../../images';
+import { GoogleAuth } from '../../components/Auth';
 
 const { height} = Dimensions.get('window');
 
@@ -175,17 +176,18 @@ const Login = ({navigation: {navigate, goBack}}) => {
               </Subheading>
             </TouchableOpacity>
 
-            {/* <View style={classes.bodyFooter}>
+            <View style={classes.bodyFooter}>
               <View style={classes.bodyFooterLines}>
                 <View style={classes.lines} />
                 <Caption>or connect using</Caption>
                 <View style={classes.lines} />
               </View>
               <View style={classes.bodyFooterIcon}>
-                <FBLogin setAlert={handleAlert} />
-                <GoogleLogin setAlert={handleAlert} />
+                <GoogleAuth />
+                {/* <FBLogin setAlert={handleAlert} />
+                <GoogleLogin setAlert={handleAlert} /> */}
               </View>
-            </View> */}
+            </View>
           </Surface>
 
           <View style={classes.footer}>

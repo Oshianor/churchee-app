@@ -38,6 +38,7 @@
 		886722D0056F475FA62939F0 /* Roboto-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECBE83EF8BEC422FA414C593 /* Roboto-MediumItalic.ttf */; };
 		88996C370115467D8E4842A1 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF7F32EB24B54CD3BB6DB778 /* Zocial.ttf */; };
 		8C2A8BE905E74525A95DE6A5 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 097AE8EE0A8C4CDC8C40B26D /* Roboto-Black.ttf */; };
+		9149F06D2609149500D82900 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9149F06C2609149500D82900 /* GoogleService-Info.plist */; };
 		94D2406A6CC84B7FBD61506A /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5F5501AE401A4D50A43C57B0 /* AntDesign.ttf */; };
 		965D0C465A284EC3A810FC0B /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 671E0A5ADA834461ADF26EA0 /* Octicons.ttf */; };
 		A0BD37E5557440F78B2E4AC4 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 050500916E4B44748B68DE25 /* FontAwesome5_Solid.ttf */; };
@@ -101,6 +102,7 @@
 		7B0354C17D1A659A9F4EA5AE /* Pods-churchee-churcheeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-churchee-churcheeTests.debug.xcconfig"; path = "Target Support Files/Pods-churchee-churcheeTests/Pods-churchee-churcheeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = churchee/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8583585A1BBE7826322DFA68 /* Pods-churchee-churcheeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-churchee-churcheeTests.release.xcconfig"; path = "Target Support Files/Pods-churchee-churcheeTests/Pods-churchee-churcheeTests.release.xcconfig"; sourceTree = "<group>"; };
+		9149F06C2609149500D82900 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9BB689E796F6498F8C2A8C0C /* Roboto-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Italic.ttf"; path = "../app/assets/fonts/Roboto-Italic.ttf"; sourceTree = "<group>"; };
 		9D6763ED89AD408C80DECE64 /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-BoldItalic.ttf"; path = "../app/assets/fonts/Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
 		B9AD0F58D1514244AAA81005 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 		13B07FAE1A68108700A75B9A /* churchee */ = {
 			isa = PBXGroup;
 			children = (
+				9149F06C2609149500D82900 /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -447,6 +450,7 @@
 				1202332BEF8C47F5BCA5BC8E /* Roboto-Thin.ttf in Resources */,
 				52D69BA2D21040A7A51FCA92 /* Roboto-ThinItalic.ttf in Resources */,
 				94D2406A6CC84B7FBD61506A /* AntDesign.ttf in Resources */,
+				9149F06D2609149500D82900 /* GoogleService-Info.plist in Resources */,
 				1C7ACEA3E1AC4B0293E5D4E3 /* Entypo.ttf in Resources */,
 				BFDE289FE5B5483A85D6DA16 /* EvilIcons.ttf in Resources */,
 				3F10EB1F87D9496D9775C3DF /* Feather.ttf in Resources */,
@@ -562,6 +566,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-churchee/Pods-churchee-resources.sh",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -582,6 +587,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -596,6 +602,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-churchee-churcheeTests/Pods-churchee-churcheeTests-resources.sh",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -616,6 +623,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
