@@ -1,5 +1,4 @@
 import React from 'react';
-import {Card, Surface, Subheading} from 'react-native-paper';
 import {
   View,
   StyleSheet,
@@ -11,33 +10,54 @@ import {
 import {ThemeContext} from '../../context/ThemeContext';
 import Wrapper from "../../components/Background"
 import {Header, Swiper} from '../../components/Card';
-// import SwiperComponent from '../components/Swiper';
-import {api} from '../../api';
-// import WrapperComponent from '../components/Wrapper';
-// import LiveComponent from '../components/Live';
-// import DailyVerseModalComponent from '../components/DailyVerseModal';
-// import {firebase} from '@react-native-firebase/messaging';
-
+import { DailyVerse } from '../../components/Modal';
+import {useSelector} from 'react-redux';
 const { width, height } = Dimensions.get('screen');
-
+import {api} from '../../api';
+import axios from 'axios';
 
 const Home = ({navigation: {navigate}}) => {
   const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState(null);
+  const {church} = useSelector(({account}) => account);
+
+
+  console.log('open', open);
+
+
+  const handleData = async () => {
+    try {
+      const verse = await axios.get(api.dailyVerse, {
+        headers: {publicToken: church?.publicToken},
+      });
+
+      console.log('verse', verse);
+      setValue(verse.data.data);
+      setOpen(true);
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
 
   return (
     <ThemeContext.Consumer>
       {({theme, baseColor}) => (
         <SafeAreaView
           style={[classes.root, {backgroundColor: theme.background}]}>
-          <View style={classes.swiper}>
+          {/* <View style={classes.swiper}>
             <Swiper target="home" />
-          </View>
+          </View> */}
           <Wrapper>
             <ScrollView contentContainerStyle={classes.body}>
               <View style={classes.rootView}>
-                {/* <View style={classes.section}>
-                  <Header title="Event" name="eventSection" route="Event" />
-                </View> */}
+                <View style={classes.section}>
+                  <Header
+                    title="Daily Verse"
+                    name="verseSection"
+                    onPress={() => handleData()}
+                  />
+                </View>
 
                 <View style={classes.section}>
                   <Header title="Sermon" name="sermonSection" route="Sermon" />
@@ -68,6 +88,11 @@ const Home = ({navigation: {navigate}}) => {
                 </View>
               </View>
             </ScrollView>
+            <DailyVerse
+              open={open}
+              value={value}
+              handleClose={() => setOpen(false)}
+            />
           </Wrapper>
         </SafeAreaView>
       )}

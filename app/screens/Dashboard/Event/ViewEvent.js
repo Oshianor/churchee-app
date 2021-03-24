@@ -280,7 +280,7 @@ class EventDetail extends Component {
       this.setState({
         login: true,
       });
-      navigation.navigate('Login');
+      navigation.navigate('Onboarding');
 
     }
   };
@@ -318,7 +318,11 @@ class EventDetail extends Component {
                   </View>
                   <View style={classes.sideright}>
                     <Icon name="timer-outline" size={25} />
-                    <Paragraph>{moment(item.time).format('HH:MMA')}</Paragraph>
+                    <Paragraph>
+                      {item.recuringDate
+                        ? item.time
+                        : moment(item.startDate).format('HH:MM a')}
+                    </Paragraph>
                   </View>
                 </View>
                 <Paragraph style={[classes.para, fssm]}>{item.body}</Paragraph>

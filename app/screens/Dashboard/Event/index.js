@@ -215,9 +215,9 @@ class Event extends Component {
         {({theme, baseColor}) => (
           <SafeAreaView
             style={[classes.root, {backgroundColor: theme.background}]}>
-            <View style={classes.swiper}>
+            {/* <View style={classes.swiper}>
               <Swiper target="event" />
-            </View>
+            </View> */}
             {/* <EventComponent title="Bible study" /> */}
             <Wrapper>
               <FlatList

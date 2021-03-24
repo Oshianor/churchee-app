@@ -27,6 +27,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
 import img from '../../images';
 import {validateEmail} from '../../utils';
+import {GoogleAuth} from '../../components/Auth';
 
 const {height} = Dimensions.get('screen');
 
@@ -207,7 +208,7 @@ const Register = ({navigation: {navigate, goBack}}) => {
               disabled={loading}
               onPress={handleLogin}>
               <Subheading
-                style={[classes.buttonText, {color: theme.mode ?? 'black'}]}>
+                style={[classes.buttonText, {color: theme.mode ? 'black' : "white"}]}>
                 Sign up
               </Subheading>
             </TouchableOpacity>
@@ -222,7 +223,7 @@ const Register = ({navigation: {navigate, goBack}}) => {
             </View>
           </Surface>
 
-          {/* <Surface style={classes.bodyIcons}>
+          <Surface style={classes.bodyIcons}>
             <View style={classes.bodyFooter}>
               <View style={classes.bodyFooterLines}>
                 <View style={classes.lines} />
@@ -230,11 +231,10 @@ const Register = ({navigation: {navigate, goBack}}) => {
                 <View style={classes.lines} />
               </View>
               <View style={classes.bodyFooterIcon}>
-                <FBLogin setAlert={handleAlert} />
-                <GoogleLogin setAlert={handleAlert} />
+                <GoogleAuth />
               </View>
             </View>
-          </Surface> */}
+          </Surface>
 
           <View style={classes.footer}>
             <Caption style={classes.forgotText}>Already registered?</Caption>

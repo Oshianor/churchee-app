@@ -122,7 +122,7 @@ const Login = ({navigation: {navigate, goBack}}) => {
                 style={classes.headerImg}
               />
               <Title
-                style={[classes.headerTitle, {color: theme.mode && 'black'}]}>
+                style={[classes.headerTitle, {color: theme.mode ? 'black' : "white"}]}>
                 THE BRIDGE
               </Title>
             </View>
@@ -171,7 +171,7 @@ const Login = ({navigation: {navigate, goBack}}) => {
 
             <TouchableOpacity style={classes.button} disabled={loading} onPress={handleLogin}>
               <Subheading
-                style={[classes.buttonText, {color: theme.mode ?? 'black'}]}>
+                style={[classes.buttonText, {color: theme.mode ? 'black' : "white"}]}>
                 Sign in
               </Subheading>
             </TouchableOpacity>

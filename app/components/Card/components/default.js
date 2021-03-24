@@ -6,14 +6,12 @@ import img from "../../../images"
 const { width, height } = Dimensions.get("screen");
 
 
-const Box = ({ title, name, route, imgStyle }) => {
+const Box = ({ title, name, route, imgStyle, onPress }) => {
   const { navigate } = useNavigation();
 
+  const routed = () =>  navigate(route);
   return (
-    <TouchableOpacity
-      onPress={() =>
-      navigate(route)
-      }>
+    <TouchableOpacity onPress={onPress ?? routed}>
       <Surface style={classes.surface}>
         <Card.Cover style={[classes.img, imgStyle]} source={img[name]} />
       </Surface>

@@ -6,6 +6,7 @@ import {
   View,
   FlatList,
   Image,
+  Alert,
 } from 'react-native';
 import {Surface, Subheading, Searchbar, Caption} from 'react-native-paper';
 import Dropdown from '../../components/Dropdown';
@@ -89,8 +90,17 @@ const FindChurch = ({navigation: {navigate}, route}) => {
         `${api.church}?country=${country}&state=${state}&lat=${lat}&lng=${lng}`
       );
 
-      setChurchList(churchData.data.data);
-      setFilterList(churchData.data.data);
+      console.log('churchData?.data?.data?.[0]', churchData?.data?.data?.[0]);
+      if (churchData?.data?.data?.[0]) {
+        setChurchList(churchData.data.data);
+        setFilterList(churchData.data.data);
+      } else {
+        Alert.alert(
+          'Church Not Found',
+          'No church was found for the specified location',
+        );
+      }
+      
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);
@@ -177,7 +187,7 @@ const FindChurch = ({navigation: {navigate}, route}) => {
         <Subheading style={classes.headerText}>
           Search for your church within our platform
         </Subheading>
-        <Caption>Join any congregation of your choice</Caption>
+        {/* <Caption>Join any congregation of your choice</Caption> */}
       </View>
       <Surface style={classes.surface}>
         <ScrollView style={classes.form}>
@@ -244,6 +254,7 @@ const FindChurch = ({navigation: {navigate}, route}) => {
           <Surface style={classes.buttonRoot}>
             <Button
               label="Join This Congregation"
+              disabled={selected ? false : true}
               onPress={() => handleCompleted()}
             />
           </Surface>
@@ -261,7 +272,7 @@ const classes = StyleSheet.create({
     backgroundColor: '#101424',
   },
   headerRoot: {
-    flex: 2,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },

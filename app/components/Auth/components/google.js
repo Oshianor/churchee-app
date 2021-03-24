@@ -7,6 +7,12 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import img from '../../../images';
+import { accountAction } from '../../../store/actions';
+import { useDispatch } from "react-redux";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {  api} from "../../../api";
+import axios from "axios";
+import { useNavigation } from "@react-navigation/native"
 
 GoogleSignin.configure({
   webClientId:
@@ -17,23 +23,49 @@ GoogleSignin.configure({
 
 const Google = () => {
   const { theme: { mode } } = React.useContext(ThemeContext); 
+  const dispatch = useDispatch();
+  const {goBack} = useNavigation();
 
   const signIn = async () => {
-try {
-    await GoogleSignin.hasPlayServices();
-    const userInfo = await GoogleSignin.signIn();
-    this.setState({ userInfo });
-  } catch (error) {
-    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-      // user cancelled the login flow
-    } else if (error.code === statusCodes.IN_PROGRESS) {
-      // operation (e.g. sign in) is in progress already
-    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-      // play services not available or outdated
-    } else {
-      // some other error happened
+    try {
+      await GoogleSignin.hasPlayServices();
+      const {user} = await GoogleSignin.signIn();
+      
+      console.log('user', user);
+
+      const create = await axios.post(api.createAcctMethod, {
+        name: user.givenName + ' ' + user.familyName,
+        email: user.email,
+        sourceID: user.id,
+        img: user.photo,
+        source: 'google',
+      });
+
+      console.log('create', create);
+
+      dispatch(accountAction.updateToken(create.headers['x-auth-token']));
+      dispatch(accountAction.updateUserData(create.data.data));
+
+      await AsyncStorage.setItem('token', create.headers['x-auth-token']);
+      await AsyncStorage.setItem('user', JSON.stringify(create.data.data));
+      await AsyncStorage.setItem('type', 'google');
+
+      goBack();
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        // some other error happened
+        await GoogleSignin.revokeAccess();
+        await GoogleSignin.signOut();
+      }
     }
-  }
   };
 
   return (

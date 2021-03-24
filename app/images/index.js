@@ -14,6 +14,7 @@ const img = {
   formSection: require('../assets/images/home/form.jpg'),
   hymnSection: require('../assets/images/home/hymn.jpg'),
   chatSection: require('../assets/images/home/chat.png'),
+  verseSection: require('../assets/images/home/daily-verse.jpg'),
   bgImg: require('../assets/images/icons/logo.png'),
   tithe: require('../assets/images/tithe.jpeg'),
   findChurch: require('../assets/images/findChurch.png'),

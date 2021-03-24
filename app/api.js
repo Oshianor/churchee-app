@@ -18,7 +18,7 @@ export const api = {
   img: 'https://dlvr7v2twt32x.cloudfront.net/',
   backups: baseUrl + '/backups',
   refreshToken: baseUrl + '/auth/refreshToken/mobile',
-  createAcctMethod: baseUrl + '/methods',
+  createAcctMethod: baseUrl + '/user/member/source',
   emailExist: baseUrl + '/email',
   sermon: baseUrl + '/sermon/member',
   createAnonymousPR: baseUrl + '/pr/anonymous',
@@ -46,7 +46,7 @@ export const api = {
   give: baseUrl + '/give/history',
   savedItem: baseUrl + '/member/savedItem',
   favouriteMedia: baseUrl + '/favourite/media',
-  dailyVerse: baseUrl + '/dailyverse/today',
+  dailyVerse: baseUrl + '/dailyverse/member',
   country: baseUrl + '/country',
   church: baseUrl + '/user/find-church',
 };

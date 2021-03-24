@@ -9,113 +9,59 @@ import {
 import {View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {accountAction} from '../../../store/actions';
-import Axios from 'axios';
-import {api, publicToken} from '../../../api';
+import {api} from '../../../api';
 import {ThemeContext} from '../../../context/ThemeContext';
 import img from '../../../images';
 
-// import {
-//   GoogleSignin,
-//   GoogleSigninButton,
-//   statusCodes,
-// } from '@react-native-community/google-signin';
+const ProfileHome = ({navigation: {navigate}}) => {
+  const {user} = useSelector(({account}) => account);
+  const dispatch = useDispatch();
 
-// function mapStateToProps(state) {
-//   return {
-//     account: state.account,
-//   };
-// }
+  const handleLogOut = async () => {
+    try {
+      dispatch(accountAction.updateToken(null));
+      dispatch(accountAction.updateUserData(null));
 
-// const mapDispatchToprops = {
-//   updateUserData,
-//   updateToken,
-//   updateRefreshToken,
-// };
+      // // save backup that where added to the phone database when the user wasn't authenticated
+      // const backup = await Axios.put(
+      //   api.backups,
+      //   {
+      //     savedEvents: savedEvents ? JSON.parse(savedEvents) : [],
+      //     favouriteDevotion: favouriteDevotion ? JSON.parse(favouriteDevotion) : [],
+      //     favouriteHymn: favouriteHymn ? JSON.parse(favouriteHymn) : [],
+      //   },
+      //   {headers: {'x-auth-token': token}},
+      // );
 
-const ProfileHome = ({ navigation: { navigate } }) => {
-  const account = useSelector(({account}) => account);
-  // state = {
-  //   loading: "",
-  //   visible: false,
-  //   type: "",
-  //   msg: "",
-  //   user: null,
-  //   token: null
-  // };
+      // updateUserData(null);
+      // updateToken(null);
 
-  // handleLogOut = async () => {
-  //   const {account, navigation, updateToken, updateRefreshToken} = this.props;
-  //   try {
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('savedEvents');
+      await AsyncStorage.removeItem('favouriteDevotion');
+      await AsyncStorage.removeItem('favouriteHymn');
 
-  //     await Axios.get(api.logout, { headers: { "x-auth-token": account.token, publicToken } });
-  //     // const savedEvents = await AsyncStorage.getItem('savedEvents');
-  //     // const favouriteDevotion = await AsyncStorage.getItem('favouriteDevotion');
-  //     // const favouriteHymn = await AsyncStorage.getItem('favouriteHymn');
+      navigate('Onboarding');
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
 
-  //     // console.log('savedEvents', savedEvents);
-  //     // console.log('favouriteDevotion', favouriteDevotion);
-  //     // console.log('favouriteHymn', favouriteHymn);
-
-  //     // save backup that where added to the phone database when the user wasn't authenticated
-  //     // const backup = await Axios.put(
-  //     //   api.backups,
-  //     //   {
-  //     //     savedEvents: savedEvents ? JSON.parse(savedEvents) : [],
-  //     //     favouriteDevotion: favouriteDevotion ? JSON.parse(favouriteDevotion) : [],
-  //     //     favouriteHymn: favouriteHymn ? JSON.parse(favouriteHymn) : [],
-  //     //   },
-  //     //   {headers: {'x-auth-token': token}},
-  //     // );
-
-  //     // this.setState({
-  //     //   loading: '',
-  //     //   visible: true,
-  //     //   msg: backup.data,
-  //     //   type: 's',
-  //     // });
-
-  //     // console.log('backup', backup);
-
-  //     updateUserData(null),
-  //     updateToken(null),
-  //     updateRefreshToken(null),
-
-  //     await AsyncStorage.removeItem('token');
-  //     await AsyncStorage.removeItem('refreshToken');
-  //     // await AsyncStorage.removeItem('savedEvents');
-  //     // await AsyncStorage.removeItem('favouriteDevotion');
-  //     // await AsyncStorage.removeItem('favouriteHymn');
-
-  //     navigate('Login');
-
-  //   } catch (error) {
-  //     console.log('error', error);
-  //     console.log('error', error.response);
-  //     this.setState({
-  //       loading: '',
-  //       visible: true,
-  //       msg: error.response.data,
-  //       type: 'w',
-  //     });
-  //     updateUserData(null),
-  //     updateToken(null),
-  //     updateRefreshToken(null),
-  //     await AsyncStorage.removeItem('token');
-  //     await AsyncStorage.removeItem('refreshToken');
-  //   }
-  // }
+  if (!user) return null;
 
   return (
     <ThemeContext.Consumer>
       {({theme, baseColor}) => (
         <View style={[classes.root, {backgroundColor: theme.background}]}>
           <ScrollView contentContainerStyle={classes.container}>
-            {account.user && (
+            {user && (
               <View style={classes.profile}>
-                {!account.user.img ? (
+                {!user.img ? (
                   <Avatar.Image
                     size={150}
                     style={{
@@ -130,23 +76,17 @@ const ProfileHome = ({ navigation: { navigate } }) => {
                       backgroundColor: 'white',
                     }}
                     source={{
-                      uri: api.img + account.user.img.key,
+                      uri: user.source === "google" ? user.img : api.img + user.img,
                     }}
                   />
                 )}
 
-                {account.user && (
-                  <>
-                    <Subheading style={classes.name}>
-                      {account.user.fullName}
-                    </Subheading>
-                    <Paragraph style={classes.bio}>
-                      {account.user.bio.length > 50
-                        ? account.user.bio.substring(0, 50)
-                        : account.user.bio}
-                    </Paragraph>
-                  </>
-                )}
+                <Subheading style={classes.name}>{user?.name}</Subheading>
+                <Paragraph style={classes.bio}>
+                  {user?.bio.length > 50
+                    ? user?.bio.substring(0, 50)
+                    : user?.bio}
+                </Paragraph>
 
                 <Button
                   mode="contained"
@@ -175,9 +115,7 @@ const ProfileHome = ({ navigation: { navigate } }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={classes.surface}
-              onPress={() =>
-                navigate('PersonalPrayerRequest')
-              }>
+              onPress={() => navigate('PersonalPrayerRequest')}>
               <View style={classes.left}>
                 <AwesomeIcon
                   name="hands"
@@ -206,7 +144,7 @@ const ProfileHome = ({ navigation: { navigate } }) => {
               <IconButton icon="chevron-right" size={25} />
             </TouchableOpacity>
             <TouchableOpacity
-              // onPress={this.handleLogOut}
+              onPress={handleLogOut}
               style={[classes.surface, classes.opacity]}>
               <View style={classes.left}>
                 <Icon
