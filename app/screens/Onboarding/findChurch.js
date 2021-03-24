@@ -173,11 +173,30 @@ const FindChurch = ({navigation: {navigate}, route}) => {
   };
 
   const handleCompleted = async () => {
-    const church = churchList.filter((v, i) => v._id === selected);
+    const church = churchList.find((element) => element._id === selected);
+    let churchDataList = await AsyncStorage.getItem('churchList');
+    console.log('churchDataList', churchDataList);
 
-    await AsyncStorage.setItem("church", JSON.stringify(church[0]));
+    if (churchDataList) {
+      churchDataList = JSON.parse(churchDataList);
+      const exist = churchDataList?.find(
+        (element) => element._id === church?._id,
+      );
+      
+      if (!exist) {
+        churchDataList.push(church);
+      }
+    } else {
+      churchDataList = [church];
+    }
+    
+    console.log('churchDataList', churchDataList);
 
-    dispatch(accountAction.updateChurchData(church[0]));
+    await AsyncStorage.setItem("church", JSON.stringify(church));
+    await AsyncStorage.setItem('churchList', JSON.stringify(churchDataList));
+
+    dispatch(accountAction.updateChurchData(church));
+    dispatch(accountAction.churchListData(churchDataList));
     navigate("Dashboard");
   };
 

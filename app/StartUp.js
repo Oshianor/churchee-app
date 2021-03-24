@@ -35,12 +35,14 @@ const StartUp = () => {
   
   const handleGetChurch = async () => {
     const church = await AsyncStorage.getItem("church");
+    const churchList = await AsyncStorage.getItem('churchList');
 
-    // console.log('Uncut church', church);
+    console.log('Uncut churchList', churchList);
     if (church) {
       dispatch(accountAction.updateChurchData(JSON.parse(church)));
+      dispatch(accountAction.churchListData(JSON.parse(churchList)));
     } else {
-      RootNavigation.navigate('FindChurch');
+      RootNavigation.navigate('Onboarding', {screen: 'FindChurch'});
     }
   }
 

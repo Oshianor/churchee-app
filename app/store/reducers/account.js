@@ -4,7 +4,8 @@ import {
   HOMEPAGE,
   DEVOTION_DATA,
   UPDATE_CHURCH_DATA,
-  UPDATE_USER_LOCATION
+  UPDATE_USER_LOCATION,
+  CHURCH_LIST_DATA
 } from '../types';
 
 const initialstate = {
@@ -19,7 +20,8 @@ const initialstate = {
   media: null,
   hymn: [],
   user: null,
-  church: null
+  church: null,
+  churchList: []
 };
 
 export default (state = initialstate, action) => {
@@ -35,6 +37,10 @@ export default (state = initialstate, action) => {
     case UPDATE_CHURCH_DATA:
       return Object.assign({}, state, {
         church: action.payload,
+      });
+    case CHURCH_LIST_DATA:
+      return Object.assign({}, state, {
+        churchList: action.payload,
       });
     case UPDATE_AUTH_TOKEN:
       return Object.assign({}, state, {

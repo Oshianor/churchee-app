@@ -3,6 +3,7 @@ import {
   UPDATE_USER_DATA,
   UPDATE_CHURCH_DATA,
   UPDATE_USER_LOCATION,
+  CHURCH_LIST_DATA
 } from '../types';
 
 const updateToken = (token) => {
@@ -15,6 +16,13 @@ const updateToken = (token) => {
 const updateChurchData = (data) => {
   return {
     type: UPDATE_CHURCH_DATA,
+    payload: data,
+  };
+};
+
+const churchListData = (data) => {
+  return {
+    type: CHURCH_LIST_DATA,
     payload: data,
   };
 };
@@ -40,4 +48,5 @@ export default {
   updateChurchData,
   updateUserData,
   setLocation,
+  churchListData,
 };

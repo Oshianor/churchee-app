@@ -15,68 +15,74 @@ import PrayerRequest from './Dashboard/More/PrayerRequest';
 import PPR from './Dashboard/More/PPR';
 import Profile from "./Dashboard/Profile";
 import Chat from "./Dashboard/More/Chat"
-import SideDrawer from './custom/SideDrawer';
-import {useWindowDimensions} from 'react-native';
-// const Stack = createStackNavigator();
+import FindChurch from "../screens/Onboarding/findChurch"
+import {useSelector, useDispatch} from 'react-redux';
+const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
+// export default function Navigation() {
+//   return (
+//       <Drawer.Navigator initialRouteName="Home">
+//         <Drawer.Screen name="Home" component={HomeScreen} />
+//         <Drawer.Screen name="Notifications" component={NotificationsScreen} />
+//       </Drawer.Navigator>
+//   );
+// }
+
 const Navigation = () => {
-  const { width } = useWindowDimensions();
+  const {church} = useSelector(({account}) => account);
   return (
-    <Drawer.Navigator
-      initialRouteName="Dashboard"
-      headerMode="screen"
-      drawerContent={(props) => <SideDrawer {...props} />}
-      drawerType={width >= 768 ? 'permanent' : 'slide'}
-      drawerStyle={{
-        width: width >= 768 ? width / 3 : width / 1.2,
-      }}>
-      <Drawer.Screen
+    <Stack.Navigator initialRouteName="Dashboard" headerMode="screen">
+      <Stack.Screen
         name="Onboarding"
         options={{headerShown: false}}
         component={Onboarding}
       />
-      <Drawer.Screen
+      <Stack.Screen
+        name="FindChurch"
+        options={({route, navigation: {goBack}}) => ({
+          headerLeft: () => church ? <BackButton goBack={goBack} /> : null,
+          headerTitle: () => <Subheading>Join a congregation</Subheading>,
+        })}
+        component={FindChurch}
+      />
+      <Stack.Screen
         name="Dashboard"
         options={{headerShown: false}}
         component={Dashboard}
       />
-      <Drawer.Screen
+      <Stack.Screen
         name="Devotion"
         options={{headerShown: false}}
         component={Devotion}
       />
-      <Drawer.Screen
+      <Stack.Screen
         name="Sermon"
         options={{headerShown: false}}
         component={Sermon}
       />
-      <Drawer.Screen
+      <Stack.Screen
         name="Hymn"
         options={{headerShown: false}}
         component={Hymn}
       />
-      <Drawer.Screen
+      <Stack.Screen
         name="Form"
         options={{headerShown: false}}
         component={Forms}
       />
-      <Drawer.Screen
+      <Stack.Screen
         name="Media"
         options={{headerShown: false}}
         component={Media}
       />
-      <Drawer.Screen
+      <Stack.Screen
         name="PrayerRequest"
         options={{headerShown: false}}
         component={PrayerRequest}
       />
-      <Drawer.Screen
-        name="PPR"
-        options={{headerShown: false}}
-        component={PPR}
-      />
-      <Drawer.Screen
+      <Stack.Screen name="PPR" options={{headerShown: false}} component={PPR} />
+      <Stack.Screen
         name="SettingScreen"
         options={({route, navigation: {goBack}}) => ({
           headerLeft: () => <BackButton goBack={goBack} />,
@@ -84,17 +90,17 @@ const Navigation = () => {
         })}
         component={Setting}
       />
-      <Drawer.Screen
+      <Stack.Screen
         name="Profile"
         options={{headerShown: false}}
         component={Profile}
       />
-      <Drawer.Screen
+      <Stack.Screen
         name="Chat"
         options={{headerShown: false}}
         component={Chat}
       />
-    </Drawer.Navigator>
+    </Stack.Navigator>
   );
 };
 

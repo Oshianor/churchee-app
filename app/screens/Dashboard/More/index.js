@@ -22,7 +22,7 @@ const MoreScreen = ({ navigation: { navigate } }) => {
           <Wrapper root={{justifyContent: 'flex-start'}}>
             <TouchableOpacity
               style={classes.surface}
-              onPress={() => navigate('FindChurch')}>
+              onPress={() => navigate('Onboarding', {screen: 'FindChurch'})}>
               <View style={classes.left}>
                 <Icon
                   name="account-group-outline"
@@ -47,9 +47,7 @@ const MoreScreen = ({ navigation: { navigate } }) => {
                   style={classes.icon}
                   size={25}
                 />
-                <Subheading style={classes.Subheading}>
-                  Chat Room
-                </Subheading>
+                <Subheading style={classes.Subheading}>Chat Room</Subheading>
               </View>
               <Icon name="chevron-right" color={theme.icon} size={25} />
             </TouchableOpacity>
