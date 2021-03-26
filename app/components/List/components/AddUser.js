@@ -1,20 +1,21 @@
 import React from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Avatar, Subheading } from 'react-native-paper';
+import { api } from '../../../api';
 import { Radio } from "../../Radio"
 
-const link = 'https://source.unsplash.com/random/75x75';
-const User = () => {
+// const link = 'https://source.unsplash.com/random/75x75';
+const User = ({item, selected}) => {
   return (
-    <TouchableOpacity style={classes.root}>
+    <View style={classes.root}>
       <View style={classes.left}>
-        <Avatar.Image source={{uri: link}} size={30} />
-        <Subheading style={classes.text}>Phoenix Walker</Subheading>
+        <Avatar.Image source={{uri: api.img + item.img}} size={30} />
+        <Subheading style={classes.text}>{item.name}</Subheading>
       </View>
       <Radio selected />
-    </TouchableOpacity>
+    </View>
   );
-}
+};
 
 export default User
 

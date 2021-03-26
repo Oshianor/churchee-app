@@ -1,11 +1,71 @@
-import React from 'react'
-import {View, StyleSheet, TextInput} from 'react-native';
-import { Caption, Subheading, Surface } from 'react-native-paper';
-import { Radio } from '../../../../components/Radio';
+import React from 'react';
+import {View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import {Caption, Subheading, Surface} from 'react-native-paper';
+import {Radio} from '../../../../components/Radio';
 import {ThemeContext} from '../../../../context/ThemeContext';
-import { Button } from "../../../../components/Button"
+import {Button} from '../../../../components/Button';
+import axios from 'axios';
+import {api} from '../../../../api';
+import {useSelector, useDispatch} from 'react-redux';
+import {feedbackAction} from '../../../../store/actions';
 
-const CreateRoom = ({ navigation: { navigate } }) => {
+const CreateRoom = ({navigation: {navigate}}) => {
+  const dispatch = useDispatch();
+  const {token} = useSelector(({account}) => account);
+  const [value, setValue] = React.useState({
+    roomDesc: '',
+    roomName: '',
+    roomType: 'PUBLIC',
+  });
+
+  const handleCreateRoom = async () => {
+    try {
+      if (value.roomName === '') {
+        dispatch(
+          feedbackAction.launch({
+            msg: 'Room name is required',
+            open: true,
+            severity: 'w',
+          }),
+        );
+        return;
+      }
+      dispatch(
+        feedbackAction.launch({
+          loading: true,
+        }),
+      );
+
+      const room = await axios.post(api.createRoom, value, {
+        headers: {userAuth: token},
+      });
+
+      console.log('room', room);
+
+      dispatch(
+        feedbackAction.launch({
+          msg: 'Room successfully created',
+          open: true,
+          severity: 's',
+          loading: false,
+        }),
+      );
+      navigate('AddModerator');
+    } catch (error) {
+      dispatch(
+        feedbackAction.launch({
+          msg: 'Something went wrong',
+          open: true,
+          severity: 'w',
+          loading: false,
+        }),
+      );
+
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
+
   return (
     <ThemeContext.Consumer>
       {({theme}) => (
@@ -13,14 +73,18 @@ const CreateRoom = ({ navigation: { navigate } }) => {
           <View style={classes.privacyRoot}>
             <Subheading style={classes.privacyTitle}>Privacy</Subheading>
             <Surface style={classes.privacyBody}>
-              <View style={classes.privacyItem}>
+              <TouchableOpacity
+                onPress={() => setValue({...value, roomType: 'PRIVATE'})}
+                style={classes.privacyItem}>
                 <Subheading style={classes.privacySubTitle}>Private</Subheading>
-                <Radio selected />
-              </View>
-              <View style={classes.privacyItem}>
+                <Radio selected={value.roomType === 'PRIVATE'} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={classes.privacyItem}
+                onPress={() => setValue({...value, roomType: 'PUBLIC'})}>
                 <Subheading style={classes.privacySubTitle}>Public</Subheading>
-                <Radio />
-              </View>
+                <Radio selected={value.roomType === 'PUBLIC'} />
+              </TouchableOpacity>
             </Surface>
             <Caption style={classes.privacyCaption}>
               Explanation of what differentiates Private and Public Rooms
@@ -38,8 +102,8 @@ const CreateRoom = ({ navigation: { navigate } }) => {
                 // style={[classes.TextInput, {color: theme.text}]}
                 placeholderTextColor={'#bbbbbb'}
                 placeholder="#  Name"
-                // onChangeText={(email) => setValue({...value, email})}
-                // value={value.email}
+                onChangeText={(roomName) => setValue({...value, roomName})}
+                value={value.roomName}
               />
             </Surface>
             <Caption style={classes.privacyCaption}>
@@ -58,8 +122,8 @@ const CreateRoom = ({ navigation: { navigate } }) => {
                 placeholderTextColor={'#bbbbbb'}
                 multiline
                 placeholder="#  Brief Description of the room"
-                // onChangeText={(email) => setValue({...value, email})}
-                // value={value.email}
+                onChangeText={(roomDesc) => setValue({...value, roomDesc})}
+                value={value.roomDesc}
               />
             </Surface>
             <Caption style={classes.privacyCaption}>
@@ -69,18 +133,15 @@ const CreateRoom = ({ navigation: { navigate } }) => {
           </View>
 
           <View style={classes.buttonRoot}>
-            <Button
-              label="Create Room"
-              onPress={() => navigate('AddModerator')}
-            />
+            <Button label="Create Room" onPress={handleCreateRoom} />
           </View>
         </View>
       )}
     </ThemeContext.Consumer>
   );
-}
+};
 
-export default CreateRoom
+export default CreateRoom;
 
 const classes = StyleSheet.create({
   root: {

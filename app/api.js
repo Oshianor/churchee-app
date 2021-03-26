@@ -1,9 +1,10 @@
 // export const baseUrl = 'https://api.churchee.app/api/v1';
 // const baseUrl = 'http://192.168.8.151:3000/api';
 export const webiste = 'https://api.churchee.app';
+export const chatService =
+  'http://ec2-18-218-125-237.us-east-2.compute.amazonaws.com:8080';
 const baseUrl = 'http://localhost:9090/api/v1';
 
-// export const publicToken = '539f106f-8149-426e-b0d2-8de76e9bd0a2';
 
 export const api = {
   createAccount: baseUrl + '/user/member',
@@ -50,4 +51,8 @@ export const api = {
   dailyVerse: baseUrl + '/dailyverse/member',
   country: baseUrl + '/country',
   church: baseUrl + '/user/find-church',
+  getAllMembers: baseUrl + '/user/all/members',
+
+  // room service
+  createRoom: `${chatService}/api/v1/room/create`,
 };

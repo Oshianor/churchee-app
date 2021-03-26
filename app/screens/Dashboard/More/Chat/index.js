@@ -1,18 +1,26 @@
 import React from 'react';
 import { StyleSheet, View } from "react-native";
 import { CreateRoom, Room } from '../../../../components/Card';
+import {useSelector, useDispatch} from 'react-redux';
+
 
 const ChatHome = ({ navigation: { navigate } }) => {
+  const {
+    user
+  } = useSelector(({account}) => account);
+
   return (
     <View style={classes.root}>
       <View style={classes.section}>
-        <CreateRoom onPress={() => navigate('CreateRoom')} />
-        <Room onPress={() => navigate('RoomChat')} />
+        {user?.type === 'church' && (
+          <CreateRoom onPress={() => navigate('CreateRoom')} />
+        )}
+        {/* <Room onPress={() => navigate('RoomChat')} /> */}
       </View>
-      <View style={classes.section}>
+      {/* <View style={classes.section}>
         <Room onPress={() => navigate('RoomInfo')} />
         <Room onPress={() => navigate('RoomInfo')} />
-      </View>
+      </View> */}
     </View>
   );
 }

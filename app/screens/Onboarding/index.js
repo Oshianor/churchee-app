@@ -35,8 +35,8 @@ const Login = ({navigation: {navigate, goBack}}) => {
   const dispatch = useDispatch();
   const {loading} = useSelector(({feedback}) => feedback);
   const [value, setValue] = React.useState({
-    email: 'test@gmail.com',
-    password: 'opendoor12345'
+    email: '',
+    password: ''
   });
 
   const handleLogin = async () => {
@@ -64,9 +64,11 @@ const Login = ({navigation: {navigate, goBack}}) => {
 
       const login = await axios.post(api.login, {
         ...value,
+        email: value.email.toLowerCase(),
       });
 
       await AsyncStorage.setItem('token', JSON.stringify(login.headers['x-auth-token']));
+      await AsyncStorage.setItem('user', JSON.stringify(login.data.data));
 
       dispatch(accountAction.updateToken(login.headers['x-auth-token']));
       dispatch(accountAction.updateUserData(login.data.data));

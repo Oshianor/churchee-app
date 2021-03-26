@@ -220,9 +220,9 @@ const CustomDrawerContentComponent = ({
                 style={classes.buttonRoot}
                 onPress={() => {
                   AsyncStorage.clear();
-                  dispatch(accountAction.setToken(null));
-                  dispatch(accountAction.setUserData(null));
-                  // navigate('Onboarding');
+                  dispatch(accountAction.updateToken(null));
+                  dispatch(accountAction.updateUserData(null));
+                  navigate('Onboarding');
                 }}>
                 <Icon
                   name="logout"

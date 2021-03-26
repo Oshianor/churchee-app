@@ -1,24 +1,84 @@
 import React from 'react';
-import {View, StyleSheet, FlatList} from 'react-native';
+import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import { Surface } from 'react-native-paper';
 import { Button } from '../../../../components/Button';
 import { AddUser } from '../../../../components/List';
+import axios from 'axios';
+import {api} from '../../../../api';
+import {useSelector, useDispatch} from 'react-redux';
+import {feedbackAction, accountAction} from '../../../../store/actions';
 
-const link =
-  'https://secure.gravatar.com/avatar/633a831aae31c6e03393c6bab4681788?s=46&d=identicon';
-const mapper = [
-  link,
-  link,
-  link
-];
+
 const AddModerator = () => {
+  const dispatch = useDispatch();
+  const {token, members, selectedMembers} = useSelector(({account}) => account);
+
+  React.useEffect(() => {
+    getAllMembers();
+  }, []);
+
+  const getAllMembers = async () => {
+    try {
+      dispatch(
+        feedbackAction.launch({
+          loading: true,
+        }),
+      );
+
+      const users = await axios.get(api.getAllMembers, {
+        headers: {'x-auth-token': token},
+      });
+
+      dispatch(
+        feedbackAction.launch({
+          loading: false,
+        }),
+      );
+
+      dispatch(
+        accountAction.setAccountData({
+          members: users?.data?.data,
+        }),
+      );
+    } catch (error) {
+      dispatch(
+        feedbackAction.launch({
+          loading: false,
+        }),
+      );
+      console.log("error", error);
+      console.log('error', error.response);
+    }
+  }
+
+  const handleSelect = (item) => {
+
+    const set = {
+      memberID: item._id,
+      memberType: 'ADMIN',
+    };
+
+    const newMember = [...selectedMembers, set];
+    const newMemberIDs = [...selectedMembersIDs, item._id];
+    dispatch(
+      accountAction.setAccountData({
+        selectedMembers: newMember,
+        selectedMembersIDs: newMemberIDs,
+      }),
+    );
+  }
+
   return (
     <View style={classes.root}>
       <View style={classes.container}>
         <FlatList
-          data={mapper}
+          data={members}
           keyExtractor={(item, i) => i.toString()}
-          renderItem={({item}) => <AddUser />}
+          renderItem={({item}) => (
+            <TouchableOpacity onPress={() => handleSelect(item)}>
+              <AddUser item={item} />
+            </TouchableOpacity>
+          )}
         />
       </View>
 

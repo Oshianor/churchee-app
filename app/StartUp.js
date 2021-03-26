@@ -32,10 +32,12 @@ const StartUp = () => {
   } = React.useContext(ThemeContext);
 
   React.useEffect(() => {
+    getUser();
     handleGetChurch();
     requestLocationPermission();
     handleBackground();
     getLive();
+
     SplashScreen.hide();
   }, []);
 
@@ -53,24 +55,31 @@ const StartUp = () => {
     }
   }
 
-    const getLive = async () => {
-      try {
-        let church = await AsyncStorage.getItem('church');
-        church = JSON.parse(church);
-        console.log('church', church);
+  const getUser = async () => {
+    const token = await AsyncStorage.getItem('token');
+    const user = await AsyncStorage.getItem('user');
+    dispatch(accountAction.updateToken(token));
+    dispatch(accountAction.updateUserData(JSON.parse(user)));
+  };
 
-        const live = await axios.get(api.live, {
-          headers: {publicToken: church.publicToken},
-        });
+  const getLive = async () => {
+    try {
+      let church = await AsyncStorage.getItem('church');
+      church = JSON.parse(church);
+      console.log('church', church);
 
-        console.log('live', live);
+      const live = await axios.get(api.live, {
+        headers: {publicToken: church.publicToken},
+      });
 
-        dispatch(accountAction.setAccountData({live: live.data.data}));
-      } catch (error) {
-        console.log('error', error);
-        console.log('error', error.response);
-      }
-    };
+      console.log('live', live);
+
+      dispatch(accountAction.setAccountData({live: live.data.data}));
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {

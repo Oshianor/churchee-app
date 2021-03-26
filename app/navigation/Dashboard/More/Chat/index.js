@@ -11,13 +11,24 @@ import Search from "../../../../screens/Dashboard/More/Chat/search";
 import RoomChat from '../../../../screens/Dashboard/More/Chat/roomChat';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import { TouchableOpacity } from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 
 const Room = () => {
+    const {
+      church: {name},
+    } = useSelector(({account}) => account);
   return (
     <Stack.Navigator initialRouteName="ChatTabs">
-      <Stack.Screen name="ChatTabs" component={ChatTabs} />
+      <Stack.Screen
+        name="ChatTabs"
+        options={({route, navigation: {goBack}}) => ({
+          headerLeft: () => <BackButton goBack={goBack} />,
+          headerTitle: () => <Subheading style={{ textTransform: "capitalize" }} >{`${name}'s Room space`}</Subheading>,
+        })}
+        component={ChatTabs}
+      />
       <Stack.Screen
         name="RoomInfo"
         options={({route, navigation: {goBack}}) => ({

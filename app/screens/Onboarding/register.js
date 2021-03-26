@@ -38,7 +38,7 @@ const Register = ({navigation: {navigate, goBack}}) => {
   const [value, setValue] = React.useState({
     name: 'Josh welback',
     email: 'same@gmail.com',
-    password: 'opendoor',
+    password: 'opendoor12345',
   });
 
   const handleLogin = async () => {
@@ -81,12 +81,14 @@ const Register = ({navigation: {navigate, goBack}}) => {
 
       const login = await axios.post(api.createAccount, {
         ...value,
+        email: value.email.toLowerCase()
       });
 
       console.log('login', login);
       
       const church = await AsyncStorage.getItem('church');
       await AsyncStorage.setItem('token', JSON.stringify(login.headers['x-auth-token']));
+      await AsyncStorage.setItem('user', JSON.stringify(login.data.data));
       dispatch(accountAction.updateToken(login.headers['x-auth-token']));
       dispatch(accountAction.updateUserData(login.data.data));
 

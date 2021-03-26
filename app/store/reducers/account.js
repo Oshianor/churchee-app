@@ -22,7 +22,10 @@ const initialstate = {
   hymn: [],
   user: null,
   church: null,
-  churchList: []
+  churchList: [],
+  members: [],
+  selectedMembers: [],
+  selectedMembersIDs: []
 };
 
 export default (state = initialstate, action) => {
