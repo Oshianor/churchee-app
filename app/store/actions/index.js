@@ -7,6 +7,7 @@ import mediaAction from './media';
 import sermonAction from './sermon';
 import countryAction from './country';
 import eventAction from './event';
+import PRAction from './pr';
 
 export {
   accountAction,
@@ -18,4 +19,5 @@ export {
   sermonAction,
   countryAction,
   eventAction,
+  PRAction,
 };

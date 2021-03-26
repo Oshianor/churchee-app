@@ -17,6 +17,7 @@ const initialstate = {
   sermon: [],
   event: [],
   prayer: [],
+  notes: [],
   media: null,
   hymn: [],
   user: null,

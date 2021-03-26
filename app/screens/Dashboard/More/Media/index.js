@@ -59,6 +59,8 @@ const Media = ({navigation: { navigate }}) => {
 
       const mediaLoad = await axios.get(api.media, { headers: { publicToken } });
 
+      console.log('mediaLoad', mediaLoad);
+
       dispatch(mediaAction.setMedia(mediaLoad.data));
 
       setIsRefreshing(false);

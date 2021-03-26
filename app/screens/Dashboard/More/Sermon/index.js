@@ -23,7 +23,7 @@ import moment from 'moment';
 import { api} from '../../../../api';
 import Wrapper from '../../../../components/Background';
 import {ThemeContext} from '../../../../context/ThemeContext';
-import {sermonAction} from '../../../../store/actions';
+import {sermonAction, feedbackAction} from '../../../../store/actions';
 
 
 const { width, height } = Dimensions.get('screen');
@@ -45,7 +45,8 @@ const Sermon = ({navigation: {navigate}}) => {
   const handleData = async () => {
     if (typeof sermon.data[0] === 'undefined') {
       try {
-        setLoading(true);
+        dispatch(feedbackAction.launch({loading: true}));
+
 
         const resSermon = await axios.get(api.sermon, {
           headers: {publicToken},
@@ -53,16 +54,19 @@ const Sermon = ({navigation: {navigate}}) => {
 
         console.log('resSermon', resSermon);
 
-        setLoading(false);
         dispatch(
           sermonAction.setSermon({
             sermon: resSermon.data.data,
-            total: sermon.data.total,
-            page: sermon.data.pages,
+            total: resSermon.data.total,
+            page: resSermon.data.pages,
           }),
         );
+
+      dispatch(feedbackAction.launch({loading: false}));
+
       } catch (error) {
-        setLoading(false);
+      dispatch(feedbackAction.launch({loading: false}));
+        
         console.log(error.response);
       }
     }
@@ -75,15 +79,15 @@ const Sermon = ({navigation: {navigate}}) => {
 
       const resSermon = await axios.get(api.sermon, {headers: {publicToken}});
 
-        console.log('resSermon', resSermon);
+      console.log('resSermon', resSermon);
 
       setIsRefreshing(false);
 
       dispatch(
         sermonAction.setSermon({
           sermon: resSermon.data.data,
-          total: sermon.data.total,
-          page: sermon.data.pages,
+          total: resSermon.data.meta.total,
+          page: resSermon.data.meta.pages,
         }),
       );
       // setSermon(sermon.data);

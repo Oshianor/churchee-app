@@ -21,7 +21,8 @@ import {
   accountAction,
   eventAction,
   sermonAction,
-  devotionAction
+  devotionAction,
+  PRAction,
 } from '../../store/actions';
 import img from '../../images';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -204,6 +205,7 @@ const FindChurch = ({navigation: {navigate}, route}) => {
     await getDevotion(church.publicToken);
     await getLive(church.publicToken);
     await getEvent(church.publicToken);
+    await getPR(church.publicToken);
 
     dispatch(accountAction.updateChurchData(church));
     dispatch(accountAction.churchListData(churchDataList));
@@ -279,6 +281,25 @@ const FindChurch = ({navigation: {navigate}, route}) => {
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);
+    }
+  };
+
+  const getPR = async (publicToken) => {
+    try {
+      const pray = await axios.get(api.getPRWall, {
+        headers: {publicToken},
+      });
+
+      dispatch(
+        PRAction.setPR({
+          data: pray.data.data,
+          total: pray.data.meta.total,
+          page: pray.data.meta.page,
+        }),
+      );
+    } catch (error) {
+      // console.log('error', error);
+      // console.log('error', error.response);
     }
   };
 

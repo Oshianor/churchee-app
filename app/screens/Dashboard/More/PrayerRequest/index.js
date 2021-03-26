@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
   Surface,
   Caption,
@@ -16,201 +16,192 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import {connect} from 'react-redux';
-import { api, publicToken } from "../../../../api";
-import axios from "axios";
-import moment from "moment";
+import {api} from '../../../../api';
+import axios from 'axios';
+import moment from 'moment';
 import Wrapper from '../../../../components/Background';
-// import SnackbarComponent from '../components/Snackbar';
-import { getDeviceId, getUniqueId } from 'react-native-device-info';
+import {getDeviceId, getUniqueId} from 'react-native-device-info';
 import {ThemeContext} from '../../../../context/ThemeContext';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  devotionAction,
+  feedbackAction,
+  PRAction,
+} from '../../../../store/actions';
+const {width} = Dimensions.get('screen');
+
+const PrayRequest = ({ navigation: { navigate } }) => {
+  const dispatch = useDispatch();
+  const [deviceId, setDeviceId] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [value, setValue] = React.useState({
+    name: "",
+    body: ""
+  });
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const {
+    church: {publicToken},
+  } = useSelector(({account}) => account);
+  const PR = useSelector(({pr}) => pr);
+
+  console.log('deviceId', deviceId);
 
 
-function mapStateToProps(state) {
-  return {
-    account: state.account,
-  };
-}
+  React.useEffect(() => {
+    handleDevice();
+    handleData();
+  }, []);
 
-const { width } = Dimensions.get('screen');
-
-class PrayRequest extends Component {
-  state = {
-    loading: true,
-    deviceId: null,
-    isRefreshing: false,
-    data: [],
-    pages: 0,
-    total: 0,
-    pageNumber: 1,
-    name: '',
-    body: '\n\n',
-    visible: false,
-    loadingButton: false,
-    msg: '',
-    type: '',
-  };
-
-  async componentDidMount() {
+  const handleDevice = async () => {
     const deviceId = await getUniqueId();
-    this.setState({
-      deviceId,
-    });
-    this.handleData();
-  }
+    setDeviceId(deviceId);
+  };
 
-  handleData = async () => {
+  const handleData = async () => {
     try {
-      const { account } = this.props;
-      this.setState({
-        loading: true,
-      });
+      dispatch(feedbackAction.launch({loading: true}));
 
       const pray = await axios.get(api.getPRWall, {
-        headers: {publicToken: account.church.publicToken},
+        headers: {publicToken},
       });
 
-      this.setState({
-        loading: false,
-        data: pray.data.data,
-        total: pray.data.meta.total,
-        pages: pray.data.meta.pages,
-      });
+      console.log('pray', pray);
 
-      console.log('handleData', this.state);
+      dispatch(
+        PRAction.setPR({
+          data: pray.data.data,
+          total: pray.data.meta.total,
+          page: pray.data.meta.page,
+        }),
+      );
+
+      dispatch(feedbackAction.launch({loading: false}));
     } catch (error) {
-      this.setState({
-        loading: false,
-      });
+      dispatch(feedbackAction.launch({loading: false}));
       console.log(error.response);
     }
   };
 
-  handleRefreshData = async () => {
+  const handleRefreshData = async () => {
     try {
-      const {account} = this.props;
-      this.setState({
-        isRefreshing: true,
-        pageNumber: 1,
-      });
+      setIsRefreshing(true);
 
       const pray = await axios.get(api.getPRWall, {
-        headers: {publicToken: account.church.publicToken},
+        headers: {publicToken},
       });
       console.log('pray-refresh', pray);
 
-
-      this.setState({
-        isRefreshing: false,
-        data: pray.data.data,
-        total: pray.data.meta.total,
-        pages: pray.data.meta.pages,
-      });
-
+      dispatch(
+        PRAction.setPR({
+          data: pray.data.data,
+          total: pray.data.meta.total,
+          page: pray.data.meta.page,
+        })
+      );
+      setIsRefreshing(false);
     } catch (error) {
-      this.setState({
-        isRefreshing: false,
-      });
+      setIsRefreshing(false);
       console.log(error);
       console.log(error.response);
     }
   };
 
-  handleLoadMore = async () => {
+  const handleLoadMore = async () => {
     try {
-      const { account } = this.props;
-      const {pages, data, pageNumber} = this.state;
+      // const {account} = this.props;
+      // const {pages, data, pageNumber} = this.state;
 
-      const num = Number(pageNumber) + 1;
+      const num = Number(PR.currentPage) + 1;
 
-      if (num > pages) return null;
+      if (num > PR.page) return null;
 
       const pray = await axios.get(api.getPR + '?page=' + num, {
-        headers: {publicToken: account.church.publicToken},
+        headers: {publicToken},
       });
 
-      this.setState({
-        loading: true,
-        pageNumber: num,
-      });
+      // this.setState({
+      //   loading: true,
+      //   pageNumber: num,
+      // });
 
       console.log('pray', pray);
 
-      const listData = data.concat(pray.data.data);
+      const data = [...PR.data, pray.data.data];
+      // const listData = data.concat(pray.data.data);
 
-      this.setState({
-        loading: false,
-        data: listData,
-        total: pray.data.meta.total,
-        pages: pray.data.meta.pages,
-      });
+      // this.setState({
+      //   loading: false,
+      //   data: listData,
+      //   total: pray.data.meta.total,
+      //   pages: pray.data.meta.pages,
+      // });
+      dispatch(
+        PRAction.setPR({
+          data: data,
+          total: pray.data.meta.total,
+          page: pray.data.meta.page,
+        }),
+      );
 
-      console.log('handleLoadMore', this.state);
+      dispatch(PRAction.setPRPage(num));
     } catch (error) {
-      this.setState({
-        loading: false,
-      });
+      // this.setState({
+      //   loading: false,
+      // });
       console.log(error.response);
     }
   };
 
-  renderFooter = () => {
-    const { loading } = this.state;
+  const renderFooter = () => {
     //it will show indicator at the bottom of the list when data is loading otherwise it returns null
     if (!loading) return null;
-    return <ActivityIndicator style={{ color: '#000' }} />;
+    return <ActivityIndicator style={{color: '#000'}} />;
   };
 
-  handlePrayrequest = async () => {
+  const handlePrayrequest = async () => {
     try {
-      const { name, body } = this.state;
-      const { account } = this.props;
-
-      this.setState({
-        visible: false,
-        loadingButton: true,
-        msg: '',
-      });
-
+      setLoading(true);
       const prayer = await axios({
         method: 'post',
         data: {
-          name,
-          body,
+          ...value
         },
-        headers: {publicToken: account.church.publicToken},
+        headers: {publicToken},
         url: api.createAnonymousPR,
       });
 
       console.log('prayer', prayer);
 
-      this.handleData();
+      handleData();
 
-      this.setState({
-        visible: true,
-        loadingButton: false,
-        msg: prayer.data.msg,
-        type: 's',
+      setValue({
         body: '\n\n\n',
         name: '',
       });
+      dispatch(
+        feedbackAction.launch({
+          open: true,
+          msg: prayer.data.msg,
+          severity: 's',
+        }),
+      );
+
+      setLoading(false);
     } catch (error) {
-      this.setState({
-        visible: true,
-        loadingButton: false,
-        type: 'w',
-        loading: false,
-        msg: error.response.data,
-      });
+      setLoading(false);
+      dispatch(
+        feedbackAction.launch({
+          open: true,
+          msg: error?.response.data.msg,
+          severity: 'w',
+        }),
+      );
       console.log('error', error.response);
       console.log('error', error);
     }
   };
 
-  handlePrayed = prayerId => async () => {
-    const { account } = this.props;
-    const { deviceId } = this.state;
-
+  const handlePrayed = async (prayerId) => {
     console.log('deviceId', deviceId);
 
     try {
@@ -219,165 +210,153 @@ class PrayRequest extends Component {
         {deviceId},
         {
           headers: {
-            // 'x-auth-token': account.token,
-            publicToken: account.church.publicToken,
+            publicToken,
           },
         },
       );
-      console.log("pr", pr);
-      
-      this.handleData();
+      console.log('p--------r', pr);
+
+      handleData();
     } catch (error) {
       console.log('handlePrayed', error);
     }
   };
 
-  handleClose = () => {
-    this.setState({ visible: false, msg: '' });
-  };
-
-  render() {
-    const { navigation } = this.props;
-    const { data, isRefreshing, visible, type, msg, deviceId, name, body, loadingButton } = this.state;
-
-    
-    return (
-      <ThemeContext.Consumer>
-        {({theme, baseColor}) => (
-          <View style={[classes.root, {backgroundColor: theme.background}]}>
-            <Wrapper>
-              <View style={classes.form}>
-                <TextInput
-                  mode="outlined"
-                  label="Prayer Request"
-                  placeholder="Type your prayer request here."
-                  multiline
-                  style={classes.TextInput}
-                  spellCheck={true}
-                  // autoFocus={true}
-                  numberOfLines={5}
-                  maxLength={225}
-                  value={body}
-                  onChangeText={(body) => this.setState({body})}
-                />
-                <View style={classes.textButton}>
-                  <TextInput
-                    label="Full Name (optional)"
-                    mode="outlined"
-                    style={classes.accNameTextField}
-                    spellCheck={true}
-                    value={name}
-                    onChangeText={(name) => this.setState({name})}
-                  />
-                  <Button
-                    contentStyle={classes.innerButton}
-                    // style={classes.button}
-                    mode="contained"
-                    disabled={loadingButton}
-                    color={baseColor}
-                    dark={true}
-                    style={classes.button}
-                    uppercase
-                    onPress={this.handlePrayrequest}>
-                    Submit
-                  </Button>
-                </View>
-              </View>
-
-              <FlatList
-                contentContainerStyle={classes.container}
-                data={data}
-                extraData={this.state}
-                keyExtractor={(item) => item._id}
-                renderItem={({item, index}) => (
-                  <Surface
-                    style={[
-                      classes.surface,
-                      {borderColor: theme.mode ? 'white' : '#0000006e'},
-                      index % 2 === 0 && {
-                        backgroundColor: !theme.mode ? '#e4e4e4' : 'black',
-                      },
-                    ]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate('PrayRequestDetailScreen', item)
-                      }>
-                      <View style={classes.left}>
-                        <Subheading>
-                          {item.name === '' ? 'Anonymous' : item.name}
-                        </Subheading>
-                      </View>
-                      <Paragraph style={classes.para}>
-                        {item.body.replace(/(\r\n|\n|\r)/gm, ' ').length > 200
-                          ? item.body
-                              .substring(0, 200)
-                              .replace(/(\r\n|\n|\r)/gm, ' ') + '...'
-                          : item.body.replace(/(\r\n|\n|\r)/gm, ' ')}
-                      </Paragraph>
-                    </TouchableOpacity>
-                    <View style={classes.bottom}>
-                      <View style={classes.split}>
-                        <TouchableOpacity onPress={this.handlePrayed(item._id)}>
-                          <View style={classes.split}>
-                            <IconButton
-                              icon="thumb-up"
-                              size={20}
-                              color={
-                                item.view.includes(deviceId)
-                                  ? baseColor
-                                  : theme.icon
-                              }
-                            />
-                            <Paragraph style={classes.count}>
-                              Click to pray
-                            </Paragraph>
-                          </View>
-                        </TouchableOpacity>
-                        <View
-                          style={{
-                            borderRightColor: theme.icon,
-                            borderRightWidth: 1,
-                            height: 15,
-                            marginLeft: 10,
-                          }}
-                        />
-                        <Caption style={classes.count}>
-                          {item.view.length}
-                        </Caption>
-                        <Paragraph>prayed</Paragraph>
-                      </View>
-                      <Caption>
-                        {moment(item.createdAt).format('MMM DD  HH:MM')}
-                      </Caption>
-                    </View>
-                  </Surface>
-                )}
-                refreshing={isRefreshing}
-                ListFooterComponent={this.renderFooter.bind(this)}
-                onRefresh={this.handleRefreshData}
-                onEndReached={this.handleLoadMore}
-                onEndReachedThreshold={0.4}
+  return (
+    <ThemeContext.Consumer>
+      {({theme, baseColor}) => (
+        <View style={[classes.root, {backgroundColor: theme.background}]}>
+          <Wrapper>
+            <View style={classes.form}>
+              <TextInput
+                mode="outlined"
+                label="Prayer Request"
+                placeholder="Type your prayer request here."
+                multiline
+                style={classes.TextInput}
+                spellCheck={true}
+                // autoFocus={true}
+                numberOfLines={5}
+                maxLength={225}
+                value={value.body}
+                onChangeText={(body) => setValue({...value, body})}
               />
-              {/* <View style={classes.fab}>
-          <FAB
-            small
-            icon="add"
-            color="white"
-            style={{
-              backgroundColor: setting.baseColor,
-            }}
-            onPress={this.handleAdd}
-          />
-        </View> */}
-            </Wrapper>
-          </View>
-        )}
-      </ThemeContext.Consumer>
-    );
-  }
-}
+              <View style={classes.textButton}>
+                <TextInput
+                  label="Full Name (optional)"
+                  mode="outlined"
+                  style={classes.accNameTextField}
+                  spellCheck={true}
+                  value={value.name}
+                  onChangeText={(name) => setValue({...value, name})}
+                />
+                <Button
+                  contentStyle={classes.innerButton}
+                  mode="contained"
+                  disabled={loading}
+                  color={baseColor}
+                  dark={true}
+                  style={classes.button}
+                  uppercase
+                  onPress={handlePrayrequest}>
+                  Submit
+                </Button>
+              </View>
+            </View>
 
-export default connect(mapStateToProps)(PrayRequest);
+            <FlatList
+              contentContainerStyle={classes.container}
+              data={PR.data}
+              extraData={PR.data}
+              keyExtractor={(item) => item._id}
+              renderItem={({item, index}) => (
+                <Surface
+                  style={[
+                    classes.surface,
+                    {borderColor: theme.mode ? 'white' : '#0000006e'},
+                    index % 2 === 0 && {
+                      backgroundColor: !theme.mode ? '#e4e4e4' : 'black',
+                    },
+                  ]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigate('PrayRequestDetailScreen', item)
+                    }>
+                    <View style={classes.left}>
+                      <Subheading>
+                        {item.name === '' ? 'Anonymous' : item.name}
+                      </Subheading>
+                    </View>
+                    <Paragraph style={classes.para}>
+                      {item.body.replace(/(\r\n|\n|\r)/gm, ' ').length > 200
+                        ? item.body
+                            .substring(0, 200)
+                            .replace(/(\r\n|\n|\r)/gm, ' ') + '...'
+                        : item.body.replace(/(\r\n|\n|\r)/gm, ' ')}
+                    </Paragraph>
+                  </TouchableOpacity>
+                  <View style={classes.bottom}>
+                    <View style={classes.split}>
+                      <TouchableOpacity onPress={() => handlePrayed(item._id)}>
+                        <View style={classes.split}>
+                          <IconButton
+                            icon="thumb-up"
+                            size={20}
+                            color={
+                              item.view.includes(deviceId)
+                                ? baseColor
+                                : theme.icon
+                            }
+                          />
+                          <Paragraph style={classes.count}>
+                            Click to pray
+                          </Paragraph>
+                        </View>
+                      </TouchableOpacity>
+                      <View
+                        style={{
+                          borderRightColor: theme.icon,
+                          borderRightWidth: 1,
+                          height: 15,
+                          marginLeft: 10,
+                        }}
+                      />
+                      <Caption style={classes.count}>
+                        {item.view.length}
+                      </Caption>
+                      <Paragraph>prayed</Paragraph>
+                    </View>
+                    <Caption>
+                      {moment(item.createdAt).format('MMM DD  HH:MM')}
+                    </Caption>
+                  </View>
+                </Surface>
+              )}
+              refreshing={isRefreshing}
+              ListFooterComponent={renderFooter}
+              onRefresh={handleRefreshData}
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={0.4}
+            />
+            {/* <View style={classes.fab}>
+        <FAB
+          small
+          icon="add"
+          color="white"
+          style={{
+            backgroundColor: setting.baseColor,
+          }}
+          onPress={this.handleAdd}
+        />
+      </View> */}
+          </Wrapper>
+        </View>
+      )}
+    </ThemeContext.Consumer>
+  );
+};
+
+export default PrayRequest;
 
 const classes = StyleSheet.create({
   root: {
@@ -414,7 +393,7 @@ const classes = StyleSheet.create({
   para: {
     fontSize: 12,
   },
-  title: { flex: 1, justifyContent: 'flex-start' },
+  title: {flex: 1, justifyContent: 'flex-start'},
   fab: {
     position: 'absolute',
     margin: 16,

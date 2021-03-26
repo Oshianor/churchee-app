@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
   Surface,
   Caption,
@@ -18,63 +18,46 @@ import {
   Alert,
   TouchableOpacity,
 } from 'react-native';
-import {connect} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import Axios from 'axios';
-import { api, publicToken } from '../../../../api';
+import { api } from '../../../../api';
 import moment from "moment";
 import {ThemeContext} from '../../../../context/ThemeContext';
 
 
+const NoteDetail = ({route, navigation: {navigate}}) => {
+  const dispatch = useDispatch();
+  const item = route.params;
 
+  console.log('item', item);
+  const {
+    token,
+    church: {publicToken},
+  } = useSelector(({account}) => account);
+  const [open, setOpen] = React.useState(false);
 
-function mapStateToProps(state) {
-  return {
-    account: state.account,
-  };
-}
+  // constructor(props) {
+  //   super(props);
 
+  //   this.redirect = null;
+  //   this.state = {
+  //     item: {},
+  //     visible: false,
+  //     type: '',
+  //     msg: '',
+  //     open: false,
+  //   };
+  // }
 
-class NoteDetail extends Component {
-  static navigationOptions = ({navigation}) => {
-    return {
-      headerTitle: <Paragraph style={classes.title}>Private Notes</Paragraph>,
-    };
-  };
+  // React.useEffect(() => {
 
-  constructor(props) {
-    super(props);
-    
-    this.redirect = null;
-    this.state = {
-      item: {},
-      visible: false,
-      type: '',
-      msg: '',
-      open: false,
-    };
-  }
-  
-  
+  // }, []);
 
+  // componentWillUnmount() {
+  //   clearTimeout(this.redirect)
+  // }
 
-  componentDidMount() {
-    const { navigation} = this.props;
-
-    const item = navigation.getParam('item', {});
-
-    this.setState({
-      item
-    })
-  }
-
-
-  componentWillUnmount() {
-    clearTimeout(this.redirect)
-  }
-  
-  
-
-  handleDeleteAlert = () => {
+  const handleDeleteAlert = () => {
     Alert.alert(
       'Delete Note',
       'Are you sure you want to delete this note?',
@@ -82,7 +65,7 @@ class NoteDetail extends Component {
         {
           text: 'Yes, Please',
           // style: 'ok',
-          onPress: () => this.handleDelete(),
+          onPress: () => handleDelete(),
         },
         {
           text: 'No, Thanks',
@@ -94,96 +77,88 @@ class NoteDetail extends Component {
     );
   };
 
-
-  handleDelete = async () => {
+  const handleDelete = async () => {
     try {
-      const { account, navigation } = this.props;
-      const { item } = this.state;
-
-      const deleteNote = await Axios.delete(api.note + "/" + item._id, { headers: { "x-auth-token": account.token, publicToken } });
-
-      this.setState({
-        visible: true,
-        type: 's',
-        msg: deleteNote.data,
+      const deleteNote = await Axios.delete(api.note + '/' + item._id, {
+        headers: {'x-auth-token': token, publicToken},
       });
 
-      this.redirect = setTimeout(() => {
-        navigation.navigate('ProfileHomeScreen');        
-      }, 3000);
+      // this.setState({
+      //   visible: true,
+      //   type: 's',
+      //   msg: deleteNote.data,
+      // });
+      dispatch(
+        feedbackAction.launch({
+          open: true,
+          severity: 's',
+          msg: deleteNote.data.msg,
+        }),
+      );
+
+      navigate('ProfileHomeScreen');
     } catch (error) {
-      this.setState({
-        visible: true,
-        type: 'w',
-        msg: error.response.data,
-      });
+      dispatch(
+        feedbackAction.launch({
+          open: true,
+          severity: 'w',
+          msg: error.response.data.msg,
+        }),
+      );
       console.log('error', error);
       console.log('error', error.response);
     }
-  }
-
-  handleClose = () => {
-    this.setState({
-      visible: false,
-      type: '',
-      msg: '',
-    });
   };
 
-  render() {
-    const { navigation} = this.props;
-    const {item} = this.state;
-    
-    return (
-      <ThemeContext.Consumer>
-        {({theme, baseColor}) => (
-      <View style={[classes.root, {backgroundColor: theme.background}]}>
-        <ScrollView contentContainerStyle={classes.container}>
-          <Title>{item.title}</Title>
-          <Paragraph style={classes.text}>{item.body}</Paragraph>
-        </ScrollView>
-        <Provider>
-          <Portal>
-            <FAB.Group
-              open={this.state.open}
-              icon={this.state.open ? 'expand-more' : 'unfold-more'}
-              actions={[
-                {
-                  icon: 'delete',
-                  // color: 'red',
-                  style: {
-                    backgroundColor: 'red',
+  return (
+    <ThemeContext.Consumer>
+      {({theme, baseColor}) => (
+        <View style={[classes.root, {backgroundColor: theme.background}]}>
+          <ScrollView contentContainerStyle={classes.container}>
+            <Title>{item?.title}</Title>
+            <Paragraph style={classes.text}>{item?.body}</Paragraph>
+          </ScrollView>
+          {/* <Provider>
+            <Portal>
+              <FAB.Group
+                open={open}
+                icon={!open ? 'unfold-more-horizontal' : 'unfold-less-horizontal'}
+                actions={[
+                  {
+                    icon: 'delete',
+                    // color: 'red',
+                    style: {
+                      backgroundColor: 'red',
+                    },
+                    label: 'Delete',
+                    onPress: () => handleDeleteAlert(),
                   },
-                  label: 'Delete',
-                  onPress: () => this.handleDeleteAlert(),
-                },
-                {
-                  icon: 'edit',
-                  label: 'Edit',
-                  // color: 'yellow',
-                  style: {
-                    backgroundColor: 'yellow',
+                  {
+                    icon: 'pencil',
+                    label: 'Edit',
+                    // color: 'yellow',
+                    style: {
+                      backgroundColor: 'yellow',
+                    },
+                    onPress: () => navigate('EditNoteScreen', {item}),
                   },
-                  onPress: () => navigation.navigate('EditNoteScreen', {item}),
-                },
-              ]}
-              onStateChange={({open}) => this.setState({open})}
-              onPress={() => {
-                if (this.state.open) {
-                  // do something if the speed dial is open
-                }
-              }}
-            />
-          </Portal>
-        </Provider>
-      </View>
+                ]}
+                onStateChange={({open}) => setOpen(open)}
+                onPress={() => {
+                  // if (open) {
+                  //   // do something if the speed dial is open
+                  // }
+                }}
+              />
+            </Portal>
+          </Provider> */}
+        </View>
       )}
-      </ThemeContext.Consumer>
-    );
-  }
-}
+    </ThemeContext.Consumer>
+  );
+};
 
-export default connect(mapStateToProps)(NoteDetail);
+export default NoteDetail;
 
 const classes = StyleSheet.create({
   root: {

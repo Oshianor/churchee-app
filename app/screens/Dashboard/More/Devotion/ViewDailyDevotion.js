@@ -21,7 +21,6 @@ const { width, height } = Dimensions.get('screen');
 const DailyDevotionDetails = ({ route, navigation: { navigate } }) => {
   const { token, church: { publicToken } } = useSelector(({ account }) => account);
   const [open, setOpen] = React.useState(false);
-  const [paused, setPaused] = React.useState(false);
   const [login, setLogin] = React.useState(false);
   const [favourite, setFavourite] = React.useState([]);
   const {fontSize} = React.useContext(ThemeContext);

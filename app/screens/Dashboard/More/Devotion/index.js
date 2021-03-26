@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import axios from 'axios';
-import {api, publicToken} from '../../../../api';
+import {api} from '../../../../api';
 import { devotionAction, feedbackAction } from '../../../../store/actions';
 import Wrapper from '../../../../components/Background';
 import {ThemeContext} from '../../../../context/ThemeContext';

@@ -8,6 +8,7 @@ import setting from './setting';
 import feedback from './feedback';
 import country from './country';
 import event from './event';
+import pr from './pr';
 
 const appReducer = combineReducers({
   account,
@@ -19,6 +20,7 @@ const appReducer = combineReducers({
   feedback,
   country,
   event,
+  pr
 });
 
 export default appReducer;

@@ -34,6 +34,11 @@ export const SERMON_DATA = 'SERMON_DATA';
 export const SERMON_CURRENT_PAGE = 'SERMON_CURRENT_PAGE'; 
 
 
+// pr
+export const PR_DATA = 'PR_DATA'; 
+export const PR_CURRENT_PAGE = 'PR_CURRENT_PAGE'; 
+
+
 // event
 export const EVENT_DATA = 'EVENT_DATA'; 
 export const EVENT_CURRENT_PAGE = 'EVENT_CURRENT_PAGE'; 

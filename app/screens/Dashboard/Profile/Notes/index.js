@@ -15,133 +15,109 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {connect} from 'react-redux';
-import Axios from 'axios';
+import axios from 'axios';
 import { api} from '../../../../api';
 import moment from "moment";
 import {ThemeContext} from '../../../../context/ThemeContext';
+import {accountAction, feedbackAction} from '../../../../store/actions';
+import {useSelector, useDispatch} from 'react-redux';
 
 
-function mapStateToProps(state) {
-  return {
-    account: state.account,
-  };
-}
+const Notes = ({navigation: { navigate }}) => {
+  const dispatch = useDispatch();
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const {token, notes} = useSelector(({account}) => account);
 
+  React.useEffect(() => {
+    handleData();
+  }, []);
 
-class Notes extends Component {
-  state = {
-    loading: true,
-    notes: [],
-    isRefreshing: false,
-  };
-
-
-  async componentDidMount() {
+  const handleData = async () => {
     try {
-      const {account} = this.props;
-
-      const notes = await Axios.get(api.note, {
-        headers: { 'x-auth-token': account.token},
+      const notes = await axios.get(api.note, {
+        headers: {'x-auth-token': token},
       });
 
       console.log('notes', notes);
 
-      this.setState({
-        notes: notes.data.data
-      });
+      dispatch(accountAction.setAccountData({notes: notes.data.data}));
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);
     }
-  }
+  };
 
-  handleRefreshData = async () => {
+  const handleRefreshData = async () => {
     try {
-      const {account} = this.props;
+      setIsRefreshing(true);
 
-      this.setState({
-        isRefreshing: true,
+      const notes = await axios.get(api.note, {
+        headers: {'x-auth-token': token},
       });
 
-      const notes = await Axios.get(api.note, {
-        headers: { 'x-auth-token': account.token},
-      });
-      
-      this.setState({
-        isRefreshing: false,
-        notes: notes.data.data,
-      });
+      dispatch(accountAction.setAccountData({notes: notes.data.data}));
+      setIsRefreshing(false);
 
-      console.log('handleRefreshData', this.state);
+      console.log('handleRefreshData', state);
     } catch (error) {
-      this.setState({
-        isRefreshing: false,
-      });
+      setIsRefreshing(false);
       console.log(error.response);
     }
   };
 
-
-  render() {
-    const { navigation} = this.props;
-    const {notes, isRefreshing} = this.state;
-    
-
-    return (
-      <ThemeContext.Consumer>
-        {({theme, baseColor}) => (
-      <View style={[classes.root, {backgroundColor: theme.background}]}>
-        <FlatList
-          contentContainerStyle={classes.container}
-          data={notes}
-          keyExtractor={item => item._id}
-          extraData={this.state}
-          refreshing={isRefreshing}
-          onRefresh={this.handleRefreshData}
-          renderItem={({item}) => (
-            <Surface style={classes.surface}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('NoteDetailScreen', {item})}>
-                <View style={classes.left}>
-                  <Subheading style={classes.Subheading}>
-                    {/* {item.title} */}
-                    {item.title.length > 30
-                      ? item.title.substring(0, 30) + '...'
-                      : item.title}
-                  </Subheading>
-                  <Caption>{moment(item.createdAt).format('MMM DD')}</Caption>
-                </View>
-                <Paragraph style={classes.para}>
-                  {item.body.replace(/(\r\n|\n|\r)/gm, ' ').length > 75
-                    ? item.body
-                        .replace(/(\r\n|\n|\r)/gm, ' ')
-                        .substring(0, 75) + '...'
-                    : item.body.replace(/(\r\n|\n|\r)/gm, ' ')}
-                </Paragraph>
-              </TouchableOpacity>
-            </Surface>
-          )}
-        />
-        <View style={classes.fab}>
-          <FAB
-            small
-            icon="plus"
-            color="white"
-            style={{
-              backgroundColor: baseColor,
-            }}
-            onPress={() => navigation.navigate('AddNoteScreen')}
+  return (
+    <ThemeContext.Consumer>
+      {({theme, baseColor}) => (
+        <View style={[classes.root, {backgroundColor: theme.background}]}>
+          <FlatList
+            contentContainerStyle={classes.container}
+            data={notes}
+            keyExtractor={(item) => item._id}
+            extraData={notes}
+            refreshing={isRefreshing}
+            onRefresh={handleRefreshData}
+            renderItem={({item}) => (
+              <Surface style={classes.surface}>
+                <TouchableOpacity
+                  onPress={() => navigate('NoteDetailScreen', item)}>
+                  <View style={classes.left}>
+                    <Subheading style={classes.Subheading}>
+                      {/* {item.title} */}
+                      {item.title.length > 30
+                        ? item.title.substring(0, 30) + '...'
+                        : item.title}
+                    </Subheading>
+                    <Caption>{moment(item.createdAt).format('MMM DD')}</Caption>
+                  </View>
+                  <Paragraph style={classes.para}>
+                    {item.body.replace(/(\r\n|\n|\r)/gm, ' ').length > 75
+                      ? item.body
+                          .replace(/(\r\n|\n|\r)/gm, ' ')
+                          .substring(0, 75) + '...'
+                      : item.body.replace(/(\r\n|\n|\r)/gm, ' ')}
+                  </Paragraph>
+                </TouchableOpacity>
+              </Surface>
+            )}
           />
+          <View style={classes.fab}>
+            <FAB
+              small
+              icon="plus"
+              color="white"
+              style={{
+                backgroundColor: baseColor,
+              }}
+              onPress={() => navigate('AddNoteScreen')}
+            />
+          </View>
         </View>
-      </View>
       )}
-      </ThemeContext.Consumer>
-    );
-  }
-}
+    </ThemeContext.Consumer>
+  );
+};
 
-export default connect(mapStateToProps)(Notes);
+export default Notes;
 
 const classes = StyleSheet.create({
   root: {

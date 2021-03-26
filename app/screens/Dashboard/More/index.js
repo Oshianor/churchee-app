@@ -129,7 +129,7 @@ const MoreScreen = ({ navigation: { navigate } }) => {
               </View>
               <Icon name="chevron-right" color={theme.icon} size={25} />
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => navigate('Form')}
               style={classes.surface}>
               <View style={classes.left}>
@@ -142,7 +142,7 @@ const MoreScreen = ({ navigation: { navigate } }) => {
                 <Subheading style={classes.Subheading}>Forms</Subheading>
               </View>
               <Icon name="chevron-right" color={theme.icon} size={25} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity
               onPress={() => navigate('More', {screen: 'SettingScreen'})}
               style={classes.surface}>

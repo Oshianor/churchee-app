@@ -10,9 +10,9 @@ import {
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import axios from 'axios';
-import {api, publicToken} from '../../../../api';
+import {api} from '../../../../api';
 import {ThemeContext} from '../../../../context/ThemeContext';
-import { feedbackAction } from "../../../../store/actions";
+import {feedbackAction, accountAction} from '../../../../store/actions';
 import { Button } from "../../../../components/Button"
 
 
@@ -66,6 +66,8 @@ const AddNotes = ({navigation: {goBack}}) => {
 
       console.log('notes', notes);
 
+      handleData();
+
       dispatch(
         feedbackAction.launch({
           loading: false,
@@ -74,6 +76,8 @@ const AddNotes = ({navigation: {goBack}}) => {
           msg: notes.data.msg,
         }),
       );
+
+
 
       goBack();
     } catch (error) {
@@ -89,6 +93,21 @@ const AddNotes = ({navigation: {goBack}}) => {
       console.log('error', error.response);
     }
   };
+
+    const handleData = async () => {
+      try {
+        const notes = await axios.get(api.note, {
+          headers: {'x-auth-token': token},
+        });
+
+        console.log('notes', notes);
+
+        dispatch(accountAction.setAccountData({notes: notes.data.data}));
+      } catch (error) {
+        console.log('error', error);
+        console.log('error', error.response);
+      }
+    };
 
   return (
     <ThemeContext.Consumer>

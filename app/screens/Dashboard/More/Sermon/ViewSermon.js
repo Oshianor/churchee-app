@@ -19,7 +19,7 @@ import {
   Image
 } from 'react-native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import {api, publicToken} from '../../../../api';
+import {api} from '../../../../api';
 import {Youtube, AudioPlayer} from '../../../../components/Random';
 import Wrapper from '../../../../components/Background';
 import {ThemeContext} from '../../../../context/ThemeContext';
@@ -27,7 +27,6 @@ const screen = Dimensions.get('screen');
 
 
 const SermonDetail = ({ route, navigation: { navigate } }) => {
-  const [paused, setPaused] = React.useState(true);
   const [open, setOpen] = React.useState(false);
   const { fontSize } = React.useContext(ThemeContext); 
   const {title, body, audio, video, headline, img, youtubeId} = route.params;
@@ -114,10 +113,9 @@ const SermonDetail = ({ route, navigation: { navigate } }) => {
                     mode="outlined"
                     icon="television"
                     onPress={() =>
-                      navigate('VideoPlayerScreen', {
+                      navigate('VideoPlayer', {
                         video: video,
                         title: title,
-                        route: 'SermonDetailScreen',
                       })
                     }
                     // onPress={this.handleVideo}

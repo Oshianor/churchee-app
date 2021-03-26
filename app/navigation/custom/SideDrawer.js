@@ -17,6 +17,7 @@ import {
   devotionAction,
   sermonAction,
   eventAction,
+  PRAction,
 } from '../../store/actions';
 import {useDispatch, useSelector} from 'react-redux';
 import { api } from "../../api";
@@ -45,7 +46,8 @@ const CustomDrawerContentComponent = ({
       await getDevotion(item.publicToken);
       await getSermon(item.publicToken);
       await getLive(item.publicToken);
-      await getEvent(item.publicToken);
+    await getPR(item.publicToken);
+    await getEvent(item.publicToken);
       
       dispatch(feedbackAction.launch({loading: false}));
       closeDrawer();
@@ -61,6 +63,25 @@ const CustomDrawerContentComponent = ({
         }),
       );
 
+    }
+  };
+
+  const getPR = async (publicToken) => {
+    try {
+      const pray = await axios.get(api.getPRWall, {
+        headers: {publicToken},
+      });
+
+      dispatch(
+        PRAction.setPR({
+          data: pray.data.data,
+          total: pray.data.meta.total,
+          page: pray.data.meta.page,
+        }),
+      );
+    } catch (error) {
+      // console.log('error', error);
+      // console.log('error', error.response);
     }
   };
 
