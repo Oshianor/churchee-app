@@ -1,9 +1,8 @@
-// export const baseUrl = 'https://api.churchee.app/api/v1';
-// const baseUrl = 'http://192.168.8.151:3000/api';
+export const baseUrl = 'https://api.churchee.app/api/v1';
 export const webiste = 'https://api.churchee.app';
 export const chatService =
   'http://ec2-18-218-125-237.us-east-2.compute.amazonaws.com:8080';
-const baseUrl = 'http://localhost:9090/api/v1';
+// const baseUrl = 'http://localhost:9090/api/v1';
 
 
 export const api = {
