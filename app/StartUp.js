@@ -23,12 +23,19 @@ import Geolocation from 'react-native-geolocation-service';
 
 const StartUp = () => {
   const dispatch = useDispatch();
-  const setting = useSelector(({setting}) => setting);
+  // const setting = useSelector(({setting}) => setting);
+  const {
+    toggleTheme,
+    updateBaseColor,
+    updateFontSize,
+    baseColor,
+  } = React.useContext(ThemeContext);
 
   React.useEffect(() => {
     handleGetChurch();
     requestLocationPermission();
-
+    handleBackground();
+    getLive();
     SplashScreen.hide();
   }, []);
 
@@ -45,6 +52,25 @@ const StartUp = () => {
       RootNavigation.navigate('Onboarding', {screen: 'FindChurch'});
     }
   }
+
+    const getLive = async () => {
+      try {
+        let church = await AsyncStorage.getItem('church');
+        church = JSON.parse(church);
+        console.log('church', church);
+
+        const live = await axios.get(api.live, {
+          headers: {publicToken: church.publicToken},
+        });
+
+        console.log('live', live);
+
+        dispatch(accountAction.setAccountData({live: live.data.data}));
+      } catch (error) {
+        console.log('error', error);
+        console.log('error', error.response);
+      }
+    };
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
@@ -83,6 +109,20 @@ const StartUp = () => {
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
+  };
+
+  const handleBackground = async () => {
+    try {
+      let setting = await AsyncStorage.getItem('setting');
+
+      if (JSON.parse(setting)) {
+        toggleTheme(JSON.parse(setting).mode);
+        updateBaseColor(JSON.parse(setting).color);
+        updateFontSize(JSON.parse(setting).fontSize);
+      }
+    } catch (error) {
+      console.log('errorerror', error);
+    }
   };
 
   return (

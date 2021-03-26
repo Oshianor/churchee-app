@@ -9,6 +9,7 @@ const VideoPlayerScreen = ({ route, navigation: { goBack } }) => {
         uri: api.img + route.params.video,
       }}
       onBack={() => goBack()}
+      tapAnywhereToPause={true}
     />
   );
 }

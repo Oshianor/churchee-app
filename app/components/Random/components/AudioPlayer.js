@@ -152,7 +152,7 @@ class AudioPlayer extends Component {
               <View style={classes.iconsRoot}>
                 <IconButton
                   onPress={this.handleFastRewind}
-                  icon="replay-10"
+                  icon="rewind-10"
                   size={35}
                   color="white"
                 />
@@ -164,7 +164,7 @@ class AudioPlayer extends Component {
                 />
                 <IconButton
                   onPress={this.handleFastForward}
-                  icon="forward-10"
+                  icon="fast-forward-10"
                   size={35}
                   color="white"
                 />

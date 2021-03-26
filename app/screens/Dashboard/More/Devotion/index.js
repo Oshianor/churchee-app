@@ -14,15 +14,13 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import axios from 'axios';
 import {api, publicToken} from '../../../../api';
-import { devotionAction } from '../../../../store/actions';
+import { devotionAction, feedbackAction } from '../../../../store/actions';
 import Wrapper from '../../../../components/Background';
 import {ThemeContext} from '../../../../context/ThemeContext';
-
-
 const { width, height } = Dimensions.get('screen');
 
 const Devotion = ({ navigation}) => {
-  const [loading, setLoading] = React.useState(false);
+  // const [loading, setLoading] = React.useState(false);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const dispatch = useDispatch();
   const devotion = useSelector(({devotion}) => devotion);
@@ -34,7 +32,7 @@ const Devotion = ({ navigation}) => {
 
   const handleData = async () => {
     try {
-      setLoading(true);
+      dispatch(feedbackAction.launch({ loading: true }));
 
       const resDevotion = await axios.get(api.getDevotion, { headers: { publicToken } });
 
@@ -46,9 +44,11 @@ const Devotion = ({ navigation}) => {
        }),
      );
 
-      setLoading(false);
+      dispatch(feedbackAction.launch({loading: false}));
+      
     } catch (error) {
-      setLoading(false);
+      dispatch(feedbackAction.launch({loading: false}));
+
       console.log(error);
       console.log(error.response);
     }
@@ -69,9 +69,10 @@ const Devotion = ({ navigation}) => {
       );
       setIsRefreshing(true);
     } catch (error) {
-      this.setState({
-        isRefreshing: false,
-      });
+      setIsRefreshing(false);
+      // this.setState({
+      //   isRefreshing: false,
+      // });
       console.log(error.response);
     }
   };

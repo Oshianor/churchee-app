@@ -6,6 +6,7 @@ import devotionAction from './devotion';
 import mediaAction from './media';
 import sermonAction from './sermon';
 import countryAction from './country';
+import eventAction from './event';
 
 export {
   accountAction,
@@ -16,4 +17,5 @@ export {
   mediaAction,
   sermonAction,
   countryAction,
+  eventAction,
 };

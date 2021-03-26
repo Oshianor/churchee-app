@@ -14,12 +14,6 @@ const Devotion = () => {
       <Stack.Screen
         name="DailyDevotionScreen"
         options={({route, navigation: {goBack}}) => ({
-          // headerLeft: () => (
-          //   <IconButton
-          //     icon="arrow-back"
-          //     onPress={() => navigate('Dashboard', {screen: route.screen})}
-          //   />
-          // ),
           headerLeft: () => <BackButton goBack={goBack} />,
           headerTitle: () => <Subheading>Devotion</Subheading>,
         })}

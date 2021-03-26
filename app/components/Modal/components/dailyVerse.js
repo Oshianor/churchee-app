@@ -69,7 +69,7 @@ const DailyVerseModal = ({open, handleClose, value}) => {
         <Modal
           animationType="slide"
           transparent={true}
-          visible={open}
+          visible={open === "dailyVerse"}
           // presentationStyle="formSheet"
         >
           <View
@@ -81,7 +81,9 @@ const DailyVerseModal = ({open, handleClose, value}) => {
               backgroundColor: 'rgba(0,0,0,0.5)',
             }}>
             <Surface style={classes.surface}>
-              <Subheading style={{ fontWeight: "600" }} >Verse of the day</Subheading>
+              <Subheading style={{fontWeight: '600'}}>
+                Verse of the day
+              </Subheading>
               <Paragraph>{value ? value.body : ''}</Paragraph>
               <View style={classes.bottomRoot}>
                 <IconButton icon="share" size={20} onPress={onShare} />
@@ -95,7 +97,7 @@ const DailyVerseModal = ({open, handleClose, value}) => {
             <View style={{marginTop: 25}}>
               <IconButton
                 onPress={() => handleClose()}
-                icon="cancel"
+                icon="close"
                 size={35}
                 color="white"
               />

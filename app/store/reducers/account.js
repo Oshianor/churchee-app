@@ -1,11 +1,11 @@
 import {
   UPDATE_AUTH_TOKEN,
   UPDATE_USER_DATA,
-  HOMEPAGE,
+  UPDATE_DATA,
   DEVOTION_DATA,
   UPDATE_CHURCH_DATA,
   UPDATE_USER_LOCATION,
-  CHURCH_LIST_DATA
+  CHURCH_LIST_DATA,
 } from '../types';
 
 const initialstate = {
@@ -52,15 +52,9 @@ export default (state = initialstate, action) => {
         devotionPage: action.payload.pages,
         devotionTotal: action.payload.total,
       });
-    case HOMEPAGE:
+    case UPDATE_DATA:
       return Object.assign({}, state, {
-        live: action.payload.live,
-        devotion: action.payload.devotion,
-        sermon: action.payload.sermon,
-        event: action.payload.event,
-        prayer: action.payload.prayerRequests,
-        media: action.payload.media,
-        hymn: action.payload.hymn,
+        ...action.payload,
       });
     default:
       return state;

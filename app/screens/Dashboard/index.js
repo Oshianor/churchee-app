@@ -10,30 +10,36 @@ import {
 import {ThemeContext} from '../../context/ThemeContext';
 import Wrapper from "../../components/Background"
 import {Header, Swiper} from '../../components/Card';
-import { DailyVerse } from '../../components/Modal';
-import {useSelector} from 'react-redux';
+import { DailyVerse, Live } from '../../components/Modal';
+import {useSelector, useDispatch} from 'react-redux';
+import { feedbackAction } from "../../store/actions"
 const { width, height } = Dimensions.get('screen');
 import {api} from '../../api';
 import axios from 'axios';
 
 const Home = ({navigation: {navigate}}) => {
-  const [open, setOpen] = React.useState(false);
+  const dispatch = useDispatch();
+  const [open, setOpen] = React.useState(null);
   const [value, setValue] = React.useState(null);
-  const {church} = useSelector(({account}) => account);
-
+  const {church, live} = useSelector(({account}) => account);
 
   console.log('open', open);
-
+  console.log('value', value);
 
   const handleData = async () => {
     try {
+      dispatch(feedbackAction.launch({ loading: true }));
       const verse = await axios.get(api.dailyVerse, {
         headers: {publicToken: church?.publicToken},
       });
 
       console.log('verse', verse);
       setValue(verse.data.data);
-      setOpen(true);
+      dispatch(feedbackAction.launch({loading: false}));
+
+      setOpen("dailyVerse");
+
+
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);
@@ -52,6 +58,12 @@ const Home = ({navigation: {navigate}}) => {
             <ScrollView contentContainerStyle={classes.body}>
               <View style={classes.rootView}>
                 <View style={classes.section}>
+                  <Header
+                    title="Live"
+                    name="liveSection"
+                    disabled={!live}
+                    onPress={() => setOpen('live')}
+                  />
                   <Header
                     title="Daily Verse"
                     name="verseSection"
@@ -83,7 +95,7 @@ const Home = ({navigation: {navigate}}) => {
                 </View>
 
                 <View style={classes.section}>
-                  <Header title="Form" name="formSection" route="Form" />
+                  {/* <Header title="Form" name="formSection" route="Form" /> */}
                   <Header title="Hymn" name="hymnSection" route="Hymn" />
                 </View>
               </View>
@@ -91,8 +103,9 @@ const Home = ({navigation: {navigate}}) => {
             <DailyVerse
               open={open}
               value={value}
-              handleClose={() => setOpen(false)}
+              handleClose={() => setOpen()}
             />
+            <Live open={open} handleClose={() => setOpen()} />
           </Wrapper>
         </SafeAreaView>
       )}

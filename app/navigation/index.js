@@ -2,10 +2,8 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {Subheading} from 'react-native-paper';
-import BackButton from './custom/BackButton';
 import Onboarding from './Onboarding';
 import Dashboard from './Dashboard';
-import Setting from "../screens/Dashboard/More/Setting"
 import Devotion from "./Dashboard/More/Devotion";
 import Sermon from './Dashboard/More/Sermon';
 import Hymn from './Dashboard/More/Hymn';
@@ -17,6 +15,8 @@ import Profile from "./Dashboard/Profile";
 import Chat from "./Dashboard/More/Chat"
 import SideDrawer from './custom/SideDrawer';
 import {useWindowDimensions} from 'react-native';
+import VideoPlayer from '../screens/Dashboard/More/Video';
+
 // const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -77,14 +77,6 @@ const Navigation = () => {
         component={PPR}
       />
       <Drawer.Screen
-        name="SettingScreen"
-        options={({route, navigation: {goBack}}) => ({
-          headerLeft: () => <BackButton goBack={goBack} />,
-          headerTitle: () => <Subheading>Setting</Subheading>,
-        })}
-        component={Setting}
-      />
-      <Drawer.Screen
         name="Profile"
         options={{headerShown: false}}
         component={Profile}
@@ -93,6 +85,11 @@ const Navigation = () => {
         name="Chat"
         options={{headerShown: false}}
         component={Chat}
+      />
+      <Drawer.Screen
+        name="VideoPlayer"
+        options={{headerShown: false}}
+        component={VideoPlayer}
       />
     </Drawer.Navigator>
   );

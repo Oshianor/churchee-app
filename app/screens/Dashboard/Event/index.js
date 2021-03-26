@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import { IconButton, Subheading, Surface } from 'react-native-paper';
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import React from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {Subheading, Surface} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   View,
   StyleSheet,
@@ -11,51 +11,59 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import { Swiper } from '../../../components/Card';
-import { api } from "../../../api";
+import {Swiper} from '../../../components/Card';
+import {api} from '../../../api';
 import axios from 'axios';
 import moment from 'moment';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Wrapper from "../../../components/Background";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Wrapper from '../../../components/Background';
 import {ThemeContext} from '../../../context/ThemeContext';
-const { width, height } = Dimensions.get("screen")
+import {eventAction, feedbackAction} from '../../../store/actions';
+const {width, height} = Dimensions.get('screen');
 
-const mapStateToProps = state => ({
-  account: state.account,
-});
-class Event extends Component {
-  state = {
-    loading: true,
-    isRefreshing: false,
-    pages: 1,
-    total: 0,
-    pageNumber: 1,
-    data: [],
-    savedEvents: [],
-    login: false
-  };
+const Event = ({navigation: {navigate}}) => {
+  const dispatch = useDispatch();
+  const event = useSelector(({event}) => event);
+  const {
+    church: {publicToken},
+    token,
+  } = useSelector(({account}) => account);
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [savedEvents, setSavedEvents] = React.useState([]);
 
-  async componentDidMount() {
+  React.useEffect(() => {
+    getSaved();
+    handleData();
+  }, []);
+
+  // state = {
+  //   loading: true,
+  //   isRefreshing: false,
+  //   pages: 1,
+  //   total: 0,
+  //   pageNumber: 1,
+  //   data: [],
+  //   savedEvents: [],
+  //   login: false
+  // };
+
+  const getSaved = async () => {
     try {
-      const savedEvent = await AsyncStorage.getItem('savedEvents');
+      let savedEvents = await AsyncStorage.getItem('savedEvents');
 
-      const savedEvents = JSON.parse(savedEvent);
+      savedEvents = JSON.parse(savedEvents);
 
       console.log('savedEvents-cdm', savedEvents);
 
-      this.setState({
-        savedEvents: savedEvents ? savedEvents : [],
-      });
+      setSavedEvents(savedEvents ?? []);
     } catch (error) {
       console.log('savedEvent', error);
     }
-    this.handleData();
   }
 
-  handleSaveEvent = eventId => async () => {
-    const {account, navigation} = this.props;
-
-    if (account.token) {
+  const handleSaveEvent = (eventId) => async () => {
+    if (token) {
       try {
         const savedItem = await axios.put(
           api.savedItem,
@@ -70,11 +78,12 @@ class Event extends Component {
           },
         );
 
-
-        const savedEvents = savedItem.data.content ? savedItem.data.content : [];
+        const savedEvents = savedItem.data.content
+          ? savedItem.data.content
+          : [];
         await AsyncStorage.setItem('savedEvents', JSON.stringify(savedEvents));
         console.log('savedItem.data.content', savedEvents);
-        
+
         this.setState({
           savedEvents,
           visible: true,
@@ -84,7 +93,7 @@ class Event extends Component {
       } catch (error) {
         console.log('error', error);
         console.log('error.response', error.response);
-        
+
         this.setState({
           visible: true,
           msg: error.response.data,
@@ -92,207 +101,180 @@ class Event extends Component {
         });
       }
     } else {
-      navigation.navigate('Onboarding', {screen: 'Login'});
+      navigate('Onboarding', {screen: 'Login'});
     }
   };
 
-  handleData = async () => {
+  const handleData = async () => {
     try {
-      const { account } = this.props;
+      dispatch(feedbackAction.launch({loading: true}));
 
-      this.setState({
-        loading: true,
+      const event = await axios.get(api.getEvent, {
+        headers: {publicToken},
       });
-
-      const event = await axios.get(api.getEvent, { headers: { publicToken: account.church.publicToken } });
 
       console.log('event', event);
 
-      this.setState({
-        loading: false,
-        data: event.data.data,
-        total: event.data.meta.total,
-        pages: event.data.meta.pages,
-      });
+      dispatch(
+        eventAction.setEvent({
+          data: event?.data?.data,
+          total: event?.data?.meta?.total,
+          pages: event?.data?.meta?.page,
+        }),
+      );
+
+      dispatch(feedbackAction.launch({loading: false}));
     } catch (error) {
-      this.setState({
-        loading: false,
-      });
-      console.log("error", error);
+      dispatch(feedbackAction.launch({loading: false}));
+
+      console.log('error', error);
       console.log('error.response', error.response);
     }
   };
 
-  handleRefreshData = async () => {
+  const handleRefreshData = async () => {
     try {
-      const {account} = this.props;
-
-      this.setState({
-        isRefreshing: true,
-        pageNumber: 1,
-      });
+      setIsRefreshing(true);
 
       const event = await axios.get(api.getEvent, {
-        headers: {publicToken: account.church.publicToken},
+        headers: {publicToken},
       });
 
       console.log('event', event);
 
+      setIsRefreshing(false);
 
-      this.setState({
-        isRefreshing: false,
-        data: event.data.data,
-        total: event.data.meta.total,
-        pages: event.data.meta.pages,
-      });
-
-      console.log('handleRefreshData', this.state);
+      dispatch(
+        eventAction.setEvent({
+          data: event.data.data,
+          total: event.data.meta.total,
+          pages: event.data.meta.pages,
+        }),
+      );
     } catch (error) {
-      this.setState({
-        isRefreshing: false,
-      });
+      setIsRefreshing(false);
       console.log(error.response);
     }
   };
 
-  handleLoadMore = async () => {
+  const handleLoadMore = async () => {
     try {
       const {pages, data, pageNumber} = this.state;
-      const {account} = this.props;
       const num = Number(pageNumber) + 1;
 
       if (num > pages) return null;
 
       const event = await axios.get(api.getEvent + '?pageNumber=' + num, {
-        headers: {publicToken: account.church.publicToken},
+        headers: {publicToken},
       });
 
-      this.setState({
-        loading: true,
-        pageNumber: num,
-      });
+      // this.setState({
+      //   loading: true,
+      //   pageNumber: num,
+      // });
 
       console.log('handleLoadMore', event);
 
       const listData = data.concat(event.data.event);
 
-      this.setState({
-        loading: false,
-        data: listData,
-        total: event.data.total,
-        pages: event.data.pages,
-      });
+      // this.setState({
+      //   loading: false,
+      //   data: listData,
+      //   total: event.data.total,
+      //   pages: event.data.pages,
+      // });
 
       console.log('handleLoadMore', this.state);
     } catch (error) {
-      this.setState({
-        loading: false,
-      });
+      // this.setState({
+      //   loading: false,
+      // });
       console.log(error.response);
     }
   };
 
-  renderFooter = () => {
-    const {loading} = this.state;
+  const renderFooter = () => {
     //it will show indicator at the bottom of the list when data is loading otherwise it returns null
     if (!loading) return null;
     return <ActivityIndicator style={{color: '#000'}} />;
   };
 
-  render() {
-    const {navigation} = this.props;
-    const {
-      isRefreshing,
-      savedEvents,
-      data,
-      login,
-    } = this.state;
-
-    console.log('data', data);
-
-    return (
-      <ThemeContext.Consumer>
-        {({theme, baseColor}) => (
-          <SafeAreaView
-            style={[classes.root, {backgroundColor: theme.background}]}>
-            {/* <View style={classes.swiper}>
-              <Swiper target="event" />
-            </View> */}
-            {/* <EventComponent title="Bible study" /> */}
-            <Wrapper>
-              <FlatList
-                // contentContainerStyle={classes.container}
-                data={data}
-                extraData={this.state}
-                keyExtractor={(item) => item._id}
-                refreshing={isRefreshing}
-                // ListFooterComponent={this.renderFooter.bind(this)}
-                onRefresh={this.handleRefreshData}
-                // onEndReached={this.handleLoadMore}
-                // onEndReachedThreshold={0.4}
-                renderItem={({item}) => (
-                  <Surface style={classes.surface}>
-                    <TouchableOpacity
-                      style={classes.touch}
-                      onPress={() =>
-                        navigation.navigate('EventDetailScreen', {
-                          // route: 'EventScreen',
-                          ...item,
-                          savedEvents,
-                        })
-                      }>
-                      <View style={classes.leftSide}>
-                        <View style={classes.topRoot}>
-                          <Subheading
-                            style={[
-                              classes.bibleTypeFontSize,
-                              {color: baseColor},
-                            ]}>
-                            {moment(item.startDate).format('MMM')}
-                          </Subheading>
-                          <Subheading
-                            style={[
-                              classes.bibleTypeFontSize,
-                              {color: baseColor},
-                            ]}>
-                            {/* {item.recursive
+  return (
+    <ThemeContext.Consumer>
+      {({theme, baseColor}) => (
+        <SafeAreaView
+          style={[classes.root, {backgroundColor: theme.background}]}>
+          <Wrapper>
+            <FlatList
+              // contentContainerStyle={classes.container}
+              data={event.data}
+              extraData={event.data}
+              keyExtractor={(item) => item._id}
+              refreshing={isRefreshing}
+              ListFooterComponent={renderFooter}
+              onRefresh={handleRefreshData}
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={0.4}
+              renderItem={({item}) => (
+                <Surface style={classes.surface}>
+                  <TouchableOpacity
+                    style={classes.touch}
+                    onPress={() =>
+                      navigate('EventDetailScreen', {
+                        // route: 'EventScreen',
+                        ...item,
+                        savedEvents,
+                      })
+                    }>
+                    <View style={classes.leftSide}>
+                      <View style={classes.topRoot}>
+                        <Subheading
+                          style={[
+                            classes.bibleTypeFontSize,
+                            {color: baseColor},
+                          ]}>
+                          {moment(item.startDate).format('MMM')}
+                        </Subheading>
+                        <Subheading
+                          style={[
+                            classes.bibleTypeFontSize,
+                            {color: baseColor},
+                          ]}>
+                          {/* {item.recursive
                               ? moment(item.time).format('DD')
                               : moment(item.startDate).format('DD')} */}
-                            {moment(item.startDate).format('DD')}
-                          </Subheading>
-                        </View>
-                        <Subheading style={classes.para}>
-                          {item.title.length > 30
-                            ? item.title.substring(0, 30) + '...'
-                            : item.title}
+                          {moment(item.startDate).format('DD')}
                         </Subheading>
                       </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={this.handleSaveEvent(item._id)}>
-                      <Icon
-                        name={
-                          savedEvents.includes(item._id)
-                            ? 'heart'
-                            : 'heart-outline'
-                        }
-                        size={25}
-                        color={
-                          savedEvents.includes(item._id)
-                            ? baseColor
-                            : theme.icon
-                        }
-                      />
-                    </TouchableOpacity>
-                  </Surface>
-                )}
-              />
-            </Wrapper>
-          </SafeAreaView>
-        )}
-      </ThemeContext.Consumer>
-    );
-  }
-}
+                      <Subheading style={classes.para}>
+                        {item.title.length > 30
+                          ? item.title.substring(0, 30) + '...'
+                          : item.title}
+                      </Subheading>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => handleSaveEvent(item._id)}>
+                    <Icon
+                      name={
+                        savedEvents.includes(item._id)
+                          ? 'heart'
+                          : 'heart-outline'
+                      }
+                      size={25}
+                      color={
+                        savedEvents.includes(item._id) ? baseColor : theme.icon
+                      }
+                    />
+                  </TouchableOpacity>
+                </Surface>
+              )}
+            />
+          </Wrapper>
+        </SafeAreaView>
+      )}
+    </ThemeContext.Consumer>
+  );
+};
 
 const classes = StyleSheet.create({
   root: {
@@ -349,4 +331,13 @@ const classes = StyleSheet.create({
     textTransform: 'capitalize',
   },
 });
-export default connect(mapStateToProps)(Event);
+export default Event;
+
+{
+  /* <View style={classes.swiper}>
+              <Swiper target="event" />
+            </View> */
+}
+{
+  /* <EventComponent title="Bible study" /> */
+}

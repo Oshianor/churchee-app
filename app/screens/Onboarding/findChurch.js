@@ -19,6 +19,9 @@ import {
   countryAction,
   feedbackAction,
   accountAction,
+  eventAction,
+  sermonAction,
+  devotionAction
 } from '../../store/actions';
 import img from '../../images';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -173,6 +176,8 @@ const FindChurch = ({navigation: {navigate}, route}) => {
   };
 
   const handleCompleted = async () => {
+    dispatch(feedbackAction.launch({ loading: true }));
+
     const church = churchList.find((element) => element._id === selected);
     let churchDataList = await AsyncStorage.getItem('churchList');
     console.log('churchDataList', churchDataList);
@@ -195,9 +200,86 @@ const FindChurch = ({navigation: {navigate}, route}) => {
     await AsyncStorage.setItem("church", JSON.stringify(church));
     await AsyncStorage.setItem('churchList', JSON.stringify(churchDataList));
 
+    await getSermon(church.publicToken);
+    await getDevotion(church.publicToken);
+    await getLive(church.publicToken);
+    await getEvent(church.publicToken);
+
     dispatch(accountAction.updateChurchData(church));
     dispatch(accountAction.churchListData(churchDataList));
+
+    dispatch(feedbackAction.launch({loading: false}));
+
     navigate("Dashboard");
+
+  };
+
+
+  const getSermon = async (publicToken) => {
+    try {
+      const resSermon = await axios.get(api.sermon, {
+        headers: {publicToken},
+      });
+
+      dispatch(
+        sermonAction.setSermon({
+          sermon: resSermon.data.data,
+          total: resSermon.data.meta.total,
+          page: resSermon.data.meta.pages,
+        }),
+      );
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
+
+  const getDevotion = async (publicToken) => {
+    try {
+      const resDevotion = await axios.get(api.getDevotion, {
+        headers: {publicToken},
+      });
+      dispatch(
+        devotionAction.setDevotion({
+          data: resDevotion.data.data,
+        }),
+      );
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
+
+  const getLive = async (publicToken) => {
+    try {
+      const live = await axios.get(api.live, {
+        headers: {publicToken},
+      });
+
+      dispatch(accountAction.setAccountData({live: live.data.data}));
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
+
+  const getEvent = async (publicToken) => {
+    try {
+      const event = await axios.get(api.getEvent, {
+        headers: {publicToken},
+      });
+
+      dispatch(
+        eventAction.setEvent({
+          data: event?.data?.data,
+          total: event?.data?.meta?.total,
+          pages: event?.data?.meta?.page,
+        }),
+      );
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
   };
 
   return (

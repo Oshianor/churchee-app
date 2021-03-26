@@ -15,6 +15,7 @@ const img = {
   hymnSection: require('../assets/images/home/hymn.jpg'),
   chatSection: require('../assets/images/home/chat.png'),
   verseSection: require('../assets/images/home/daily-verse.jpg'),
+  liveSection: require('../assets/images/home/live.png'),
   bgImg: require('../assets/images/icons/logo.png'),
   tithe: require('../assets/images/tithe.jpeg'),
   findChurch: require('../assets/images/findChurch.png'),
@@ -34,6 +35,9 @@ const img = {
   user: require('../assets/images/icons/user.png'),
   GoogleIconDark: require('../assets/images/GoogleIconDark.png'),
   GoogleIconLight: require('../assets/images/GoogleIconLight.png'),
+  facebook: require('../assets/images/icons/facebook.png'),
+  instagram: require('../assets/images/icons/instagram.png'),
+  youtube: require('../assets/images/icons/youtube.png'),
 };
 
 export default img;

@@ -12,15 +12,16 @@ const Events = () => {
     <Stack.Navigator headerMode="screen">
       <Stack.Screen
         name="EventScreen"
-        options={{headerShown: false}}
+        // options={{headerShown: false}}
+        options={({route, navigation: {goBack}}) => ({
+          headerTitle: () => <Subheading>Events</Subheading>,
+        })}
         component={Event}
       />
       <Stack.Screen
         name="EventDetailScreen"
         options={({route, navigation: {goBack}}) => ({
-          headerLeft: () => (
-            <BackButton goBack={goBack} />
-          ),
+          headerLeft: () => <BackButton goBack={goBack} />,
           headerTitle: () => <Subheading>{route.params.title}</Subheading>,
         })}
         component={ViewEvent}

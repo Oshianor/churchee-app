@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
   IconButton,
   Button,
@@ -7,24 +7,19 @@ import {
 } from 'react-native-paper';
 import {View, Dimensions, StyleSheet, ScrollView, Image, Share } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {connect} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import moment from "moment"; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { api, publicToken } from "../../../../api";
+import { api } from "../../../../api";
 import Wrapper from "../../../../components/Background";
 import Video from 'react-native-video';
 import {ThemeContext} from '../../../../context/ThemeContext';
 import Axios from 'axios';
 import {Youtube, AudioPlayer} from '../../../../components/Random';
-
-
-const mapStateToProps = (state) => ({
-  account: state.account
-})
-
 const { width, height } = Dimensions.get('screen');
 
-const DailyDevotionDetails = ({ route, navigation, account }) => {
+const DailyDevotionDetails = ({ route, navigation: { navigate } }) => {
+  const { token, church: { publicToken } } = useSelector(({ account }) => account);
   const [open, setOpen] = React.useState(false);
   const [paused, setPaused] = React.useState(false);
   const [login, setLogin] = React.useState(false);
@@ -84,9 +79,9 @@ const DailyDevotionDetails = ({ route, navigation, account }) => {
   };
 
   const handleAddFavourite = async () => {
-    if (!account.token) {
+    if (!token) {
       setLogin(true) 
-      navigation.navigate('Login');
+      navigate("Onboarding", { screen: 'Login'});
 
       return
     }
@@ -97,7 +92,7 @@ const DailyDevotionDetails = ({ route, navigation, account }) => {
       },
       {
         headers: {
-          "x-auth-token": account.token,
+          "x-auth-token": token,
           publicToken
         }
       });
@@ -175,7 +170,7 @@ const DailyDevotionDetails = ({ route, navigation, account }) => {
                     icon="television"
                     mode="outlined"
                     onPress={() =>
-                      navigation.navigate('VideoPlayerScreen', {
+                      navigate("VideoPlayer", {
                         video: video,
                         title: title,
                       })
@@ -216,7 +211,7 @@ const DailyDevotionDetails = ({ route, navigation, account }) => {
   );
 }
 
-export default connect(mapStateToProps)(DailyDevotionDetails);
+export default DailyDevotionDetails;
 
 
 const classes = StyleSheet.create({

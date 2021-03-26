@@ -2,7 +2,7 @@ export const CHANGE_MODE = 'CHANGE_MODE';
 export const CHANGE_FONT_SIZE = 'CHANGE_FONT_SIZE';
 export const CHANGE_BASE_COLOR = 'CHANGE_BASE_COLOR';
 export const TOGGLE_HOME_SECTIONS = 'TOGGLE_HOME_SECTIONS';
-export const HOMEPAGE = 'HOMEPAGE';
+export const UPDATE_DATA = 'UPDATE_DATA';
 export const SET_HEADERS = "SET_HEADERS";
 export const UPDATE_USER_LOCATION = 'UPDATE_USER_LOCATION';
 
@@ -32,6 +32,11 @@ export const SELECTED_VERSE = 'SELECTED_VERSE';
 // sermon
 export const SERMON_DATA = 'SERMON_DATA'; 
 export const SERMON_CURRENT_PAGE = 'SERMON_CURRENT_PAGE'; 
+
+
+// event
+export const EVENT_DATA = 'EVENT_DATA'; 
+export const EVENT_CURRENT_PAGE = 'EVENT_CURRENT_PAGE'; 
 
 
 // feedback

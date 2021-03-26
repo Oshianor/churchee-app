@@ -138,10 +138,7 @@ class Setings extends Component {
                   </Subheading>
                 </View>
                 <View style={classes.same}>
-                  <Image
-                    source={img.usflag}
-                    style={classes.img}
-                  />
+                  <Image source={img.usflag} style={classes.img} />
                   <Subheading>English United States</Subheading>
                 </View>
               </Surface>
@@ -167,9 +164,9 @@ class Setings extends Component {
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => this.setState({color: '#59c8fa'})}>
+                    onPress={() => this.setState({color: '#4cd964'})}>
                     <View style={[classes.color, classes.option2]}>
-                      {color === '#59c8fa' && (
+                      {color === '#4cd964' && (
                         <Icon name="check" size={15} color="white" />
                       )}
                     </View>
@@ -241,7 +238,7 @@ class Setings extends Component {
                     step={1}
                     value={fontSize}
                     // onValueChange={fontSize => changeFontSize(fontSize)}
-                    onSlidingComplete={fontSize => this.setState({fontSize})}
+                    onSlidingComplete={(fontSize) => this.setState({fontSize})}
                     maximumValue={25}
                     minimumTrackTintColor={baseColor}
                     maximumTrackTintColor="#000000"

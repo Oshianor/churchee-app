@@ -11,22 +11,140 @@ import {Caption, Headline, Subheading} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {accountAction} from '../../store/actions';
+import {
+  accountAction,
+  feedbackAction,
+  devotionAction,
+  sermonAction,
+  eventAction,
+} from '../../store/actions';
 import {useDispatch, useSelector} from 'react-redux';
 import { api } from "../../api";
 import { version } from "../../../package.json";
 import {ThemeContext} from '../../context/ThemeContext';
+import axios from 'axios';
 
 
-const CustomDrawerContentComponent = ({navigation: {navigate}}) => {
+const CustomDrawerContentComponent = ({
+  navigation: {navigate, closeDrawer},
+}) => {
   const dispatch = useDispatch();
-  const {churchList, church} = useSelector(({account}) => account);
+  const {churchList, church, token} = useSelector(({account}) => account);
+
+  const changeChurch = async (item) => {
+    try {
+      if (item._id === church._id) {
+        closeDrawer();
+        return
+      }
+
+      dispatch(feedbackAction.launch({loading: true}));
+      dispatch(accountAction.updateChurchData(item));
+      await AsyncStorage.setItem("church", JSON.stringify(item));
+      
+      await getDevotion(item.publicToken);
+      await getSermon(item.publicToken);
+      await getLive(item.publicToken);
+      await getEvent(item.publicToken);
+      
+      dispatch(feedbackAction.launch({loading: false}));
+      closeDrawer();
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+      dispatch(
+        feedbackAction.launch({
+          loading: false,
+          open: true,
+          msg: 'An error occured while trying to change church space',
+          severity: "w",
+        }),
+      );
+
+    }
+  };
+
+  const getSermon = async (publicToken) => {
+    try {
+      const resSermon = await axios.get(api.sermon, {
+        headers: {publicToken}
+      });
+
+      dispatch(
+        sermonAction.setSermon({
+          sermon: resSermon.data.data,
+          total: resSermon.data.meta.total,
+          page: resSermon.data.meta.pages,
+        }),
+      );
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
+
+  const getDevotion = async (publicToken) => {
+    try {
+      const resDevotion = await axios.get(api.getDevotion, {
+        headers: {publicToken}
+      });
+      dispatch(
+        devotionAction.setDevotion({
+          data: resDevotion.data.data,
+        }),
+      );
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
+  
+
+  const getLive = async (publicToken) => {
+    try {
+      const live = await axios.get(api.live, {
+        headers: {publicToken}
+      });
+
+      dispatch(accountAction.setAccountData({live: live.data.data}));
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
+
+
+  const getEvent = async (publicToken) => {
+    try {
+      const event = await axios.get(api.getEvent, {
+        headers: {publicToken},
+      });
+
+      dispatch(
+        eventAction.setEvent({
+          data: event?.data?.data,
+          total: event?.data?.meta?.total,
+          pages: event?.data?.meta?.page,
+        }),
+      );
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
 
   return (
     <ThemeContext.Consumer>
       {({theme, baseColor}) => (
-        <SafeAreaView style={[classes.root, {backgroundColor: baseColor}]}>
-          <Headline style={classes.header}>Church Spaces</Headline>
+        <SafeAreaView
+          style={[classes.root, {backgroundColor: theme.background}]}>
+          <Headline
+            style={[
+              classes.header,
+              {color: !theme.mode ? colors.black : colors.white},
+            ]}>
+            Church Spaces
+          </Headline>
           <View style={classes.body}>
             <FlatList
               data={churchList}
@@ -35,28 +153,40 @@ const CustomDrawerContentComponent = ({navigation: {navigate}}) => {
               renderItem={({item}) => (
                 <TouchableOpacity
                   style={classes.content}
-                  onPress={() => navigate('Home')}>
+                  onPress={() => changeChurch(item)}>
                   <View style={classes.content}>
-                    <View style={classes.imageRoot}>
+                    <View
+                      style={[
+                        classes.imageRoot,
+                        {color: !theme.mode ? colors.black : colors.white},
+                      ]}>
                       <Image
                         source={{uri: api.img + item.img}}
                         style={classes.image}
                       />
                     </View>
                     <View>
-                      <Subheading style={classes.bodyText}>
+                      <Subheading
+                        style={[
+                          classes.bodyText,
+                          {color: !theme.mode ? colors.black : colors.white},
+                        ]}>
                         {item.name.length > 18
                           ? item.name.substring(0, 18) + '...'
                           : item.name}
                       </Subheading>
-                      <Caption style={classes.bodyCaption}>
+                      <Caption
+                        style={[
+                          classes.bodyCaption,
+                          {color: !theme.mode ? colors.black : colors.white},
+                        ]}>
                         {item.address.length > 35
                           ? item.address.substring(0, 35) + '...'
                           : item.address}
                       </Caption>
                     </View>
                   </View>
-                  <Icon name="chevron-right" size={20} color="white" />
+                  <Icon name="chevron-right" size={20} color={baseColor} />
                 </TouchableOpacity>
               )}
             />
@@ -64,18 +194,33 @@ const CustomDrawerContentComponent = ({navigation: {navigate}}) => {
 
           <View
             style={{bottom: 10, position: 'absolute', paddingHorizontal: 20}}>
-            <TouchableOpacity
-              style={classes.buttonRoot}
-              onPress={() => {
-                AsyncStorage.clear();
-                dispatch(accountAction.setToken(null));
-                dispatch(accountAction.setUserData(null));
-                // navigate('Onboarding');
-              }}>
-              <Icon name="logout" size={20} style={classes.buttonIcon} />
-              <Subheading style={classes.buttonText}>Logout</Subheading>
-            </TouchableOpacity>
-            <Caption style={classes.version}>v{version}</Caption>
+            {token && (
+              <TouchableOpacity
+                style={classes.buttonRoot}
+                onPress={() => {
+                  AsyncStorage.clear();
+                  dispatch(accountAction.setToken(null));
+                  dispatch(accountAction.setUserData(null));
+                  // navigate('Onboarding');
+                }}>
+                <Icon
+                  name="logout"
+                  size={20}
+                  style={classes.buttonIcon}
+                  color={baseColor}
+                />
+                <Subheading
+                  style={[
+                    classes.buttonText,
+                    {color: !theme.mode ? colors.black : colors.white},
+                  ]}>
+                  Logout
+                </Subheading>
+              </TouchableOpacity>
+            )}
+            <Caption style={[classes.version, {color: baseColor}]}>
+              v{version}
+            </Caption>
           </View>
           {/* <Logout open={open} setOpen={() => setOpen(false)} /> */}
         </SafeAreaView>
@@ -91,9 +236,7 @@ const classes = StyleSheet.create({
   },
   header: {
     marginLeft: 10,
-    color: 'white',
     fontWeight: '600',
-    // letterSpacing: 1,
     textTransform: "uppercase"
   },
   headerImg: {
@@ -113,7 +256,7 @@ const classes = StyleSheet.create({
   },
   buttonIcon: {
     marginRight: 10,
-    color: '#FFF',
+    // color: '#FFF',
   },
   buttonText: {
     color: '#FFF',
@@ -121,7 +264,6 @@ const classes = StyleSheet.create({
     fontWeight: '300',
   },
   version: {
-    color: 'white',
     opacity: 0.5,
   },
   image: {
@@ -132,7 +274,6 @@ const classes = StyleSheet.create({
     width: 60,
     height: 60,
     borderWidth: 1,
-    borderColor: 'white',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -141,13 +282,11 @@ const classes = StyleSheet.create({
     fontSize: 17,
     lineHeight: 20,
     marginLeft: 10,
-    color: 'white',
     fontWeight: '500',
   },
   bodyCaption: {
     fontSize: 10,
     lineHeight: 10,
-    color: 'white',
     fontWeight: '300',
     marginLeft: 10,
   },

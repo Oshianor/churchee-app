@@ -7,6 +7,7 @@ import sermon from './sermon';
 import setting from './setting';
 import feedback from './feedback';
 import country from './country';
+import event from './event';
 
 const appReducer = combineReducers({
   account,
@@ -17,6 +18,7 @@ const appReducer = combineReducers({
   setting,
   feedback,
   country,
+  event,
 });
 
 export default appReducer;

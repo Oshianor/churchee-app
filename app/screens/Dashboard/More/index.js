@@ -144,7 +144,7 @@ const MoreScreen = ({ navigation: { navigate } }) => {
               <Icon name="chevron-right" color={theme.icon} size={25} />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => navigate('SettingScreen')}
+              onPress={() => navigate('More', {screen: 'SettingScreen'})}
               style={classes.surface}>
               <View style={classes.left}>
                 <Icon
