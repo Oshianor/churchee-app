@@ -89,8 +89,8 @@ const Register = ({navigation: {navigate, goBack}}) => {
       const church = await AsyncStorage.getItem('church');
       await AsyncStorage.setItem('token', JSON.stringify(login.headers['x-auth-token']));
       await AsyncStorage.setItem('user', JSON.stringify(login.data.data));
-      dispatch(accountAction.updateToken(login.headers['x-auth-token']));
-      dispatch(accountAction.updateUserData(login.data.data));
+      dispatch(accountAction.setToken(login.headers['x-auth-token']));
+      dispatch(accountAction.setUserData(login.data.data));
 
       setValue({
         email: '',
@@ -108,7 +108,7 @@ const Register = ({navigation: {navigate, goBack}}) => {
 
 
       if (church) {
-        dispatch(accountAction.updateChurchData(JSON.parse(church)));
+        dispatch(churchAction.setChurchData(JSON.parse(church)));
         navigate('Dashboard');
       } else {
         navigate('FindChurch');

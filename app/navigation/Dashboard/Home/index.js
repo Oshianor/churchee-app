@@ -12,7 +12,7 @@ const Stack = createStackNavigator();
 
 
 const Navigation = () => {
-  const {church} = useSelector(({account}) => account);
+  const {church} = useSelector(({church}) => church);
   return (
     <ThemeContext.Consumer>
       {({theme, baseColor}) => (

@@ -76,7 +76,7 @@ class ProfileEdit extends Component {
 
   handleProfileDetailsUpdate = async () => {
     const {fullName, bio, token} = this.state;
-    const {account, updateUserData} = this.props;
+    const {account, setUserData} = this.props;
 
     Keyboard.dismiss();
     this.handleClose();
@@ -106,7 +106,7 @@ class ProfileEdit extends Component {
         headers: {'x-auth-token': token, publicToken},
       });
 
-      // updateUserData(user.data);
+      // setUserData(user.data);
       await AsyncStorage.setItem('user', JSON.stringify(user.data));
 
     } catch (error) {
@@ -123,7 +123,7 @@ class ProfileEdit extends Component {
 
   handlePasswordChange = async () => {
     const {currentPassword, newPassword, confirmNewPassword} = this.state;
-    const {account, navigation, updateToken, updateRefreshToken} = this.props;
+    const {account, navigation, setToken, updateRefreshToken} = this.props;
 
     Keyboard.dismiss();
     this.handleClose();
@@ -186,7 +186,7 @@ class ProfileEdit extends Component {
 
           console.log('backup', backup);
 
-          // updateToken(null);
+          // setToken(null);
           // updateRefreshToken(null);
           await AsyncStorage.removeItem('token');
           await AsyncStorage.removeItem('refreshToken');

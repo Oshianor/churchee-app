@@ -14,7 +14,7 @@ import {Platform, PermissionsAndroid} from 'react-native';
 import axios from 'axios';
 import {api} from './api';
 import {ThemeContext} from "./context/ThemeContext";
-import { accountAction } from "./store/actions"
+import {accountAction, churchAction} from './store/actions';
 import {navigationRef} from './RootNavigation';
 import * as RootNavigation from './RootNavigation';
 import SplashScreen from 'react-native-splash-screen';
@@ -48,8 +48,8 @@ const StartUp = () => {
 
     console.log('Uncut churchList', churchList);
     if (church) {
-      dispatch(accountAction.updateChurchData(JSON.parse(church)));
-      dispatch(accountAction.churchListData(JSON.parse(churchList)));
+      dispatch(churchAction.setChurchData({church: JSON.parse(church)}));
+      dispatch(churchAction.setChurchData({churchList: JSON.parse(churchList)}));
     } else {
       RootNavigation.navigate('Onboarding', {screen: 'FindChurch'});
     }
@@ -58,8 +58,8 @@ const StartUp = () => {
   const getUser = async () => {
     const token = await AsyncStorage.getItem('token');
     const user = await AsyncStorage.getItem('user');
-    dispatch(accountAction.updateToken(token));
-    dispatch(accountAction.updateUserData(JSON.parse(user)));
+    dispatch(accountAction.setToken(token));
+    dispatch(accountAction.setUserData(JSON.parse(user)));
   };
 
   const getLive = async () => {
@@ -106,7 +106,7 @@ const StartUp = () => {
         console.log('position', position);
 
         dispatch(
-          accountAction.setLocation({
+          accountAction.setAccountData({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           }),

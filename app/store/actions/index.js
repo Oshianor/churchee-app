@@ -8,6 +8,7 @@ import sermonAction from './sermon';
 import countryAction from './country';
 import eventAction from './event';
 import PRAction from './pr';
+import churchAction from './church';
 
 export {
   accountAction,
@@ -20,4 +21,5 @@ export {
   countryAction,
   eventAction,
   PRAction,
+  churchAction,
 };

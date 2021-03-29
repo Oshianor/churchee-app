@@ -1,24 +1,18 @@
 export const CHANGE_MODE = 'CHANGE_MODE';
 export const CHANGE_FONT_SIZE = 'CHANGE_FONT_SIZE';
 export const CHANGE_BASE_COLOR = 'CHANGE_BASE_COLOR';
-export const TOGGLE_HOME_SECTIONS = 'TOGGLE_HOME_SECTIONS';
-export const UPDATE_DATA = 'UPDATE_DATA';
-export const SET_HEADERS = "SET_HEADERS";
-export const UPDATE_USER_LOCATION = 'UPDATE_USER_LOCATION';
 
 // account
 export const UPDATE_USER_DATA = 'UPDATE_USER_DATA';
 export const UPDATE_AUTH_TOKEN = 'UPDATE_AUTH_TOKEN';
-export const UPDATE_AUTH_REFRESH_TOKEN = 'UPDATE_AUTH_REFRESH_TOKEN';
-export const UPDATE_CHURCH_DATA = 'UPDATE_CHURCH_DATA';
-export const CHURCH_LIST_DATA = 'CHURCH_LIST_DATA';
+export const UPDATE_ACCOUNT_DATA = 'UPDATE_ACCOUNT_DATA';
 
+// church
+export const CHURCH_DATA = 'CHURCH_DATA';
 
+//media
 export const MEDIA_DATA = 'MEDIA_DATA';
 export const MEDIA_CURRENT_PAGE = 'MEDIA_CURRENT_PAGE'; 
-
-export const DEVOTION_DATA = 'DEVOTION_DATA';
-
 
 
 // bible
@@ -51,4 +45,3 @@ export const DISMISS_FEEDBACK = 'DISMISS_FEEDBACK';
 
 // country
 export const COUNTRY_DATA = 'COUNTRY_DATA';
-export const STATE_DATA = 'STATE_DATA';

@@ -22,8 +22,8 @@ const ProfileHome = ({navigation: {navigate}}) => {
 
   const handleLogOut = async () => {
     try {
-      dispatch(accountAction.updateToken(null));
-      dispatch(accountAction.updateUserData(null));
+      dispatch(accountAction.setToken(null));
+      dispatch(accountAction.setUserData(null));
 
       // // save backup that where added to the phone database when the user wasn't authenticated
       // const backup = await Axios.put(
@@ -36,8 +36,8 @@ const ProfileHome = ({navigation: {navigate}}) => {
       //   {headers: {'x-auth-token': token}},
       // );
 
-      // updateUserData(null);
-      // updateToken(null);
+      // setUserData(null);
+      // setToken(null);
 
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('user');

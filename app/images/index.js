@@ -38,6 +38,7 @@ const img = {
   facebook: require('../assets/images/icons/facebook.png'),
   instagram: require('../assets/images/icons/instagram.png'),
   youtube: require('../assets/images/icons/youtube.png'),
+  churchFind: require('../assets/images/churchFind.png'),
 };
 
 export default img;

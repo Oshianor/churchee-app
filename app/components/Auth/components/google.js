@@ -43,8 +43,8 @@ const Google = () => {
 
       console.log('create', create);
 
-      dispatch(accountAction.updateToken(create.headers['x-auth-token']));
-      dispatch(accountAction.updateUserData(create.data.data));
+      dispatch(accountAction.setToken(create.headers['x-auth-token']));
+      dispatch(accountAction.setUserData(create.data.data));
 
       await AsyncStorage.setItem('token', create.headers['x-auth-token']);
       await AsyncStorage.setItem('user', JSON.stringify(create.data.data));

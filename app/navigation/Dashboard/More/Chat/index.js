@@ -18,7 +18,7 @@ const Tab = createMaterialTopTabNavigator();
 const Room = () => {
     const {
       church: {name},
-    } = useSelector(({account}) => account);
+    } = useSelector(({church}) => church);
   return (
     <Stack.Navigator initialRouteName="ChatTabs">
       <Stack.Screen

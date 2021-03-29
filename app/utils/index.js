@@ -68,3 +68,16 @@ export const AsyncForEach = async (array, callback) => {
     await callback(array[index], index);
   }
 };
+
+  
+  
+export const moveElement = (arr, oldIndex, newIndex) => {
+    if (newIndex >= arr.length) {
+      const k = newIndex - arr.length + 1;
+      while (k--) {
+          arr.push(undefined);
+      }
+    }
+    arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
+    return arr; // for testing
+};

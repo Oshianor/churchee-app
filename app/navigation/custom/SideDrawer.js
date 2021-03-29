@@ -18,6 +18,7 @@ import {
   sermonAction,
   eventAction,
   PRAction,
+  churchAction,
 } from '../../store/actions';
 import {useDispatch, useSelector} from 'react-redux';
 import { api } from "../../api";
@@ -30,7 +31,8 @@ const CustomDrawerContentComponent = ({
   navigation: {navigate, closeDrawer},
 }) => {
   const dispatch = useDispatch();
-  const {churchList, church, token} = useSelector(({account}) => account);
+  const {churchList, church} = useSelector(({church}) => church);
+  const {token} = useSelector(({account}) => account);
 
   const changeChurch = async (item) => {
     try {
@@ -40,7 +42,7 @@ const CustomDrawerContentComponent = ({
       }
 
       dispatch(feedbackAction.launch({loading: true}));
-      dispatch(accountAction.updateChurchData(item));
+      dispatch(churchAction.setChurchData(item));
       await AsyncStorage.setItem("church", JSON.stringify(item));
       
       await getDevotion(item.publicToken);
@@ -220,8 +222,8 @@ const CustomDrawerContentComponent = ({
                 style={classes.buttonRoot}
                 onPress={() => {
                   AsyncStorage.clear();
-                  dispatch(accountAction.updateToken(null));
-                  dispatch(accountAction.updateUserData(null));
+                  dispatch(accountAction.setToken(null));
+                  dispatch(accountAction.setUserData(null));
                   navigate('Onboarding');
                 }}>
                 <Icon
@@ -258,7 +260,7 @@ const classes = StyleSheet.create({
   header: {
     marginLeft: 10,
     fontWeight: '600',
-    textTransform: "uppercase"
+    textTransform: 'uppercase',
   },
   headerImg: {
     height: 33.08,
@@ -267,7 +269,7 @@ const classes = StyleSheet.create({
   body: {
     // backgroundColor: colors.primary.main,
     paddingHorizontal: 10,
-    marginVertical: 20
+    marginVertical: 20,
   },
   buttonRoot: {
     flexDirection: 'row',
@@ -290,10 +292,11 @@ const classes = StyleSheet.create({
   image: {
     width: 55,
     height: 55,
+    borderRadius: 10,
   },
   imageRoot: {
-    width: 60,
-    height: 60,
+    width: 55,
+    height: 55,
     borderWidth: 1,
     borderRadius: 10,
     justifyContent: 'center',
@@ -312,10 +315,10 @@ const classes = StyleSheet.create({
     marginLeft: 10,
   },
   content: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginVertical: 5
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 5,
   },
 });
 

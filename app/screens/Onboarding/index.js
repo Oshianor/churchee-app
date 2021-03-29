@@ -70,8 +70,8 @@ const Login = ({navigation: {navigate, goBack}}) => {
       await AsyncStorage.setItem('token', JSON.stringify(login.headers['x-auth-token']));
       await AsyncStorage.setItem('user', JSON.stringify(login.data.data));
 
-      dispatch(accountAction.updateToken(login.headers['x-auth-token']));
-      dispatch(accountAction.updateUserData(login.data.data));
+      dispatch(accountAction.setToken(login.headers['x-auth-token']));
+      dispatch(accountAction.setUserData(login.data.data));
 
       dispatch(
         feedbackAction.launch({

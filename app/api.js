@@ -1,8 +1,8 @@
-export const baseUrl = 'https://api.churchee.app/api/v1';
+// export const baseUrl = 'https://api.churchee.app/api/v1';
 export const webiste = 'https://api.churchee.app';
 export const chatService =
   'http://ec2-18-218-125-237.us-east-2.compute.amazonaws.com:8080';
-// const baseUrl = 'http://localhost:9090/api/v1';
+const baseUrl = 'http://localhost:9090/api/v1';
 
 
 export const api = {
@@ -18,7 +18,6 @@ export const api = {
   localImg: baseUrl + '/user/img/',
   img: 'https://dlvr7v2twt32x.cloudfront.net/',
   backups: baseUrl + '/backups',
-  refreshToken: baseUrl + '/auth/refreshToken/mobile',
   createAcctMethod: baseUrl + '/user/member/source',
   emailExist: baseUrl + '/email',
   sermon: baseUrl + '/sermon/member',
@@ -51,6 +50,7 @@ export const api = {
   country: baseUrl + '/country',
   church: baseUrl + '/user/find-church',
   getAllMembers: baseUrl + '/user/all/members',
+  searchChurch: `${baseUrl}/user/search-church`,
 
   // room service
   createRoom: `${chatService}/api/v1/room/create`,
