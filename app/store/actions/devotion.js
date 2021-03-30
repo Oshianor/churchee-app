@@ -1,9 +1,9 @@
 import {DEVOTION_DATA} from '../types';
 
-const setDevotion = (data) => {
+const setDevotion = (payload) => {
   return {
     type: DEVOTION_DATA,
-    payload: data,
+    payload,
   };
 };
 

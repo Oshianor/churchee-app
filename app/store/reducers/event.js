@@ -11,9 +11,7 @@ export default (state = initialstate, action) => {
   switch (action.type) {
     case EVENT_DATA:
       return Object.assign({}, state, {
-        data: action.payload.data,
-        page: action.payload.pages,
-        total: action.payload.total,
+        ...action.payload
       });
     case EVENT_CURRENT_PAGE:
       return Object.assign({}, state, {

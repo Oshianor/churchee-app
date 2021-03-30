@@ -25,6 +25,5 @@ const classes = StyleSheet.create({
     fontSize: 18,
     lineHeight: 22,
     fontWeight: "700",
-    color: colors.white
   },
 });

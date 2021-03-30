@@ -50,7 +50,7 @@ const CreateRoom = ({navigation: {navigate}}) => {
           loading: false,
         }),
       );
-      navigate('AddModerator');
+      navigate('AddModerator', );
     } catch (error) {
       dispatch(
         feedbackAction.launch({

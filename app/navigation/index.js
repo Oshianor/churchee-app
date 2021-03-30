@@ -24,7 +24,7 @@ const Navigation = () => {
   const { width } = useWindowDimensions();
   return (
     <Drawer.Navigator
-      initialRouteName="Dashboard"
+      initialRouteName="Onboarding"
       headerMode="screen"
       drawerContent={(props) => <SideDrawer {...props} />}
       drawerType={width >= 768 ? 'permanent' : 'slide'}

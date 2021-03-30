@@ -9,6 +9,7 @@ import countryAction from './country';
 import eventAction from './event';
 import PRAction from './pr';
 import churchAction from './church';
+import chatAction from './chat';
 
 export {
   accountAction,
@@ -22,4 +23,5 @@ export {
   eventAction,
   PRAction,
   churchAction,
+  chatAction,
 };

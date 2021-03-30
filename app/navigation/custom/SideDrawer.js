@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   FlatList,
 } from 'react-native';
-import {Caption, Headline, Subheading} from 'react-native-paper';
+import {Caption, Headline, Subheading, Surface} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,12 +19,15 @@ import {
   eventAction,
   PRAction,
   churchAction,
+  mediaAction,
 } from '../../store/actions';
 import {useDispatch, useSelector} from 'react-redux';
 import { api } from "../../api";
 import { version } from "../../../package.json";
 import {ThemeContext} from '../../context/ThemeContext';
 import axios from 'axios';
+import {moveElement} from '../../utils';
+
 
 
 const CustomDrawerContentComponent = ({
@@ -42,17 +45,24 @@ const CustomDrawerContentComponent = ({
       }
 
       dispatch(feedbackAction.launch({loading: true}));
-      dispatch(churchAction.setChurchData(item));
+      resetData();
+      closeDrawer();
+
+      const elementPos = churchList
+        .map((x) => {
+          x._id === item._id;
+          return x._id;
+        })
+        .indexOf();
+      const newChurchArr = moveElement(churchList, elementPos, 0);
+
+      dispatch(
+        churchAction.setChurchData({church: item, churchList: newChurchArr}),
+      );
       await AsyncStorage.setItem("church", JSON.stringify(item));
-      
-      await getDevotion(item.publicToken);
-      await getSermon(item.publicToken);
-      await getLive(item.publicToken);
-    await getPR(item.publicToken);
-    await getEvent(item.publicToken);
+      await AsyncStorage.setItem('churchList', JSON.stringify(newChurchArr));
       
       dispatch(feedbackAction.launch({loading: false}));
-      closeDrawer();
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);
@@ -66,62 +76,19 @@ const CustomDrawerContentComponent = ({
       );
 
     }
-  };
 
-  const getPR = async (publicToken) => {
-    try {
-      const pray = await axios.get(api.getPRWall, {
-        headers: {publicToken},
-      });
+    await getLive(item.publicToken);
 
-      dispatch(
-        PRAction.setPR({
-          data: pray.data.data,
-          total: pray.data.meta.total,
-          page: pray.data.meta.page,
-        }),
-      );
-    } catch (error) {
-      // console.log('error', error);
-      // console.log('error', error.response);
-    }
-  };
-
-  const getSermon = async (publicToken) => {
-    try {
-      const resSermon = await axios.get(api.sermon, {
-        headers: {publicToken}
-      });
-
-      dispatch(
-        sermonAction.setSermon({
-          sermon: resSermon.data.data,
-          total: resSermon.data.meta.total,
-          page: resSermon.data.meta.pages,
-        }),
-      );
-    } catch (error) {
-      console.log('error', error);
-      console.log('error', error.response);
-    }
-  };
-
-  const getDevotion = async (publicToken) => {
-    try {
-      const resDevotion = await axios.get(api.getDevotion, {
-        headers: {publicToken}
-      });
-      dispatch(
-        devotionAction.setDevotion({
-          data: resDevotion.data.data,
-        }),
-      );
-    } catch (error) {
-      console.log('error', error);
-      console.log('error', error.response);
-    }
   };
   
+  const resetData = () => {
+    // remove all the data for all service
+    dispatch(eventAction.setEvent({data: [], page: 0, total: 0}));
+    dispatch(devotionAction.setDevotion({data: [], page: 0, total: 0}));
+    dispatch(sermonAction.setSermon({data: [], page: 0, total: 0}));
+    dispatch(PRAction.setPR({data: [], page: 0, total: 0}));
+    dispatch(mediaAction.setMedia({data: [], page: 0, total: 0}));
+  };
 
   const getLive = async (publicToken) => {
     try {
@@ -136,39 +103,17 @@ const CustomDrawerContentComponent = ({
     }
   };
 
-
-  const getEvent = async (publicToken) => {
-    try {
-      const event = await axios.get(api.getEvent, {
-        headers: {publicToken},
-      });
-
-      dispatch(
-        eventAction.setEvent({
-          data: event?.data?.data,
-          total: event?.data?.meta?.total,
-          pages: event?.data?.meta?.page,
-        }),
-      );
-    } catch (error) {
-      console.log('error', error);
-      console.log('error', error.response);
-    }
-  };
-
   return (
     <ThemeContext.Consumer>
       {({theme, baseColor}) => (
-        <SafeAreaView
-          style={[classes.root, {backgroundColor: theme.background}]}>
-          <Headline
-            style={[
-              classes.header,
-              {color: !theme.mode ? colors.black : colors.white},
-            ]}>
-            Church Spaces
-          </Headline>
-          <View style={classes.body}>
+        <SafeAreaView style={[classes.root, {backgroundColor: baseColor}]}>
+          <View style={[classes.headerRoot]}>
+            <Headline style={[classes.header, {color: colors.white}]}>
+              Churches
+            </Headline>
+          </View>
+
+          <Surface style={classes.body}>
             <FlatList
               data={churchList}
               extraData={church}
@@ -178,6 +123,17 @@ const CustomDrawerContentComponent = ({
                   style={classes.content}
                   onPress={() => changeChurch(item)}>
                   <View style={classes.content}>
+                    {church._id === item._id ? (
+                      <View
+                        style={[
+                          classes.border,
+                          {borderColor: baseColor, backgroundColor: baseColor},
+                        ]}
+                      />
+                    ) : (
+                      <View style={[classes.space]} />
+                    )}
+
                     <View
                       style={[
                         classes.imageRoot,
@@ -203,17 +159,18 @@ const CustomDrawerContentComponent = ({
                           classes.bodyCaption,
                           {color: !theme.mode ? colors.black : colors.white},
                         ]}>
-                        {item.address.length > 35
+                        {/* {item.address.length > 35
                           ? item.address.substring(0, 35) + '...'
-                          : item.address}
+                          : item.address} */}
+                        {`${item.state}, ${item.country}`}
                       </Caption>
                     </View>
                   </View>
-                  <Icon name="chevron-right" size={20} color={baseColor} />
+                  {/* <Icon name="chevron-right" size={20} color={baseColor} /> */}
                 </TouchableOpacity>
               )}
             />
-          </View>
+          </Surface>
 
           <View
             style={{bottom: 10, position: 'absolute', paddingHorizontal: 20}}>
@@ -241,7 +198,7 @@ const CustomDrawerContentComponent = ({
                 </Subheading>
               </TouchableOpacity>
             )}
-            <Caption style={[classes.version, {color: baseColor}]}>
+            <Caption style={[classes.version, {color: colors.white}]}>
               v{version}
             </Caption>
           </View>
@@ -257,19 +214,27 @@ const classes = StyleSheet.create({
     flex: 1,
     // backgroundColor: colors.primary.main,
   },
+  headerRoot: {
+    flex: 1,
+    justifyContent: "flex-end",
+    // alignItems: "center"
+  },
   header: {
     marginLeft: 10,
     fontWeight: '600',
     textTransform: 'uppercase',
+    paddingVertical: 10
   },
   headerImg: {
     height: 33.08,
     width: 149,
   },
   body: {
+    flex: 9,
     // backgroundColor: colors.primary.main,
-    paddingHorizontal: 10,
-    marginVertical: 20,
+    // paddingHorizontal: 10,
+    paddingVertical: 20,
+    elevation: 0
   },
   buttonRoot: {
     flexDirection: 'row',
@@ -290,26 +255,24 @@ const classes = StyleSheet.create({
     opacity: 0.5,
   },
   image: {
-    width: 55,
-    height: 55,
-    borderRadius: 10,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
   },
   imageRoot: {
-    width: 55,
-    height: 55,
-    borderWidth: 1,
-    borderRadius: 10,
+    width: 60,
+    height: 60,
     justifyContent: 'center',
     alignItems: 'center',
   },
   bodyText: {
-    fontSize: 17,
+    fontSize: 18,
     lineHeight: 20,
     marginLeft: 10,
     fontWeight: '500',
   },
   bodyCaption: {
-    fontSize: 10,
+    fontSize: 12,
     lineHeight: 10,
     fontWeight: '300',
     marginLeft: 10,
@@ -319,6 +282,17 @@ const classes = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginVertical: 5,
+  },
+  border: {
+    width: 5,
+    height: 60,
+    borderWidth: 1,
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15,
+    marginRight: 15,
+  },
+  space: {
+    marginRight: 20,
   },
 });
 

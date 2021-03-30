@@ -37,7 +37,7 @@ const Register = ({navigation: {navigate, goBack}}) => {
   const {loading} = useSelector(({feedback}) => feedback);
   const [value, setValue] = React.useState({
     name: 'Josh welback',
-    email: 'same@gmail.com',
+    email: 'abundanceoshianor@gmail.com',
     password: 'opendoor12345',
   });
 
@@ -85,12 +85,14 @@ const Register = ({navigation: {navigate, goBack}}) => {
       });
 
       console.log('login', login);
+
+      navigate('Verification', { ...value });
       
-      const church = await AsyncStorage.getItem('church');
-      await AsyncStorage.setItem('token', JSON.stringify(login.headers['x-auth-token']));
-      await AsyncStorage.setItem('user', JSON.stringify(login.data.data));
-      dispatch(accountAction.setToken(login.headers['x-auth-token']));
-      dispatch(accountAction.setUserData(login.data.data));
+      // const church = await AsyncStorage.getItem('church');
+      // await AsyncStorage.setItem('token', JSON.stringify(login.headers['x-auth-token']));
+      // await AsyncStorage.setItem('user', JSON.stringify(login.data.data));
+      // dispatch(accountAction.setToken(login.headers['x-auth-token']));
+      // dispatch(accountAction.setUserData(login.data.data));
 
       setValue({
         email: '',
@@ -107,12 +109,12 @@ const Register = ({navigation: {navigate, goBack}}) => {
       );
 
 
-      if (church) {
-        dispatch(churchAction.setChurchData(JSON.parse(church)));
-        navigate('Dashboard');
-      } else {
-        navigate('FindChurch');
-      }
+      // if (church) {
+      //   dispatch(churchAction.setChurchData(JSON.parse(church)));
+      //   navigate('Dashboard');
+      // } else {
+      //   navigate('FindChurch');
+      // }
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);

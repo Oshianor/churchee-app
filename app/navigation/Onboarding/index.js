@@ -2,11 +2,11 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Subheading} from 'react-native-paper';
 import BackButton from "../custom/BackButton";
-import {useSelector} from 'react-redux';
 const Stack = createStackNavigator();
 
 import Login from '../../screens/Onboarding';
 import Register from '../../screens/Onboarding/register';
+import Verification from '../../screens/Onboarding/verification';
 import Forgot from '../../screens/Onboarding/forgot';
 import FindChurch from '../../screens/Onboarding/findChurch';
 import SearchChurch from "../../screens/Onboarding/searchChurch"
@@ -15,10 +15,9 @@ import StateList from '../../screens/Onboarding/stateList';
 
 
 const Navigation = () => {
-  const {church} = useSelector(({account}) => account);
 
   return (
-    <Stack.Navigator initialRouteName="Login" headerMode="screen">
+    <Stack.Navigator initialRouteName="FindChurch" headerMode="screen">
       <Stack.Screen
         name="Login"
         options={{headerShown: false}}
@@ -28,6 +27,15 @@ const Navigation = () => {
         name="Register"
         options={{headerShown: false}}
         component={Register}
+      />
+      <Stack.Screen
+        name="Verification"
+        // options={{headerShown: false}}
+        options={({route, navigation: {goBack}}) => ({
+          headerLeft: () => <BackButton goBack={goBack} />,
+          headerTitle: () => null
+        })}
+        component={Verification}
       />
       <Stack.Screen
         name="Forgot"

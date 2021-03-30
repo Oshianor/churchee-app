@@ -10,24 +10,33 @@ import { useNavigation } from "@react-navigation/native";
 import img from "../../../images"
 import Icon from 'react-native-vector-icons/MaterialIcons';
 const {width, height} = Dimensions.get('screen');
+import {ThemeContext} from '../../../context/ThemeContext';
 
 
 const Box = ({title, name, route, imgStyle, onPress, disabled}) => {
   const {navigate} = useNavigation();
   const routed = () => navigate(route);
   return (
-    <TouchableOpacity disabled={disabled} onPress={onPress ?? routed}>
-      <Surface style={classes.surface}>
-        {name === 'liveSection' && !disabled ? (
-          <ImageBackground style={classes.imgBack} source={img[name]}>
-            <Icon name="play-circle-outline" size={40} style={classes.icon} />
-          </ImageBackground>
-        ) : (
-          <Card.Cover style={[classes.img, imgStyle]} source={img[name]} />
-        )}
-      </Surface>
-      <Subheading>{title}</Subheading>
-    </TouchableOpacity>
+    <ThemeContext.Consumer>
+      {({theme}) => (
+        <TouchableOpacity disabled={disabled} onPress={onPress ?? routed}>
+          <Surface style={classes.surface}>
+            {name === 'liveSection' && !disabled ? (
+              <ImageBackground style={classes.imgBack} source={img[name]}>
+                <Icon
+                  name="play-circle-outline"
+                  size={40}
+                  style={classes.icon}
+                />
+              </ImageBackground>
+            ) : (
+              <Card.Cover style={[classes.img, imgStyle]} source={img[`${name}-${theme.mode ? 'dark' : 'light'}`]} />
+            )}
+          </Surface>
+          <Subheading>{title}</Subheading>
+        </TouchableOpacity>
+      )}
+    </ThemeContext.Consumer>
   );
 };
 

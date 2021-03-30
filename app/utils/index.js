@@ -72,12 +72,13 @@ export const AsyncForEach = async (array, callback) => {
   
   
 export const moveElement = (arr, oldIndex, newIndex) => {
-    if (newIndex >= arr.length) {
-      const k = newIndex - arr.length + 1;
+    const freshArr = [...arr];
+    if (newIndex >= freshArr.length) {
+      const k = newIndex - freshArr.length + 1;
       while (k--) {
-          arr.push(undefined);
+          freshArr.push(undefined);
       }
     }
-    arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
-    return arr; // for testing
+    freshArr.splice(newIndex, 0, freshArr.splice(oldIndex, 1)[0]);
+    return freshArr; // for testing
 };

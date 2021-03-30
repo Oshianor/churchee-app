@@ -74,9 +74,9 @@ class Give extends Component {
         {({theme, baseColor}) => (
           <SafeAreaView
             style={[classes.root, {backgroundColor: theme.background}]}>
-            <View style={classes.swiper}>
+            {/* <View style={classes.swiper}>
               <Swiper target="give" />
-            </View>
+            </View> */}
             <WrapperComponent>
               <ScrollView contentContainerStyle={classes.body}>
                 <View style={classes.rootView}>

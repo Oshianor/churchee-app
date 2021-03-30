@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {ThemeContext} from '../../context/ThemeContext';
 import Wrapper from "../../components/Background"
-import {Header, Swiper} from '../../components/Card';
+import {Header} from '../../components/Card';
 import { DailyVerse, Live } from '../../components/Modal';
 import {useSelector, useDispatch} from 'react-redux';
 import { feedbackAction } from "../../store/actions"
@@ -48,55 +48,52 @@ const Home = ({navigation: {navigate}}) => {
 
   return (
     <ThemeContext.Consumer>
-      {({theme, baseColor}) => (
+      {({theme}) => (
         <SafeAreaView
           style={[classes.root, {backgroundColor: theme.background}]}>
-          {/* <View style={classes.swiper}>
-            <Swiper target="home" />
-          </View> */}
           <Wrapper>
             <ScrollView contentContainerStyle={classes.body}>
               <View style={classes.rootView}>
                 <View style={classes.section}>
                   <Header
                     title="Live"
-                    name="liveSection"
+                    name="live"
                     disabled={!live}
                     onPress={() => setOpen('live')}
                   />
                   <Header
                     title="Daily Verse"
-                    name="verseSection"
+                    name="dailyVerse"
                     onPress={() => handleData()}
                   />
                 </View>
 
                 <View style={classes.section}>
-                  <Header title="Sermon" name="sermonSection" route="Sermon" />
+                  <Header title="Sermon" name="sermon" route="Sermon" />
                   <Header
                     title="Devotion"
-                    name="devotionSection"
+                    name="devotion"
                     route="Devotion"
                   />
                 </View>
 
                 <View style={classes.section}>
-                  <Header title="Event" name="eventSection" route="Event" />
-                  <Header title="Media" name="mediaSection" route="Media" />
+                  <Header title="Event" name="event" route="Event" />
+                  <Header title="Media" name="media" route="Media" />
                 </View>
 
                 <View style={classes.section}>
                   <Header
                     title="Prayer Wall"
-                    name="prayerSection"
+                    name="prayer"
                     route="PrayerRequest"
                   />
-                  <Header title="Give" name="giveSection" route="Give" />
+                  <Header title="Give" name="give" route="Give" />
                 </View>
 
                 <View style={classes.section}>
-                  {/* <Header title="Form" name="formSection" route="Form" /> */}
-                  <Header title="Hymn" name="hymnSection" route="Hymn" />
+                  <Header title="Form" name="form" route="Form" />
+                  <Header title="Hymn" name="hymn" route="Hymn" />
                 </View>
               </View>
             </ScrollView>

@@ -48,8 +48,13 @@ const StartUp = () => {
 
     console.log('Uncut churchList', churchList);
     if (church) {
-      dispatch(churchAction.setChurchData({church: JSON.parse(church)}));
-      dispatch(churchAction.setChurchData({churchList: JSON.parse(churchList)}));
+      dispatch(
+        churchAction.setChurchData({
+          church: JSON.parse(church),
+          churchList: JSON.parse(churchList),
+        }),
+      );
+      RootNavigation.navigate('Dashboard');
     } else {
       RootNavigation.navigate('Onboarding', {screen: 'FindChurch'});
     }
@@ -65,11 +70,14 @@ const StartUp = () => {
   const getLive = async () => {
     try {
       let church = await AsyncStorage.getItem('church');
+      
+      if (!church) return;
+
       church = JSON.parse(church);
       console.log('church', church);
 
       const live = await axios.get(api.live, {
-        headers: {publicToken: church.publicToken},
+        headers: {publicToken: church?.publicToken},
       });
 
       console.log('live', live);

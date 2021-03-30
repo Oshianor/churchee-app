@@ -11,9 +11,7 @@ export default (state = initialstate, action) => {
   switch (action.type) {
     case MEDIA_DATA:
       return Object.assign({}, state, {
-        data: action.payload.data,
-        page: action.payload.meta.pages,
-        total: action.payload.meta.total,
+        ...action.payload,
       });
     case MEDIA_CURRENT_PAGE:
       return Object.assign({}, state, {

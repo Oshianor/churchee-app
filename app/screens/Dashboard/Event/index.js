@@ -27,7 +27,7 @@ const Event = ({navigation: {navigate}}) => {
   const {
     church: {publicToken},
     token,
-  } = useSelector(({account}) => account);
+  } = useSelector(({church}) => church);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [savedEvents, setSavedEvents] = React.useState([]);
@@ -36,17 +36,6 @@ const Event = ({navigation: {navigate}}) => {
     getSaved();
     handleData();
   }, []);
-
-  // state = {
-  //   loading: true,
-  //   isRefreshing: false,
-  //   pages: 1,
-  //   total: 0,
-  //   pageNumber: 1,
-  //   data: [],
-  //   savedEvents: [],
-  //   login: false
-  // };
 
   const getSaved = async () => {
     try {

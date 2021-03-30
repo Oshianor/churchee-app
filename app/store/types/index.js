@@ -45,3 +45,9 @@ export const DISMISS_FEEDBACK = 'DISMISS_FEEDBACK';
 
 // country
 export const COUNTRY_DATA = 'COUNTRY_DATA';
+
+// chat
+export const UPDATE_CHAT_DATA = 'UPDATE_CHAT_DATA';
+
+// devotion
+export const DEVOTION_DATA = 'DEVOTION_DATA';

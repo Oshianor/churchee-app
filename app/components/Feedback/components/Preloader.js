@@ -5,23 +5,28 @@ import {colors} from '../../../theme';
 import { Button } from '../../Button';
 import {useSelector, useDispatch} from 'react-redux';
 import {feedbackAction} from '../../../store/actions';
+import {ThemeContext} from '../../../context/ThemeContext';
 
 const Preloader = () => {
   const {loading, onRequestClose, failed, retryAction} = useSelector(({feedback}) => feedback);
   return (
-    <Modal
-      visible={loading}
-      onRequestClose={onRequestClose}
-      animationType="slide"
-      transparent>
-      <View style={styles.modal}>
-        {!failed ? (
-          <ActivityIndicator size="large" color={colors.primary.main} />
-        ) : (
-          <Button label="Reload" onPress={retryAction} />
-        )}
-      </View>
-    </Modal>
+    <ThemeContext.Consumer>
+      {({baseColor}) => (
+        <Modal
+          visible={loading}
+          onRequestClose={onRequestClose}
+          animationType="slide"
+          transparent>
+          <View style={styles.modal}>
+            {!failed ? (
+              <ActivityIndicator size="large" color={baseColor} />
+            ) : (
+              <Button label="Reload" onPress={retryAction} />
+            )}
+          </View>
+        </Modal>
+      )}
+    </ThemeContext.Consumer>
   );
 };
 

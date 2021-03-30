@@ -11,9 +11,7 @@ export default (state = initialstate, action) => {
   switch (action.type) {
     case PR_DATA:
       return Object.assign({}, state, {
-        data: action.payload.data,
-        page: action.payload.page,
-        total: action.payload.total,
+        ...action.payload
       });
     case PR_CURRENT_PAGE:
       return Object.assign({}, state, {

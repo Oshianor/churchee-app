@@ -1,21 +1,33 @@
-const img = {
+const img = Object.freeze({
   register: require('../assets/images/Register.png'),
   registerIconDark: require('../assets/images/RegisterIconDark.png'),
   registerIconLight: require('../assets/images/RegisterIconLight.png'),
   login: require('../assets/images/login.png'),
   loginIconDark: require('../assets/images/loginIconDark.png'),
   loginIconLight: require('../assets/images/loginIconLight.png'),
-  eventSection: require('../assets/images/home/events.png'),
-  sermonSection: require('../assets/images/home/sermon.jpg'),
-  devotionSection: require('../assets/images/home/devotion.png'),
-  mediaSection: require('../assets/images/home/media.png'),
-  prayerSection: require('../assets/images/home/prayer.png'),
-  giveSection: require('../assets/images/home/give.jpg'),
-  formSection: require('../assets/images/home/form.jpg'),
-  hymnSection: require('../assets/images/home/hymn.jpg'),
-  chatSection: require('../assets/images/home/chat.png'),
-  verseSection: require('../assets/images/home/daily-verse.jpg'),
-  liveSection: require('../assets/images/home/live.png'),
+
+  // home
+  'event-light': require('../assets/images/home/event-light.jpg'),
+  'event-dark': require('../assets/images/home/event-dark.jpg'),
+  'sermon-light': require('../assets/images/home/sermon-light.jpg'),
+  'sermon-dark': require('../assets/images/home/sermon-dark.jpg'),
+  'devotion-light': require('../assets/images/home/devotion-light.jpg'),
+  'devotion-dark': require('../assets/images/home/devotion-dark.jpg'),
+  'media-light': require('../assets/images/home/media-light.jpg'),
+  'media-dark': require('../assets/images/home/media-dark.jpg'),
+  'prayer-light': require('../assets/images/home/prayer-light.jpg'),
+  'prayer-dark': require('../assets/images/home/prayer-dark.jpg'),
+  'give-dark': require('../assets/images/home/give-dark.jpg'),
+  'give-light': require('../assets/images/home/give-light.jpg'),
+  "form-light": require('../assets/images/home/form-light.jpg'),
+  "form-dark": require('../assets/images/home/form-dark.jpg'),
+  "hymn-light": require('../assets/images/home/hymn-light.jpg'),
+  "hymn-dark": require('../assets/images/home/hymn-dark.jpg'),
+  'dailyVerse-dark': require('../assets/images/home/dailyVerse-dark.jpg'),
+  'dailyVerse-light': require('../assets/images/home/dailyVerse-light.jpg'),
+  'live-light': require('../assets/images/home/live-light.jpg'),
+  'live-dark': require('../assets/images/home/live-dark.jpg'),
+
   bgImg: require('../assets/images/icons/logo.png'),
   tithe: require('../assets/images/tithe.jpeg'),
   findChurch: require('../assets/images/findChurch.png'),
@@ -39,6 +51,6 @@ const img = {
   instagram: require('../assets/images/icons/instagram.png'),
   youtube: require('../assets/images/icons/youtube.png'),
   churchFind: require('../assets/images/churchFind.png'),
-};
+});
 
 export default img;

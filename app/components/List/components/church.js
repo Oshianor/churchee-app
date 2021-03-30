@@ -10,7 +10,7 @@ const Church = ({ item }) => {
   return (
     <ThemeContext.Consumer>
       {({theme, baseColor}) => (
-        <TouchableOpacity style={classes.root}>
+        <View style={classes.root}>
           <View style={classes.imgRoot}>
             <Image source={{uri: api.img + item.img}} style={classes.img} />
           </View>
@@ -33,7 +33,7 @@ const Church = ({ item }) => {
               </Caption>
             </View>
           </View>
-        </TouchableOpacity>
+        </View>
       )}
     </ThemeContext.Consumer>
   );
@@ -49,7 +49,7 @@ const classes = StyleSheet.create({
     alignItems: 'center',
     borderTopWidth: 1,
     borderTopColor: '#E4E4E4',
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   left: {
     justifyContent: 'space-between',
@@ -60,12 +60,12 @@ const classes = StyleSheet.create({
     fontWeight: '400'
   },
   img: {
-    height: 45,
-    width: 45,
+    height: 50,
+    width: 50,
     borderRadius: 40,
   },
   imgRoot: {
-    justifyContent: 'flex-start',
+    // justifyContent: 'flex-start',
     marginRight: 10
   },
   title: {

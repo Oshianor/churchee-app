@@ -14,10 +14,17 @@ import { dimension, colors } from "../../theme"
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Button } from "../../components/Button"
 import {Church} from '../../components/Card';
+import BackButton from '../../navigation/custom/BackButton';
+import {useSelector} from 'react-redux';
 
-const JoinChurch = ({ navigation: { navigate } }) => {
+
+const JoinChurch = ({ navigation: { navigate, goBack } }) => {
+  const {church} = useSelector(({church}) => church);
+
   return (
     <SafeAreaView style={classes.root}>
+      {church && <BackButton goBack={goBack} />}
+
       <View style={classes.header}>
         <Image source={img.churchFind} style={classes.img} />
 
@@ -27,7 +34,7 @@ const JoinChurch = ({ navigation: { navigate } }) => {
       <SearchField navigate={navigate} />
       <View style={classes.filterRoot}>
         <Icon name="filter" size={20} color={colors.primary.main} />
-        <TouchableOpacity onPress={() => navigate("CountryList")}>
+        <TouchableOpacity onPress={() => navigate('CountryList')}>
           <Subheading>Filter by Location</Subheading>
         </TouchableOpacity>
       </View>

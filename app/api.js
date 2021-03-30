@@ -7,6 +7,7 @@ const baseUrl = 'http://localhost:9090/api/v1';
 
 export const api = {
   createAccount: baseUrl + '/user/member',
+  verify: baseUrl + '/auth/verify/member',
   login: baseUrl + '/auth/both',
   getMe: baseUrl + '/member/me',
   live: baseUrl + '/live/member',
@@ -54,4 +55,5 @@ export const api = {
 
   // room service
   createRoom: `${chatService}/api/v1/room/create`,
+  getRoom: `${chatService}/api/v1/room/get`,
 };

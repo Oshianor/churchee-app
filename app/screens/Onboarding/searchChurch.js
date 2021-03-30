@@ -4,7 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  FlatList
+  FlatList,
 } from 'react-native';
 import {colors} from '../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -19,13 +19,25 @@ import {
   sermonAction,
   devotionAction,
   PRAction,
+  mediaAction,
+  churchAction
 } from '../../store/actions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {moveElement} from "../../utils";
+import { ChurchFilter } from "../../components/Modal"
+
+let interval;
 
 const SearchChurch = ({navigation: {navigate}}) => {
   const dispatch = useDispatch();
   const {token} = useSelector(({account}) => account);
+  const {churchList} = useSelector(({church}) => church);
   const [churches, setChurches] = React.useState([]);
   const [value, setValue] = React.useState('');
+
+  React.useEffect(() => {
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSearch = async () => {
     try {
@@ -49,6 +61,12 @@ const SearchChurch = ({navigation: {navigate}}) => {
       setChurches(churchFind.data.data);
 
       dispatch(feedbackAction.launch({loading: false}));
+
+      interval = setTimeout(() => {
+        console.log("ran");
+        dispatch(churchAction.setChurchData({isFilter: true}));
+      }, 7000);
+
     } catch (error) {
       console.log('error', error);
       console.log('error', error?.response);
@@ -56,142 +74,109 @@ const SearchChurch = ({navigation: {navigate}}) => {
     }
   };
 
-  const handleSelect = async () => {
-    dispatch(feedbackAction.launch({loading: true}));
+  const handleSelect = async (item) => {
+    try {
+      console.log('churchList', churchList);
 
-    const church = churchList.find((element) => element._id === selected);
-    let churchDataList = await AsyncStorage.getItem('churchList');
-    console.log('churchDataList', churchDataList);
+      clearInterval(interval);
 
-    if (churchDataList) {
-      churchDataList = JSON.parse(churchDataList);
-      const exist = churchDataList?.find(
-        (element) => element._id === church?._id,
+      dispatch(feedbackAction.launch({loading: true}));
+
+      let churchDataList = await AsyncStorage.getItem('churchList');
+
+      const churchExist = churchList.find(
+        (element) => element._id === item._id,
       );
 
-      if (!exist) {
-        churchDataList.push(church);
+      console.log('churchExist', churchExist);
+      if (churchExist) {
+        const elementPos = churchList
+          .map((x) => {
+            x._id === item._id;
+            return x._id;
+          })
+          .indexOf();
+
+        console.log('elementPos', elementPos);
+        const newChurchArr = moveElement(churchList, elementPos, 0);
+        dispatch(
+          churchAction.setChurchData({
+            church: churchExist,
+            churchList: newChurchArr,
+          }),
+        );
+        // dispatch(churchAction.churchListData(newChurchArr));
+
+        await AsyncStorage.setItem('church', JSON.stringify(item));
+        await AsyncStorage.setItem('churchList', JSON.stringify(newChurchArr));
+        resetData();
+
+        dispatch(feedbackAction.launch({loading: false}));
+
+        navigate('Onboarding', {screen: 'Login'});
+        return;
       }
-    } else {
-      churchDataList = [church];
-    }
 
-    console.log('churchDataList', churchDataList);
+      console.log('churchDataList', churchDataList);
 
-    await AsyncStorage.setItem('church', JSON.stringify(church));
-    await AsyncStorage.setItem('churchList', JSON.stringify(churchDataList));
+      if (churchDataList) {
+        churchDataList = JSON.parse(churchDataList);
+        const exist = churchDataList?.find(
+          (element) => element._id === item?._id,
+        );
 
-    const sermon = await getSermon(church.publicToken);
-    const devotion = await getDevotion(church.publicToken);
-    const live = await getLive(church.publicToken);
-    const event = await getEvent(church.publicToken);
-    const pr = await getPR(church.publicToken);
+        if (!exist) {
+          churchDataList.unshift(item);
+        }
+      } else {
+        churchDataList = [item];
+      }
 
-    dispatch(churchAction.setChurchData(church));
-    dispatch(accountAction.churchListData(churchDataList));
+      console.log('churchDataList', churchDataList);
 
-    dispatch(feedbackAction.launch({loading: false}));
-
-    navigate('Dashboard');
-  };
-
-
-
-  const getSermon = async (publicToken) => {
-    try {
-      const resSermon = await axios.get(api.sermon, {
-        headers: {publicToken},
-      });
+      await AsyncStorage.setItem('church', JSON.stringify(item));
+      await AsyncStorage.setItem('churchList', JSON.stringify(churchDataList));
 
       dispatch(
-        sermonAction.setSermon({
-          sermon: resSermon.data.data,
-          total: resSermon.data.meta.total,
-          page: resSermon.data.meta.pages,
-        }),
+        churchAction.setChurchData({church: item, churchList: churchDataList}),
       );
+      // dispatch(churchAction.churchListData(churchDataList));
 
-      return resSermon?.data?.data;
+      dispatch(feedbackAction.launch({loading: false}));
+
+      if (!token) {
+      navigate('Onboarding', {screen: 'Login'});
+
+      }
+      return;
     } catch (error) {
-      console.log('error', error);
-      console.log('error', error.response);
+      dispatch(feedbackAction.launch({loading: false}));
     }
+    await getLive();
   };
 
-  const getDevotion = async (publicToken) => {
-    try {
-      const resDevotion = await axios.get(api.getDevotion, {
-        headers: {publicToken},
-      });
-      dispatch(
-        devotionAction.setDevotion({
-          data: resDevotion.data.data,
-        }),
-      );
 
-      return resDevotion?.data?.data;
-    } catch (error) {
-      console.log('error', error);
-      console.log('error', error.response);
-    }
-  };
+  const resetData = () => {
+    // remove all the data for all service
+    dispatch(eventAction.setEvent({data: [], page: 0, total: 0}));
+    dispatch(devotionAction.setDevotion({data: [], page: 0, total: 0}));
+    dispatch(sermonAction.setSermon({data: [], page: 0, total: 0}));
+    dispatch(PRAction.setPR({data: [], page: 0, total: 0}));
+    dispatch(mediaAction.setMedia({data: [], page: 0, total: 0}));
+  }
 
   const getLive = async (publicToken) => {
     try {
       const live = await axios.get(api.live, {
-        headers: {publicToken},
+        headers: {publicToken}
       });
 
       dispatch(accountAction.setAccountData({live: live.data.data}));
-      return live?.data?.data;
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);
     }
   };
-
-  const getEvent = async (publicToken) => {
-    try {
-      const event = await axios.get(api.getEvent, {
-        headers: {publicToken},
-      });
-
-      dispatch(
-        eventAction.setEvent({
-          data: event?.data?.data,
-          total: event?.data?.meta?.total,
-          pages: event?.data?.meta?.page,
-        }),
-      );
-      return event?.data?.data;
-
-    } catch (error) {
-      console.log('error', error);
-      console.log('error', error.response);
-    }
-  };
-
-  const getPR = async (publicToken) => {
-    try {
-      const pray = await axios.get(api.getPRWall, {
-        headers: {publicToken},
-      });
-
-      dispatch(
-        PRAction.setPR({
-          data: pray.data.data,
-          total: pray.data.meta.total,
-          page: pray.data.meta.page,
-        }),
-      );
-      return pray?.data?.data;
-    } catch (error) {
-      // console.log('error', error);
-      // console.log('error', error.response);
-    }
-  };
-
-  
 
   return (
     <View style={classes.root}>
@@ -214,12 +199,13 @@ const SearchChurch = ({navigation: {navigate}}) => {
           data={churches}
           keyExtractor={(i) => i.toString()}
           renderItem={({item}) => (
-            <TouchableOpacity onPress={() => handleSelect(item)} >
+            <TouchableOpacity onPress={() => handleSelect(item)}>
               <ChurchList item={item} />
             </TouchableOpacity>
           )}
         />
       </View>
+      <ChurchFilter />
     </View>
   );
 };

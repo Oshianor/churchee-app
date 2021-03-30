@@ -11,12 +11,7 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
-import {
-  Surface,
-  Title,
-  Subheading,
-  Caption,
-} from 'react-native-paper';
+import {Surface, Title, Subheading, Caption} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {accountAction, feedbackAction} from '../../store/actions';
 import {ThemeContext} from '../../context/ThemeContext';
@@ -26,18 +21,49 @@ import {useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
 import {validateEmail} from '../../utils';
 import img from '../../images';
-import { GoogleAuth } from '../../components/Auth';
+import {GoogleAuth} from '../../components/Auth';
 
-const { height} = Dimensions.get('window');
+const {height} = Dimensions.get('window');
 
-
-const Login = ({navigation: {navigate, goBack}}) => {
+const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const {loading} = useSelector(({feedback}) => feedback);
+  const [text, setText] = React.useState('');
+  const hasUnsavedChanges = Boolean(text);
   const [value, setValue] = React.useState({
-    email: '',
-    password: ''
+    email: 'abundanceoshianor@gmail.com',
+    password: 'opendoor12345',
   });
+
+  React.useEffect(
+    () =>
+      navigation.addListener('beforeRemove', (e) => {
+        if (!hasUnsavedChanges) {
+          // If we don't have unsaved changes, then we don't need to do anything
+          return;
+        }
+
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+
+        // Prompt the user before leaving the screen
+        // Alert.alert(
+        //   'Discard changes?',
+        //   'You have unsaved changes. Are you sure to discard them and leave the screen?',
+        //   [
+        //     {text: "Don't leave", style: 'cancel', onPress: () => {}},
+        //     {
+        //       text: 'Discard',
+        //       style: 'destructive',
+        //       // If the user confirmed, then we dispatch the action we blocked earlier
+        //       // This will continue the action that had triggered the removal of the screen
+        //       onPress: () => navigation.dispatch(e.data.action),
+        //     },
+        //   ],
+        // );
+      }),
+    [navigation, hasUnsavedChanges],
+  );
 
   const handleLogin = async () => {
     try {
@@ -67,7 +93,21 @@ const Login = ({navigation: {navigate, goBack}}) => {
         email: value.email.toLowerCase(),
       });
 
-      await AsyncStorage.setItem('token', JSON.stringify(login.headers['x-auth-token']));
+      // check if the account is verified.
+      if (!login?.data?.data?.verified) {
+        dispatch(
+          feedbackAction.launch({
+            loading: false,
+          }),
+        );
+        navigation.navigate('Verification', { email: login?.data?.data?.email });
+        return;
+      }
+
+      await AsyncStorage.setItem(
+        'token',
+        JSON.stringify(login.headers['x-auth-token']),
+      );
       await AsyncStorage.setItem('user', JSON.stringify(login.data.data));
 
       dispatch(accountAction.setToken(login.headers['x-auth-token']));
@@ -87,7 +127,7 @@ const Login = ({navigation: {navigate, goBack}}) => {
         password: '',
       });
 
-      goBack();
+      navigation.navigate('Dashboard');
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);
@@ -124,7 +164,10 @@ const Login = ({navigation: {navigate, goBack}}) => {
                 style={classes.headerImg}
               />
               <Title
-                style={[classes.headerTitle, {color: theme.mode ? 'black' : "white"}]}>
+                style={[
+                  classes.headerTitle,
+                  {color: theme.mode ? 'black' : 'white'},
+                ]}>
                 THE BRIDGE
               </Title>
             </View>
@@ -167,13 +210,19 @@ const Login = ({navigation: {navigate, goBack}}) => {
             </View>
             <TouchableOpacity
               style={classes.forgot}
-              onPress={() => navigate('Forgot')}>
+              onPress={() => navigation.navigate('Forgot')}>
               <Caption style={classes.forgotText}>Forgot Password?</Caption>
             </TouchableOpacity>
 
-            <TouchableOpacity style={classes.button} disabled={loading} onPress={handleLogin}>
+            <TouchableOpacity
+              style={classes.button}
+              disabled={loading}
+              onPress={handleLogin}>
               <Subheading
-                style={[classes.buttonText, {color: theme.mode ? 'black' : "white"}]}>
+                style={[
+                  classes.buttonText,
+                  {color: theme.mode ? 'black' : 'white'},
+                ]}>
                 Sign in
               </Subheading>
             </TouchableOpacity>
@@ -196,7 +245,7 @@ const Login = ({navigation: {navigate, goBack}}) => {
             <Caption style={classes.forgotText}>Not yet registered?</Caption>
             <TouchableOpacity
               style={classes.forgot}
-              onPress={() => navigate('Register')}>
+              onPress={() => navigation.navigate('Register')}>
               <Subheading style={classes.footerButton}>
                 CREATE ACCOUNT
               </Subheading>
@@ -207,7 +256,7 @@ const Login = ({navigation: {navigate, goBack}}) => {
       )}
     </ThemeContext.Consumer>
   );
-};;
+};
 
 export default Login;
 

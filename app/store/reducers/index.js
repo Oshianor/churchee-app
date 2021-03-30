@@ -10,6 +10,7 @@ import country from './country';
 import event from './event';
 import pr from './pr';
 import church from './church';
+import chat from './chat';
 
 const appReducer = combineReducers({
   account,
@@ -23,6 +24,7 @@ const appReducer = combineReducers({
   event,
   pr,
   church,
+  chat,
 });
 
 export default appReducer;
