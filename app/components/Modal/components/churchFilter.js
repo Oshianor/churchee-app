@@ -8,12 +8,9 @@ import {
   SafeAreaView
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import { Surface, Subheading, Title } from "react-native-paper";
+import { Subheading, Title } from "react-native-paper";
 import { Button } from '../../Button';
-// import { colors } from '../../../theme';
 import { churchAction } from '../../../store/actions';
-import BackButton from '../../../navigation/custom/BackButton';
-import TitleButton from '../../../navigation/custom/TitleButton';
 import { Radio } from '../../Radio';
 import {ThemeContext} from '../../../context/ThemeContext';
 import { colors } from '../../../theme';
@@ -21,7 +18,7 @@ import { colors } from '../../../theme';
 const Reason = () => {
   const {isFilter} = useSelector(({church}) => church);
   const dispatch = useDispatch();
-  const [selected, setSelected] = React.useState("");
+  const [selected, setSelected] = React.useState('thePeople');
 
   const selectedReason = (reas) => {
     setSelected(reas);
@@ -43,57 +40,36 @@ const Reason = () => {
               </Title>
             </View>
             <View style={classes.bodyRoot}>
-              <View style={classes.reasonItem}>
-                <TouchableOpacity
-                  onPress={() => selectedReason('longDistance')}
-                  style={classes.reasonRadio}>
-                  <Radio selected={selected === 'longDistance'} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => selectedReason('longDistance')}
-                  style={classes.reasonText}>
-                  <Subheading>Long distance</Subheading>
-                </TouchableOpacity>
-              </View>
-
-              <View style={classes.reasonItem}>
-                <TouchableOpacity
-                  style={classes.reasonRadio}
-                  onPress={() => selectedReason('bike')}>
-                  <Radio selected={selected === 'bike'} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={classes.reasonText}
-                  onPress={() => selectedReason('bike')}>
-                  <Subheading>Bike’s faulty</Subheading>
-                </TouchableOpacity>
-              </View>
-
-              <View style={classes.reasonItem}>
-                <TouchableOpacity
-                  style={classes.reasonRadio}
-                  onPress={() => selectedReason('personalIssues')}>
-                  <Radio selected={selected === 'personalIssues'} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={classes.reasonText}
-                  onPress={() => selectedReason('personalIssues')}>
-                  <Subheading>Personal issues</Subheading>
-                </TouchableOpacity>
-              </View>
-
-              <View style={classes.reasonItem}>
-                <TouchableOpacity
-                  style={classes.reasonRadio}
-                  onPress={() => selectedReason('busy')}>
-                  <Radio selected={selected === 'busy'} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={classes.reasonText}
-                  onPress={() => selectedReason('busy')}>
-                  <Subheading>Busy</Subheading>
-                </TouchableOpacity>
-              </View>
+              <List
+                title="The people"
+                name="thePeople"
+                selected={selected}
+                selectedReason={selectedReason}
+              />
+              <List
+                title="Sermon"
+                name="sermon"
+                selected={selected}
+                selectedReason={selectedReason}
+              />
+              <List
+                title="Music"
+                name="music"
+                selected={selected}
+                selectedReason={selectedReason}
+              />
+              <List
+                title="Devotion"
+                name="devotion"
+                selected={selected}
+                selectedReason={selectedReason}
+              />
+              <List
+                title="Prayer"
+                name="prayer"
+                selected={selected}
+                selectedReason={selectedReason}
+              />
             </View>
             <View>
               <Button
@@ -114,6 +90,24 @@ const Reason = () => {
 export default Reason;
 
 
+const List = ({selectedReason, name, title, selected}) => {
+  return (
+    <View style={classes.reasonItem}>
+      <TouchableOpacity
+        style={classes.reasonRadio}
+        onPress={() => selectedReason(name)}>
+        <Radio selected={selected === name} />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={classes.reasonText}
+        onPress={() => selectedReason(name)}>
+        <Subheading>{title}</Subheading>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+
 
 const classes = StyleSheet.create({
   root: {
@@ -122,7 +116,7 @@ const classes = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    textAlign: 'left',
+    textAlign: 'center',
   },
   surface: {
     flex: 1,

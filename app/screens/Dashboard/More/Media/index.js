@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
-import {api, publicToken, baseUrl} from '../../../../api';
+import {api, baseUrl} from '../../../../api';
 import {mediaAction} from '../../../../store/actions';
 import {ThemeContext} from '../../../../context/ThemeContext';
 import moment from "moment"
@@ -25,7 +25,7 @@ const Media = ({navigation: { navigate }}) => {
   const [loading, setLoading] = React.useState(false);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const media = useSelector(({media}) => media);
-  const { church: { publicToken  } } = useSelector(({account}) => account);
+  const { church: { publicToken  } } = useSelector(({church}) => church);
   const dispatch = useDispatch();
 
 

@@ -24,7 +24,7 @@ const Devotion = ({ navigation}) => {
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const dispatch = useDispatch();
   const devotion = useSelector(({devotion}) => devotion);
-  const { church: { publicToken } } = useSelector(({account}) => account);
+  const { church: { publicToken } } = useSelector(({church}) => church);
 
   React.useEffect(() => {
     handleData();

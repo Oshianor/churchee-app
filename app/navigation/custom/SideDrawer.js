@@ -159,9 +159,6 @@ const CustomDrawerContentComponent = ({
                           classes.bodyCaption,
                           {color: !theme.mode ? colors.black : colors.white},
                         ]}>
-                        {/* {item.address.length > 35
-                          ? item.address.substring(0, 35) + '...'
-                          : item.address} */}
                         {`${item.state}, ${item.country}`}
                       </Caption>
                     </View>

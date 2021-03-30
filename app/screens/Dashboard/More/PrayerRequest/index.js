@@ -41,7 +41,7 @@ const PrayRequest = ({ navigation: { navigate } }) => {
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const {
     church: {publicToken},
-  } = useSelector(({account}) => account);
+  } = useSelector(({church}) => church);
   const PR = useSelector(({pr}) => pr);
 
   console.log('deviceId', deviceId);

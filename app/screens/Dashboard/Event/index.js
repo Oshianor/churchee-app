@@ -26,8 +26,8 @@ const Event = ({navigation: {navigate}}) => {
   const event = useSelector(({event}) => event);
   const {
     church: {publicToken},
-    token,
   } = useSelector(({church}) => church);
+  const {token} = useSelector(({account}) => account);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [savedEvents, setSavedEvents] = React.useState([]);
@@ -49,7 +49,7 @@ const Event = ({navigation: {navigate}}) => {
     } catch (error) {
       console.log('savedEvent', error);
     }
-  }
+  };
 
   const handleSaveEvent = (eventId) => async () => {
     if (token) {

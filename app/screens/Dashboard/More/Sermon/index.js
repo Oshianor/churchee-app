@@ -34,7 +34,7 @@ const Sermon = ({navigation: {navigate}}) => {
   const sermon = useSelector(({sermon}) => sermon);
   const {
     church: {publicToken},
-  } = useSelector(({account}) => account);
+  } = useSelector(({church}) => church);
   const [loading, setLoading] = React.useState(false);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
 
