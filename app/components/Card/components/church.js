@@ -7,34 +7,33 @@ import {ThemeContext} from '../../../context/ThemeContext';
 import { api } from '../../../api';
 
 
-const link = "1616779706978_05015fee231064313879e8b5a5e4b2c7.png";
+// const link = "1616779706978_05015fee231064313879e8b5a5e4b2c7.png";
 const Church = ({item,  selected, onPress, disabled}) => {
   return (
     <ThemeContext.Consumer>
       {({theme, baseColor}) => (
         <TouchableOpacity
-          onPress={() => onPress(item)}
+          onPress={() => onPress()}
           disabled={disabled}
           style={[
             classes.contained,
             // selected === _id && classes.selected
           ]}>
           <Surface
-            style={[classes.root, {backgroundColor: !theme.mode ? '#F5F5F5' : colors.black}]}>
+            style={[
+              classes.root,
+              {backgroundColor: !theme.mode ? '#F5F5F5' : colors.black},
+            ]}>
             <View style={classes.imgRoot}>
-              <Image source={{uri: api.img + link}} style={classes.img} />
+              <Image source={{uri: api.img + item.img}} style={classes.img} />
             </View>
-            <Title style={classes.title}>
-              {/* {name} */}
-              RCCG, House of Grace
-            </Title>
+            <Title style={classes.title}>{item.name}</Title>
             <Caption
               style={[
                 classes.detailLocation,
                 {color: theme.mode ? '#fff' : colors.black},
               ]}>
-              {/* {address} */}
-              Grand Praire, Texas
+              {`${item.state}, ${item.country}`}
             </Caption>
             <View style={classes.detailsRoot}>
               <Caption
@@ -42,8 +41,7 @@ const Church = ({item,  selected, onPress, disabled}) => {
                   classes.detailsText,
                   {color: theme.mode ? '#fff' : '#101424'},
                 ]}>
-                {/* {`${state} ${country}`} */}
-                Youth and Young Adult
+                {`${item.bio}`}
               </Caption>
             </View>
           </Surface>
@@ -62,7 +60,7 @@ export default Church;
 const classes = StyleSheet.create({
   contained: {
     width: 155,
-    // height: 200,
+    // minHeight: 250,
     marginRight: 10,
     marginVertical: 5,
   },

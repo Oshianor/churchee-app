@@ -100,7 +100,7 @@ const Login = ({navigation}) => {
             loading: false,
           }),
         );
-        navigation.navigate('Verification', { email: login?.data?.data?.email });
+        navigation.navigate('Verification', {email: login?.data?.data?.email});
         return;
       }
 
@@ -127,7 +127,8 @@ const Login = ({navigation}) => {
         password: '',
       });
 
-      navigation.navigate('Dashboard');
+      // navigation.navigate('Dashboard');
+      navigation.goBack();
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);

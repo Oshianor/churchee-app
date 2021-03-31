@@ -42,7 +42,7 @@ class ProfileEdit extends Component {
 
     this.state = {
       email: '',
-      fullName: '',
+      name: '',
       bio: '',
       img: null,
       newPassword: '',
@@ -66,16 +66,16 @@ class ProfileEdit extends Component {
 
 
     this.setState({
-      fullName: account.user.fullName,
+      name: account.user.name,
       bio: typeof account.user.bio === 'undefined' ? '' : account.user.bio,
       email: account.user.email,
-      img: account.user.img ? api.img + account.user.img.key : null,
+      img: account?.user?.img ? api.img + account?.user?.img : null,
       token
     });
   }
 
   handleProfileDetailsUpdate = async () => {
-    const {fullName, bio, token} = this.state;
+    const {name, bio, token} = this.state;
     const {account, setUserData} = this.props;
 
     Keyboard.dismiss();
@@ -88,7 +88,7 @@ class ProfileEdit extends Component {
 
       const profile = await Axios.put(
         api.profile,
-        {bio, fullName},
+        {bio, name},
         { headers: { 'x-auth-token': token, publicToken}},
       );
 
@@ -295,12 +295,11 @@ class ProfileEdit extends Component {
       currentPassword,
       bio,
       email,
-      fullName,
+      name,
       loading,
       visible,
       type,
       msg,
-      img,
     } = this.state;
 
     console.log('this.state', this.state);
@@ -310,19 +309,19 @@ class ProfileEdit extends Component {
     return (
       <ThemeContext.Consumer>
         {({theme, baseColor}) => (
-      <View style={[classes.rooty, {backgroundColor: theme.background}]}>
-        <KeyboardAvoidingView behavior="position">
-          <ScrollView>
-            <StatusBar
-              backgroundColor="green"
-              barStyle="light-content"
-              hidden={true}
-              showHideTransition={true}
-              networkActivityIndicatorVisible={true}
-            />
-            <View style={classes.profile}>
-              <TouchableOpacity onPress={this.handleImageLoad}>
-                {!img ? (
+          <View style={[classes.rooty, {backgroundColor: theme.background}]}>
+            <KeyboardAvoidingView behavior="position">
+              <ScrollView>
+                <StatusBar
+                  backgroundColor="green"
+                  barStyle="light-content"
+                  hidden={true}
+                  showHideTransition={true}
+                  networkActivityIndicatorVisible={true}
+                />
+                <View style={classes.profile}>
+                  <TouchableOpacity onPress={this.handleImageLoad}>
+                    {!this.state.img ? (
                   <Avatar.Image
                     size={150}
                     style={classes.img}
@@ -335,98 +334,103 @@ class ProfileEdit extends Component {
                     source={{uri: img}}
                   />
                 )}
-              </TouchableOpacity>
-              <Subheading style={classes.name}>
-                {fullName}
-              </Subheading>
-            </View>
-
-            <View style={classes.root}>
-              <View style={classes.accNameRoot}>
-                <Subheading style={classes.Subheading}>
-                  Account Details
-                </Subheading>
-                <TextInput
-                  label="Email"
-                  mode="outlined"
-                  disabled={true}
-                  value={email}
-                  // onChangeText={email => this.setState({email})}
-                />
-                <TextInput
-                  label="Last Name"
-                  dense={true}
-                  // style={classes.accNameTextField}
-                  mode="outlined"
-                  value={fullName}
-                  onChangeText={fullName => this.setState({fullName})}
-                />
-                
-                <TextInput
-                  label="Bio"
-                  mode="outlined"
-                  multiline={true}
-                  value={bio}
-                  onChangeText={bio => this.setState({bio})}
-                />
-              </View>
-              <Button
-                mode="contained"
-                disabled={loading === 'profile'}
-                color="white"
-                onPress={this.handleProfileDetailsUpdate}
-                contentStyle={classes.buttonContent}
-                style={classes.button}>
-                Save Edits
-              </Button>
-            </View>
-            {account.user.type === 'system' && (
-              <View style={classes.root}>
-                <View style={classes.accNameRoot}>
-                  <Subheading style={classes.Subheading}>
-                    Change Password
-                  </Subheading>
-                  <TextInput
-                    label="Current Password"
-                    secureTextEntry={true}
-                    mode="outlined"
-                    value={currentPassword}
-                    onChangeText={currentPassword =>
-                      this.setState({currentPassword})
-                    }
-                  />
-                  <TextInput
-                    label="New Password"
-                    secureTextEntry={true}
-                    mode="outlined"
-                    value={newPassword}
-                    onChangeText={newPassword => this.setState({newPassword})}
-                  />
-                  <TextInput
-                    label="Confirm New Password"
-                    secureTextEntry={true}
-                    mode="outlined"
-                    value={confirmNewPassword}
-                    onChangeText={confirmNewPassword =>
-                      this.setState({confirmNewPassword})
-                    }
-                  />
+                  </TouchableOpacity>
+                  <Subheading style={classes.name}>{name}</Subheading>
                 </View>
-                <Button
-                  mode="contained"
-                  color="white"
-                  contentStyle={classes.buttonContent}
-                  style={classes.button}
-                  onPress={this.handlePasswordChange}
-                  disabled={loading === 'password'}>
-                  Update Password
-                </Button>
-              </View>
-            )}
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </View>
-      )}
+
+                <View style={classes.root}>
+                  <View style={classes.accNameRoot}>
+                    <Subheading style={classes.Subheading}>
+                      Account Details
+                    </Subheading>
+                    <TextInput
+                      label="Email"
+                      mode="outlined"
+                      disabled={true}
+                      value={email}
+                      dense={true}
+                      style={classes.accNameTextField}
+
+                      // onChangeText={email => this.setState({email})}
+                    />
+                    <TextInput
+                      label="Full Name"
+                      dense={true}
+                      style={classes.accNameTextField}
+                      mode="outlined"
+                      value={name}
+                      onChangeText={(name) => this.setState({name})}
+                    />
+
+                    <TextInput
+                      label="Bio"
+                      dense={true}
+                      mode="outlined"
+                      multiline={true}
+                      style={classes.accNameTextField}
+                      value={bio}
+                      onChangeText={(bio) => this.setState({bio})}
+                    />
+                  </View>
+                  <Button
+                    mode="contained"
+                    disabled={loading === 'profile'}
+                    color="white"
+                    onPress={this.handleProfileDetailsUpdate}
+                    contentStyle={classes.buttonContent}
+                    style={classes.button}>
+                    Save Edits
+                  </Button>
+                </View>
+                {account?.user?.type === 'system' && (
+                  <View style={classes.root}>
+                    <View style={classes.accNameRoot}>
+                      <Subheading style={classes.Subheading}>
+                        Change Password
+                      </Subheading>
+                      <TextInput
+                        label="Current Password"
+                        secureTextEntry={true}
+                        mode="outlined"
+                        value={currentPassword}
+                        onChangeText={(currentPassword) =>
+                          this.setState({currentPassword})
+                        }
+                      />
+                      <TextInput
+                        label="New Password"
+                        secureTextEntry={true}
+                        mode="outlined"
+                        value={newPassword}
+                        onChangeText={(newPassword) =>
+                          this.setState({newPassword})
+                        }
+                      />
+                      <TextInput
+                        label="Confirm New Password"
+                        secureTextEntry={true}
+                        mode="outlined"
+                        value={confirmNewPassword}
+                        onChangeText={(confirmNewPassword) =>
+                          this.setState({confirmNewPassword})
+                        }
+                      />
+                    </View>
+                    <Button
+                      mode="contained"
+                      color="white"
+                      contentStyle={classes.buttonContent}
+                      style={classes.button}
+                      onPress={this.handlePasswordChange}
+                      disabled={loading === 'password'}>
+                      Update Password
+                    </Button>
+                  </View>
+                )}
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </View>
+        )}
       </ThemeContext.Consumer>
     );
   }
@@ -479,8 +483,7 @@ const classes = StyleSheet.create({
     flexDirection: 'row',
   },
   accNameTextField: {
-    width: screen.width / 2.4,
-    height: 56,
+    marginVertical: 5
   },
   Subheading: {
     fontWeight: '600',

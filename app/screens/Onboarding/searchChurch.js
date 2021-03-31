@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  Image,
 } from 'react-native';
 import {colors} from '../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -25,6 +26,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {moveElement} from "../../utils";
 import { ChurchFilter } from "../../components/Modal"
+import {Chip} from 'react-native-paper';
 
 let interval;
 
@@ -32,6 +34,7 @@ const SearchChurch = ({navigation: {navigate}}) => {
   const dispatch = useDispatch();
   const {token} = useSelector(({account}) => account);
   const {churchList} = useSelector(({church}) => church);
+  const {selectedCountry, selectedState} = useSelector(({country}) => country);
   const [churches, setChurches] = React.useState([]);
   const [value, setValue] = React.useState('');
 
@@ -78,6 +81,11 @@ const SearchChurch = ({navigation: {navigate}}) => {
     try {
       console.log('churchList', churchList);
 
+      if (!token) {
+        navigate('Onboarding', {screen: 'Login'});
+        return
+      }
+
       clearInterval(interval);
 
       dispatch(feedbackAction.launch({loading: true}));
@@ -113,7 +121,7 @@ const SearchChurch = ({navigation: {navigate}}) => {
 
         dispatch(feedbackAction.launch({loading: false}));
 
-        navigate('Onboarding', {screen: 'Login'});
+        navigate('Dashboard');
         return;
       }
 
@@ -144,15 +152,13 @@ const SearchChurch = ({navigation: {navigate}}) => {
 
       dispatch(feedbackAction.launch({loading: false}));
 
-      if (!token) {
-      navigate('Onboarding', {screen: 'Login'});
+      navigate('Dashboard');
 
-      }
       return;
     } catch (error) {
       dispatch(feedbackAction.launch({loading: false}));
     }
-    await getLive();
+    await getLive(item.publicToken);
   };
 
 
@@ -193,6 +199,26 @@ const SearchChurch = ({navigation: {navigate}}) => {
           />
           <Icon name="magnify" size={20} color={colors.secondary.main} />
         </View>
+        {selectedCountry && selectedState && (
+          <View style={classes.locationRoot}>
+            <Chip
+              avatar={
+                <Image
+                  source={{
+                    uri: `http://www.geognos.com/api/en/countries/flag/${selectedCountry?.code2}.png`,
+                  }}
+                />
+              }
+              style={classes.chip}
+              onPress={() => navigate('CountryList')}
+              mode="outlined">
+              {selectedCountry?.name}
+            </Chip>
+            <Chip onPress={() => navigate('StateList')} mode="outlined">
+              {selectedState?.name}
+            </Chip>
+          </View>
+        )}
       </View>
       <View style={classes.body}>
         <FlatList
@@ -220,6 +246,8 @@ const classes = StyleSheet.create({
     paddingHorizontal: 20,
     justifyContent: 'center',
     flex: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.primary.light,
   },
   body: {
     flex: 6,
@@ -241,5 +269,13 @@ const classes = StyleSheet.create({
     marginHorizontal: 5,
     fontSize: 16,
     fontWeight: '600',
+  },
+  locationRoot: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginVertical: 5,
+  },
+  chip: {
+    marginHorizontal: 5,
   },
 });

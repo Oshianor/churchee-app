@@ -47,8 +47,8 @@ const classes = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 5,
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#E4E4E4',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E4E4E4',
     paddingHorizontal: 20,
   },
   left: {

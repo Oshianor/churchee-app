@@ -57,7 +57,7 @@ const Verification = ({
         }),
       );
       // navigate('VerificationCompleted');
-      navigate('Dashboard', {screen: 'Home'});
+      navigate('FindChurch');
     } catch (err) {
       setIsLoading(false);
       if (err.response) {
