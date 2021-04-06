@@ -1,7 +1,13 @@
 import React from 'react'
-import {View, StyleSheet, TouchableOpacity, FlatList, Image} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Image,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Subheading} from 'react-native-paper';
+import {Subheading, Searchbar} from 'react-native-paper';
 import axios from 'axios';
 import { api } from '../../api';
 import {useSelector, useDispatch} from 'react-redux';
@@ -11,6 +17,9 @@ import {feedbackAction, countryAction} from '../../store/actions';
 const CountryList = ({navigation: {navigate}}) => {
   const dispatch = useDispatch();
   const { country } = useSelector(({country}) => country);
+  const [search, setSearch] = React.useState('');
+  const [localCountry, setLocalCountry] = React.useState([]);
+
 
   React.useEffect(() => {
     handleCountry();
@@ -24,6 +33,7 @@ const CountryList = ({navigation: {navigate}}) => {
         const countryData = await axios.get(api.country);
 
         dispatch(countryAction.setCountry({country: countryData?.data?.data}));
+        setLocalCountry(countryData?.data?.data);
         dispatch(feedbackAction.launch({loading: false}));
       }
     } catch (error) {
@@ -39,17 +49,43 @@ const CountryList = ({navigation: {navigate}}) => {
     navigate("StateList");
   };
 
+  const handleSearchText = (search) => {
+    let text = search.split(' ');
+
+    if (search !== '') {
+      const data = localCountry.filter(function (item) {
+        return text.every(function (el) {
+          return item.name.indexOf(el) > -1;
+        });
+      });
+
+      console.log('localCountry', localCountry);
+      dispatch(countryAction.setCountry({ country: data }));
+    } else {
+      dispatch(countryAction.setCountry({country: localCountry}));
+    }
+
+    setSearch(text);
+  };
+
   return (
     <View style={classes.root}>
       <View style={classes.headerRoot}>
         <Icon name="globe-model" size={20} />
         <Subheading style={classes.headerTitle}>Select Country</Subheading>
       </View>
+      <Searchbar
+        placeholder="Search"
+        onChangeText={(search) => handleSearchText(search)}
+        value={search}
+      />
       <FlatList
         data={country}
         keyExtractor={(item) => item._id.toString()}
         renderItem={({item}) => (
-          <TouchableOpacity style={classes.listRoot} onPress={() => handleSelect(item)} >
+          <TouchableOpacity
+            style={classes.listRoot}
+            onPress={() => handleSelect(item)}>
             <Image
               source={{
                 uri: `http://www.geognos.com/api/en/countries/flag/${item.code2}.png`,

@@ -28,6 +28,7 @@ const {height} = Dimensions.get('window');
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const {loading} = useSelector(({feedback}) => feedback);
+  const {church} = useSelector(({church}) => church);
   const [text, setText] = React.useState('');
   const hasUnsavedChanges = Boolean(text);
   const [value, setValue] = React.useState({
@@ -106,7 +107,7 @@ const Login = ({navigation}) => {
 
       await AsyncStorage.setItem(
         'token',
-        JSON.stringify(login.headers['x-auth-token']),
+        login.headers['x-auth-token'],
       );
       await AsyncStorage.setItem('user', JSON.stringify(login.data.data));
 
@@ -127,8 +128,12 @@ const Login = ({navigation}) => {
         password: '',
       });
 
-      // navigation.navigate('Dashboard');
-      navigation.goBack();
+
+      if (church) {
+        navigation.navigate('Dashboard');
+      } else {
+        navigation.goBack();
+      } 
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);

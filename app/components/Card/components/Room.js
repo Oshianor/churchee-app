@@ -1,22 +1,23 @@
 import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Avatar, Subheading, Surface} from 'react-native-paper';
+import { api } from '../../../api';
 import { dimension } from '../../../theme';
 import { AvatarGroup } from "../../Group"
 
 
-const Room = (props) => {
+const Room = ({ onPress, name, img }) => {
   return (
-    <TouchableOpacity onPress={props.onPress}>
+    <TouchableOpacity style={classes.container} onPress={onPress}>
       <Surface style={classes.root}>
         <Avatar.Image
           source={{
             uri:
-              'https://secure.gravatar.com/avatar/633a831aae31c6e03393c6bab4681788?s=46&d=identicon',
+              `${api.img}${img}`
           }}
         />
 
-        <Subheading>Choir Room</Subheading>
+        <Subheading>{name}</Subheading>
         <AvatarGroup />
       </Surface>
     </TouchableOpacity>
@@ -26,6 +27,9 @@ const Room = (props) => {
 export default Room
 
 const classes = StyleSheet.create({
+  container: {
+    marginVertical: 10
+  },
   root: {
     width: dimension.APP_WIDTH / 2.4,
     height: dimension.APP_HEIGHT / 4.5,
@@ -40,6 +44,6 @@ const classes = StyleSheet.create({
     backgroundColor: '#EFF1F2',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 5
+    marginVertical: 5,
   },
 });

@@ -1,7 +1,7 @@
 export const baseUrl = 'https://api.churchee.app/api/v1';
 export const webiste = 'https://api.churchee.app';
-export const chatService =
-  'http://ec2-18-218-125-237.us-east-2.compute.amazonaws.com:8080';
+export const chatURL = 'http://ec2-3-81-141-121.compute-1.amazonaws.com:8080';
+export const chatService = `${chatURL}/api/v1`;
 // const baseUrl = 'http://localhost:9090/api/v1';
 
 
@@ -53,8 +53,10 @@ export const api = {
   getAllMembers: baseUrl + '/user/all/members',
   searchChurch: `${baseUrl}/user/search-church`,
   topChurch: `${baseUrl}/user/top/church`,
+  join: `${baseUrl}/user/join`,
 
   // room service
-  createRoom: `${chatService}/api/v1/room/create`,
-  getRoom: `${chatService}/api/v1/room/get`,
+  createRoom: `${chatService}/room/create`,
+  getRoom: `${chatService}/room/get`,
+  joinRoom: `${chatService}/member/add`,
 };

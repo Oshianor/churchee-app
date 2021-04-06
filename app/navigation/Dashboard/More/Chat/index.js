@@ -3,6 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {Subheading} from 'react-native-paper';
 import BackButton from '../../../custom/BackButton';
+import TitleButton from '../../../custom/TitleButton';
 import RoomHome from "../../../../screens/Dashboard/More/Chat"
 import RoomInfo from '../../../../screens/Dashboard/More/Chat/roomInfo';
 import CreateRoom from "../../../../screens/Dashboard/More/Chat/createRoom";
@@ -10,7 +11,7 @@ import AddModerator from "../../../../screens/Dashboard/More/Chat/AddModerator";
 import Search from "../../../../screens/Dashboard/More/Chat/search";
 import RoomChat from '../../../../screens/Dashboard/More/Chat/roomChat';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
-import { TouchableOpacity } from 'react-native';
+import {TouchableOpacity, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
@@ -19,13 +20,32 @@ const Room = () => {
     const {
       church: {name},
     } = useSelector(({church}) => church);
+    const {
+      token,
+      user
+    } = useSelector(({account}) => account);
   return (
     <Stack.Navigator initialRouteName="ChatTabs">
       <Stack.Screen
         name="ChatTabs"
-        options={({route, navigation: {goBack}}) => ({
-          headerLeft: () => <BackButton goBack={goBack} />,
-          headerTitle: () => <Subheading style={{ textTransform: "capitalize" }} >{`${name}'s Room space`}</Subheading>,
+        options={({route, navigation: {goBack, navigate}}) => ({
+          // headerLeft: () => <BackButton goBack={goBack} />,
+          headerLeft: () => <TitleButton navigate={goBack} label={`${name}'s Room space`} />,
+          // headerTitle: () => (
+          //   <Subheading
+          //     style={{
+          //       textTransform: 'capitalize',
+          //     }}>{`${name}'s Room space`}</Subheading>
+          // ),
+          title: '',
+          headerRight: () =>
+            token ? (
+              <TouchableOpacity
+                style={classes.addGroup}
+                onPress={() => navigate('CreateRoom')}>
+                <Icon name="account-multiple-plus" size={35} />
+              </TouchableOpacity>
+            ) : null,
         })}
         component={ChatTabs}
       />
@@ -98,6 +118,12 @@ const ChatTabs = () => {
   );
 }
 
+
+const classes = StyleSheet.create({
+  addGroup: {
+    marginRight: 20
+  },
+});
 
 // const RoomStack = () => {
 //   return (

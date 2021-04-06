@@ -7,17 +7,20 @@ import {
   Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Subheading} from 'react-native-paper';
+import {Subheading, Searchbar} from 'react-native-paper';
 import axios from 'axios';
 import {api} from '../../api';
 import {useSelector, useDispatch} from 'react-redux';
 import {feedbackAction, countryAction} from '../../store/actions';
+
 
 const regionMap = ['United Kingdom', 'Canada'];
 
 const StateList = ({navigation: {navigate}}) => {
   const dispatch = useDispatch();
   const {state, selectedCountry} = useSelector(({country}) => country);
+  const [search, setSearch] = React.useState('');
+  const [localState, setLocalState] = React.useState([]);
 
   React.useEffect(() => {
     handleCountry();
@@ -33,6 +36,7 @@ const StateList = ({navigation: {navigate}}) => {
       );
 
       dispatch(countryAction.setCountry({state: stateData?.data?.data}));
+      setLocalState(stateData?.data?.data);
       dispatch(feedbackAction.launch({loading: false}));
     } catch (error) {
       console.log('error', error);
@@ -45,6 +49,24 @@ const StateList = ({navigation: {navigate}}) => {
     dispatch(countryAction.setCountry({selectedState: item}));
 
     navigate('SearchChurch');
+  };
+
+  const handleSearchText = (search) => {
+    let text = search.split(' ');
+
+    if (search !== '') {
+      const data = localState.filter(function (item) {
+        return text.every(function (el) {
+          return item.name.indexOf(el) > -1;
+        });
+      });
+
+      dispatch(countryAction.setCountry({state: data}));
+    } else {
+      dispatch(countryAction.setCountry({state: localState}));
+    }
+
+    setSearch(text);
   };
 
   return (
@@ -62,6 +84,11 @@ const StateList = ({navigation: {navigate}}) => {
             : 'Select a region'}
         </Subheading>
       </View>
+      <Searchbar
+        placeholder="Search"
+        onChangeText={(search) => handleSearchText(search)}
+        value={search}
+      />
       <FlatList
         data={state}
         keyExtractor={(item) => item.name}

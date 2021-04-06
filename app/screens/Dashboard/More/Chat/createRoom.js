@@ -1,13 +1,24 @@
 import React from 'react';
-import {View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
-import {Caption, Subheading, Surface} from 'react-native-paper';
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+} from 'react-native';
+import {Caption, Subheading, Surface, Avatar} from 'react-native-paper';
 import {Radio} from '../../../../components/Radio';
-import {ThemeContext} from '../../../../context/ThemeContext';
+import {baseColor, ThemeContext} from '../../../../context/ThemeContext';
 import {Button} from '../../../../components/Button';
 import axios from 'axios';
 import {api} from '../../../../api';
 import {useSelector, useDispatch} from 'react-redux';
 import {feedbackAction} from '../../../../store/actions';
+import ImagePicker from 'react-native-image-crop-picker';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import img from '../../../../images';
+import {colors} from '../../../../theme';
 
 const CreateRoom = ({navigation: {navigate}}) => {
   const dispatch = useDispatch();
@@ -16,6 +27,7 @@ const CreateRoom = ({navigation: {navigate}}) => {
     roomDesc: '',
     roomName: '',
     roomType: 'PUBLIC',
+    base64Image: '',
   });
 
   const handleCreateRoom = async () => {
@@ -50,7 +62,7 @@ const CreateRoom = ({navigation: {navigate}}) => {
           loading: false,
         }),
       );
-      navigate('AddModerator', );
+      navigate('AddModerator', {room: room.data.data});
     } catch (error) {
       dispatch(
         feedbackAction.launch({
@@ -66,75 +78,135 @@ const CreateRoom = ({navigation: {navigate}}) => {
     }
   };
 
+  const openGallary = async () => {
+    // ImagePicker.openPicker({
+    //   width: 300,
+    //   height: 400,
+    //   cropping: true,
+    // }).then((image) => {
+    //   console.log(image);
+    // });
+
+    ImagePicker.openPicker({
+      includeBase64: true,
+      cropping: true,
+      compressImageQuality: Platform.OS === 'android' ? 0.6 : 0.8,
+    })
+      .then((image) => {
+        console.log('the images', image);
+        const prefixImg = 'data:image/png;base64,';
+        setValue({...value, base64Image: `${prefixImg}${image.data}`});
+      })
+      .catch((err) => console.error(err));
+  };
+
   return (
     <ThemeContext.Consumer>
-      {({theme}) => (
+      {({theme, baseColor}) => (
         <View style={classes.root}>
-          <View style={classes.privacyRoot}>
-            <Subheading style={classes.privacyTitle}>Privacy</Subheading>
-            <Surface style={classes.privacyBody}>
+          <ScrollView>
+            <View style={classes.imageRoot}>
+              {value.base64Image ? (
+                <Avatar.Image
+                  source={{uri: value.base64Image}}
+                  size={100}
+                  style={{
+                    backgroundColor: 'white',
+                  }}
+                />
+              ) : (
+                <Avatar.Image
+                  source={img.user}
+                  size={100}
+                  style={{
+                    backgroundColor: 'white',
+                  }}
+                />
+              )}
+
               <TouchableOpacity
-                onPress={() => setValue({...value, roomType: 'PRIVATE'})}
-                style={classes.privacyItem}>
-                <Subheading style={classes.privacySubTitle}>Private</Subheading>
-                <Radio selected={value.roomType === 'PRIVATE'} />
+                onPress={openGallary}
+                style={[classes.iconRoot, {backgroundColor: baseColor}]}>
+                <Icon name="camera" size={20} />
               </TouchableOpacity>
               <TouchableOpacity
-                style={classes.privacyItem}
-                onPress={() => setValue({...value, roomType: 'PUBLIC'})}>
-                <Subheading style={classes.privacySubTitle}>Public</Subheading>
-                <Radio selected={value.roomType === 'PUBLIC'} />
+                onPress={() => setValue({...value, base64Image: ''})}
+                style={classes.removeRoot}>
+                <Icon name="delete" size={20} color={colors.red} />
+                <Subheading>Remove Picture</Subheading>
               </TouchableOpacity>
-            </Surface>
-            <Caption style={classes.privacyCaption}>
-              Explanation of what differentiates Private and Public Rooms
-            </Caption>
-          </View>
+            </View>
 
-          <View style={classes.roomRoot}>
-            <Subheading style={classes.privacyTitle}>Room Name</Subheading>
-            <Surface style={classes.roomBody}>
-              <TextInput
-                style={[
-                  classes.TextInput,
-                  {color: theme.mode ? 'white' : 'black'},
-                ]}
-                // style={[classes.TextInput, {color: theme.text}]}
-                placeholderTextColor={'#bbbbbb'}
-                placeholder="#  Name"
-                onChangeText={(roomName) => setValue({...value, roomName})}
-                value={value.roomName}
-              />
-            </Surface>
-            <Caption style={classes.privacyCaption}>
-              Names can only be alphanumeric and shorter than 16 characters.
-            </Caption>
-          </View>
+            <View style={classes.roomRoot}>
+              <Subheading style={classes.privacyTitle}>Room Name</Subheading>
+              <Surface style={classes.roomBody}>
+                <TextInput
+                  style={[
+                    classes.TextInput,
+                    {color: theme.mode ? 'white' : 'black'},
+                  ]}
+                  // style={[classes.TextInput, {color: theme.text}]}
+                  placeholderTextColor={'#bbbbbb'}
+                  placeholder="#  Name"
+                  onChangeText={(roomName) => setValue({...value, roomName})}
+                  value={value.roomName}
+                />
+              </Surface>
+              <Caption style={classes.privacyCaption}>
+                Names can only be alphanumeric and shorter than 16 characters.
+              </Caption>
+            </View>
 
-          <View style={classes.DetailsRoot}>
-            <Subheading style={classes.privacyTitle}>Description</Subheading>
-            <Surface style={classes.DetailsBody}>
-              <TextInput
-                style={[
-                  classes.MultiInput,
-                  {color: theme.mode ? 'white' : 'black'},
-                ]}
-                placeholderTextColor={'#bbbbbb'}
-                multiline
-                placeholder="#  Brief Description of the room"
-                onChangeText={(roomDesc) => setValue({...value, roomDesc})}
-                value={value.roomDesc}
-              />
-            </Surface>
-            <Caption style={classes.privacyCaption}>
-              Description can only be alphanumeric and shorter than 160
-              characters.
-            </Caption>
-          </View>
+            <View style={classes.privacyRoot}>
+              <Subheading style={classes.privacyTitle}>Privacy</Subheading>
+              <Surface style={classes.privacyBody}>
+                <TouchableOpacity
+                  onPress={() => setValue({...value, roomType: 'PRIVATE'})}
+                  style={classes.privacyItem}>
+                  <Subheading style={classes.privacySubTitle}>
+                    Private
+                  </Subheading>
+                  <Radio selected={value.roomType === 'PRIVATE'} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={classes.privacyItem}
+                  onPress={() => setValue({...value, roomType: 'PUBLIC'})}>
+                  <Subheading style={classes.privacySubTitle}>
+                    Public
+                  </Subheading>
+                  <Radio selected={value.roomType === 'PUBLIC'} />
+                </TouchableOpacity>
+              </Surface>
+              <Caption style={classes.privacyCaption}>
+                Explanation of what differentiates Private and Public Rooms
+              </Caption>
+            </View>
 
-          <View style={classes.buttonRoot}>
-            <Button label="Create Room" onPress={handleCreateRoom} />
-          </View>
+            <View style={classes.DetailsRoot}>
+              <Subheading style={classes.privacyTitle}>Description</Subheading>
+              <Surface style={classes.DetailsBody}>
+                <TextInput
+                  style={[
+                    classes.MultiInput,
+                    {color: theme.mode ? 'white' : 'black'},
+                  ]}
+                  placeholderTextColor={'#bbbbbb'}
+                  multiline
+                  placeholder="#  Brief Description of the room"
+                  onChangeText={(roomDesc) => setValue({...value, roomDesc})}
+                  value={value.roomDesc}
+                />
+              </Surface>
+              <Caption style={classes.privacyCaption}>
+                Description can only be alphanumeric and shorter than 160
+                characters.
+              </Caption>
+            </View>
+
+            <View style={classes.buttonRoot}>
+              <Button label="Create Room" onPress={handleCreateRoom} />
+            </View>
+          </ScrollView>
         </View>
       )}
     </ThemeContext.Consumer>
@@ -147,6 +219,26 @@ const classes = StyleSheet.create({
   root: {
     flex: 1,
     // marginHorizontal: 20,
+  },
+  imageRoot: {
+    marginHorizontal: 20,
+    paddingVertical: 10,
+  },
+  iconRoot: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: -35,
+    marginLeft: 75,
+    height: 35,
+    width: 35,
+    borderRadius: 35,
+  },
+  removeRoot: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: 200,
+    marginTop: 10,
   },
   privacyRoot: {
     // height: 100,

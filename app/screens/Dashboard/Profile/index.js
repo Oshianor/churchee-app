@@ -45,7 +45,7 @@ const ProfileHome = ({navigation: {navigate}}) => {
       await AsyncStorage.removeItem('favouriteDevotion');
       await AsyncStorage.removeItem('favouriteHymn');
 
-      navigate('Onboarding');
+      navigate('Onboarding', { screen: "Login" });
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);

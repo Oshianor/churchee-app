@@ -41,7 +41,7 @@ const Verification = ({
 
       await AsyncStorage.setItem(
         'token',
-        JSON.stringify(verify.headers['x-auth-token']),
+        verify.headers['x-auth-token'],
       );
       await AsyncStorage.setItem('user', JSON.stringify(verify.data.data));
 
@@ -53,21 +53,14 @@ const Verification = ({
           loading: false,
           open: true,
           severity: 's',
-          msg: verify.data.msg,
+          msg: verify?.data?.msg,
         }),
       );
       // navigate('VerificationCompleted');
       navigate('FindChurch');
     } catch (err) {
-      setIsLoading(false);
-      if (err.response) {
-        const {msg} = err.response.data;
-        dispatch(feedbackAction.launch({open: true, severity: 'w', msg}));
-        return;
-      }
-      dispatch(
-        feedbackAction.launch({open: true, severity: 'w', msg: `${err}`}),
-      );
+      const {msg} = err.response.data;
+      dispatch(feedbackAction.launch({open: true, severity: 'w', msg, loading: false}));
     }
   };
 

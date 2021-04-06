@@ -1,22 +1,26 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from "react-native";
-import { CreateRoom, Room } from '../../../../components/Card';
+import {FlatList, StyleSheet, View} from 'react-native';
+import {CreateRoom, Room} from '../../../../components/Card';
 import {useSelector, useDispatch} from 'react-redux';
 import {feedbackAction, chatAction} from '../../../../store/actions';
-import axios from "axios"
-import { api } from '../../../../api';
+import axios from 'axios';
+import {dimension} from '../../../../theme';
+import {api} from '../../../../api';
 
-const ChatHome = ({ navigation: { navigate } }) => {
+const ChatHome = ({navigation: {navigate}}) => {
   const dispatch = useDispatch();
   const {user, token} = useSelector(({account}) => account);
   const {rooms} = useSelector(({chat}) => chat);
 
   React.useEffect(() => {
     getRooms();
-  }, [])
+  }, []);
 
   const getRooms = async () => {
     try {
+
+      if (typeof rooms[0] !== "undefined") return;
+
       dispatch(
         feedbackAction.launch({
           loading: true,
@@ -29,13 +33,11 @@ const ChatHome = ({ navigation: { navigate } }) => {
 
       console.log('room', room);
 
+      dispatch(chatAction.setChat({rooms: room.data.data.reverse()}));
       dispatch(
         feedbackAction.launch({
           loading: false,
         }),
-      );
-      dispatch(
-        chatAction.setChat({ rooms: room.data.data }),
       );
     } catch (error) {
       dispatch(
@@ -50,36 +52,35 @@ const ChatHome = ({ navigation: { navigate } }) => {
 
   return (
     <View style={classes.root}>
-      <View style={classes.section}>
-        {user?.type === 'church' && (
-          <CreateRoom onPress={() => navigate('CreateRoom')} />
+      <FlatList
+        data={rooms}
+        keyExtractor={(item) => item.roomID}
+        numColumns={2}
+        columnWrapperStyle={classes.contain}
+        renderItem={({item}) => (
+          <Room
+            onPress={() => navigate('RoomChat')}
+            name={item.roomName}
+            img={item.profileImage}
+          />
         )}
-        <FlatList
-          data={rooms}
-          keyExtractor={(item) => item.roomID}
-          renderItem={({item}) => <Room onPress={() => navigate('RoomChat')} />}
-        />
-      </View>
-
-      {/* <View style={classes.section}>
-        <Room onPress={() => navigate('RoomInfo')} />
-        <Room onPress={() => navigate('RoomInfo')} />
-      </View> */}
+      />
     </View>
   );
-}
+};
 
-export default ChatHome
+export default ChatHome;
 
 const classes = StyleSheet.create({
   root: {
     flex: 1,
-    marginHorizontal: 10
+    paddingHorizontal: 10,
+    flexDirection: 'row',
   },
-  section: {
-    justifyContent: "space-around",
-    alignItems: "center",
-    flexDirection: "row",
-    marginVertical: 10
+  contain: {
+    flex: 1,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    flexWrap: 'wrap',
   },
 });

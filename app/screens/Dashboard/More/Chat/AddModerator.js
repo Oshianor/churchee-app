@@ -6,12 +6,22 @@ import { AddUser } from '../../../../components/List';
 import axios from 'axios';
 import {api} from '../../../../api';
 import {useSelector, useDispatch} from 'react-redux';
-import {feedbackAction, accountAction} from '../../../../store/actions';
+import {feedbackAction, churchAction} from '../../../../store/actions';
 
 
-const AddModerator = () => {
+const AddModerator = ({
+  route: {
+    params: {room},
+  },
+  navigation: {navigate},
+}) => {
   const dispatch = useDispatch();
-  const {token, members, selectedMembers} = useSelector(({account}) => account);
+  const {token} = useSelector(({account}) => account);
+  const {members, selectedMembers, selectedMembersIDs} = useSelector(
+    ({church}) => church,
+  );
+
+  console.log('room', room);
 
   React.useEffect(() => {
     getAllMembers();
@@ -30,14 +40,14 @@ const AddModerator = () => {
       });
 
       dispatch(
-        feedbackAction.launch({
-          loading: false,
+        churchAction.setChurchData({
+          members: users?.data?.data,
         }),
       );
 
       dispatch(
-        accountAction.setAccountData({
-          members: users?.data?.data,
+        feedbackAction.launch({
+          loading: false,
         }),
       );
     } catch (error) {
@@ -46,12 +56,26 @@ const AddModerator = () => {
           loading: false,
         }),
       );
-      console.log("error", error);
+      console.log('error', error);
       console.log('error', error.response);
     }
-  }
+  };
 
   const handleSelect = (item) => {
+    //check if the member has been added before
+    if (selectedMembersIDs.includes(item._id)) {
+      const newMember = selectedMembers.filter((v) => v.memberID !== item._id);
+      const newMemberIDs = selectedMembersIDs.filter((v) => v !== item._id);
+
+      dispatch(
+        churchAction.setChurchData({
+          selectedMembers: newMember,
+          selectedMembersIDs: newMemberIDs,
+        }),
+      );
+
+      return;
+    }
 
     const set = {
       memberID: item._id,
@@ -61,33 +85,56 @@ const AddModerator = () => {
     const newMember = [...selectedMembers, set];
     const newMemberIDs = [...selectedMembersIDs, item._id];
     dispatch(
-      accountAction.setAccountData({
+      churchAction.setChurchData({
         selectedMembers: newMember,
         selectedMembersIDs: newMemberIDs,
       }),
     );
-  }
+  };
+
+  const handleComplete = async () => {
+    try {
+      const users = await axios.post(
+        `${api.joinRoom}/${room.roomID}`,
+        selectedMembers,
+        {
+          headers: {userAuth: token},
+        },
+      );
+
+      console.log('users', users);
+
+      navigate('RoomChat');
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
 
   return (
     <View style={classes.root}>
       <View style={classes.container}>
         <FlatList
           data={members}
+          extraData={selectedMembersIDs}
           keyExtractor={(item, i) => i.toString()}
           renderItem={({item}) => (
             <TouchableOpacity onPress={() => handleSelect(item)}>
-              <AddUser item={item} />
+              <AddUser
+                item={item}
+                selected={selectedMembersIDs?.includes(item._id)}
+              />
             </TouchableOpacity>
           )}
         />
       </View>
 
       <Surface style={classes.buttonRoot}>
-        <Button label="ADD AS MODERATOR" />
+        <Button label="ADD AS MODERATOR" onPress={handleComplete} />
       </Surface>
     </View>
   );
-}
+};
  
  export default AddModerator
  

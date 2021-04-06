@@ -20,149 +20,90 @@ const MoreScreen = ({ navigation: { navigate } }) => {
       {({theme, baseColor}) => (
         <View style={[classes.root, {backgroundColor: theme.background}]}>
           <Wrapper root={{justifyContent: 'flex-start'}}>
-            <TouchableOpacity
-              style={classes.surface}
-              onPress={() => navigate('Onboarding', {screen: 'FindChurch'})}>
-              <View style={classes.left}>
-                <Icon
-                  name="account-group-outline"
-                  color={theme.icon}
-                  style={classes.icon}
-                  size={25}
-                />
-                <Subheading style={classes.Subheading}>
-                  Join Congregation
-                </Subheading>
-              </View>
-              <Icon name="chevron-right" color={theme.icon} size={25} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={classes.surface}
-              onPress={() => navigate('Chat')}>
-              <View style={classes.left}>
-                <Icon
-                  name="wechat"
-                  color={theme.icon}
-                  style={classes.icon}
-                  size={25}
-                />
-                <Subheading style={classes.Subheading}>Chat Room</Subheading>
-              </View>
-              <Icon name="chevron-right" color={theme.icon} size={25} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={classes.surface}
-              onPress={() => navigate('Devotion')}>
-              <View style={classes.left}>
-                <Icon
-                  name="book"
-                  color={theme.icon}
-                  style={classes.icon}
-                  size={25}
-                />
-                <Subheading style={classes.Subheading}>
-                  Daily Devotion
-                </Subheading>
-              </View>
-              <Icon name="chevron-right" color={theme.icon} size={25} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={classes.surface}
-              onPress={() => navigate('Hymn')}>
-              <View style={classes.left}>
-                <Icon
-                  name="book-open"
-                  color={theme.icon}
-                  style={classes.icon}
-                  size={25}
-                />
-                <Subheading style={classes.Subheading}>Hymns</Subheading>
-              </View>
-              <Icon name="chevron-right" color={theme.icon} size={25} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={classes.surface}
-              onPress={() =>
-                navigate('Sermon', {
-                  screen: 'More',
-                })
-              }>
-              <View style={classes.left}>
-                <Icon
-                  name="file-document"
-                  color={theme.icon}
-                  style={classes.icon}
-                  size={25}
-                />
-                <Subheading style={classes.Subheading}>Sermons</Subheading>
-              </View>
-              <Icon name="chevron-right" color={theme.icon} size={25} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={classes.surface}
-              onPress={() => navigate('PPR')}>
-              <View style={classes.left}>
-                <AwesomeIcon
-                  name="hands"
-                  color={theme.icon}
-                  style={classes.icon}
-                  size={20}
-                />
-                <Subheading style={classes.Subheading}>
-                  Prayer Requests
-                </Subheading>
-              </View>
-              <Icon name="chevron-right" color={theme.icon} size={25} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={classes.surface}
-              onPress={() => navigate('Media')}>
-              <View style={classes.left}>
-                <Icon
-                  name="folder-multiple-image"
-                  color={theme.icon}
-                  style={classes.icon}
-                  size={25}
-                />
-                <Subheading style={classes.Subheading}>Media</Subheading>
-              </View>
-              <Icon name="chevron-right" color={theme.icon} size={25} />
-            </TouchableOpacity>
-            {/* <TouchableOpacity
+            <ListNav
+              name="Join Congregation"
+              icon="account-group-outline"
+              onPress={() => navigate('Onboarding', {screen: 'FindChurch'})}
+            />
+            <ListNav
+              name="Chat Room"
+              icon="wechat"
+              onPress={() => navigate('Chat')}
+            />
+            <ListNav
+              name="Daily Devotion"
+              icon="book"
+              onPress={() => navigate('Devotion')}
+            />
+            <ListNav
+              name="Hymns"
+              icon="book-open"
+              onPress={() => navigate('Hymn')}
+            />
+            <ListNav
+              name="Sermons"
+              icon="file-document"
+              onPress={() => navigate('Sermon')}
+            />
+            <ListNav
+              name="Prayer Requests"
+              icon="hands"
+              iconType="AwesomeIcon"
+              onPress={() => navigate('PPR')}
+            />
+            <ListNav
+              name="Media"
+              icon="folder-multiple-image"
+              onPress={() => navigate('Media')}
+            />
+            <ListNav
+              name="Forms"
+              icon="format-align-center"
               onPress={() => navigate('Form')}
-              style={classes.surface}>
-              <View style={classes.left}>
-                <Icon
-                  name="format-align-center"
-                  color={theme.icon}
-                  style={classes.icon}
-                  size={25}
-                />
-                <Subheading style={classes.Subheading}>Forms</Subheading>
-              </View>
-              <Icon name="chevron-right" color={theme.icon} size={25} />
-            </TouchableOpacity> */}
-            <TouchableOpacity
+            />
+            <ListNav
+              name="Settings"
+              icon="cogs"
               onPress={() => navigate('More', {screen: 'SettingScreen'})}
-              style={classes.surface}>
-              <View style={classes.left}>
-                <Icon
-                  name="cogs"
-                  color={theme.icon}
-                  style={classes.icon}
-                  size={25}
-                />
-                <Subheading style={classes.Subheading}>Settings</Subheading>
-              </View>
-              <Icon name="chevron-right" color={theme.icon} size={25} />
-            </TouchableOpacity>
+            />
           </Wrapper>
         </View>
       )}
     </ThemeContext.Consumer>
   );
 }
+
+
+const ListNav = ({name, icon, onPress, iconType="MD"}) => {
+  return (
+    <ThemeContext.Consumer>
+      {({theme}) => (
+        <TouchableOpacity style={classes.surface} onPress={onPress}>
+          <View style={classes.left}>
+            {iconType === 'MD' ? (
+              <Icon
+                name={icon}
+                color={theme?.icon}
+                style={classes.icon}
+                size={25}
+              />
+            ) : (
+              <AwesomeIcon
+                name={icon}
+                color={theme.icon}
+                style={classes.icon}
+                size={20}
+              />
+            )}
+
+            <Subheading style={classes.Subheading}>{name}</Subheading>
+          </View>
+          <Icon name="chevron-right" color={theme?.icon} size={25} />
+        </TouchableOpacity>
+      )}
+    </ThemeContext.Consumer>
+  );
+};
 
 export default MoreScreen;
 

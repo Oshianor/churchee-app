@@ -28,16 +28,17 @@ import {
   mediaAction,
   churchAction,
 } from '../../store/actions';
+import {moveElement} from '../../utils';
+
 
 const JoinChurch = ({navigation: {navigate, goBack}}) => {
   const dispatch = useDispatch();
   const [recomend, setRecomend] = React.useState([]);
   const {church, churchList} = useSelector(({church}) => church);
   const {selectedCountry, selectedState} = useSelector(({country}) => country);
-  const {token} = useSelector(({account}) => account);
+  const {token, lat, lng} = useSelector(({account}) => account);
 
 
-  console.log('recomend', recomend);
   React.useEffect(() => {
     getTopChurch();
   }, []);
@@ -47,10 +48,18 @@ const JoinChurch = ({navigation: {navigate, goBack}}) => {
 
       // dispatch(feedbackAction.launch({loading: true}));
 
-      const churchFind = await axios.get(`${api.topChurch}`);
+      const churchFind = await axios.get(
+        `${api.topChurch}?lat=${lat}&lng=${lng}`,
+      );
 
       console.log('churchFind', churchFind);
       setRecomend(churchFind.data.data);
+
+      if (typeof churchFind?.data?.data[0] === "undefined") {
+
+        dispatch(churchAction.setChurchData({isFilter: true}));
+        return 
+      }
 
       // dispatch(feedbackAction.launch({loading: false}));
     } catch (error) {
@@ -94,6 +103,8 @@ const JoinChurch = ({navigation: {navigate, goBack}}) => {
             churchList: newChurchArr,
           }),
         );
+
+
         // dispatch(churchAction.churchListData(newChurchArr));
 
         await AsyncStorage.setItem('church', JSON.stringify(item));
@@ -101,6 +112,17 @@ const JoinChurch = ({navigation: {navigate, goBack}}) => {
         resetData();
 
         dispatch(feedbackAction.launch({loading: false}));
+
+        const join = await axios.post(
+          `${api.join}`,
+          {
+            church: item._id,
+          },
+          {headers: {'x-auth-token': token}},
+        );
+
+        console.log('join', join);
+
 
         navigate('Dashboard');
         return;
@@ -133,10 +155,21 @@ const JoinChurch = ({navigation: {navigate, goBack}}) => {
 
       dispatch(feedbackAction.launch({loading: false}));
 
+      const join = await axios.post(
+        `${api.join}`,
+        {
+          church: item._id,
+        },
+        {headers: {'x-auth-token': token}},
+      );
+
+      console.log('join', join);
+
       navigate('Dashboard');
 
       return;
     } catch (error) {
+      console.log('error', error);
       dispatch(feedbackAction.launch({loading: false}));
     }
     await getLive(item.publicToken);
@@ -167,7 +200,7 @@ const JoinChurch = ({navigation: {navigate, goBack}}) => {
 
   return (
     <SafeAreaView style={classes.root}>
-      {church && <BackButton goBack={goBack} />}
+      {token && <BackButton goBack={() => navigate("Dashboard")} />}
 
       <View style={classes.header}>
         <Image source={img.churchFind} style={classes.img} />
@@ -200,7 +233,9 @@ const JoinChurch = ({navigation: {navigate, goBack}}) => {
           data={recomend}
           keyExtractor={(item) => item._id}
           horizontal={true}
-          renderItem={({item}) => <ChurchCard item={item} onPress={() => handleSelect(item)} />}
+          renderItem={({item}) => (
+            <ChurchCard item={item} onPress={() => handleSelect(item)} />
+          )}
         />
       </View>
     </SafeAreaView>

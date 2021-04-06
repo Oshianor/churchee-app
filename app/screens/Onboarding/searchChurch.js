@@ -28,7 +28,7 @@ import {moveElement} from "../../utils";
 import { ChurchFilter } from "../../components/Modal"
 import {Chip} from 'react-native-paper';
 
-let interval;
+// let interval;
 
 const SearchChurch = ({navigation: {navigate}}) => {
   const dispatch = useDispatch();
@@ -38,9 +38,9 @@ const SearchChurch = ({navigation: {navigate}}) => {
   const [churches, setChurches] = React.useState([]);
   const [value, setValue] = React.useState('');
 
-  React.useEffect(() => {
-    return () => clearInterval(interval);
-  }, []);
+  // React.useEffect(() => {
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const handleSearch = async () => {
     try {
@@ -65,10 +65,10 @@ const SearchChurch = ({navigation: {navigate}}) => {
 
       dispatch(feedbackAction.launch({loading: false}));
 
-      interval = setTimeout(() => {
-        console.log("ran");
-        dispatch(churchAction.setChurchData({isFilter: true}));
-      }, 7000);
+      // interval = setTimeout(() => {
+      //   console.log("ran");
+      //   dispatch(churchAction.setChurchData({isFilter: true}));
+      // }, 7000);
 
     } catch (error) {
       console.log('error', error);
@@ -86,7 +86,7 @@ const SearchChurch = ({navigation: {navigate}}) => {
         return
       }
 
-      clearInterval(interval);
+      // clearInterval(interval);
 
       dispatch(feedbackAction.launch({loading: true}));
 
@@ -121,6 +121,16 @@ const SearchChurch = ({navigation: {navigate}}) => {
 
         dispatch(feedbackAction.launch({loading: false}));
 
+        const join = await axios.post(
+          `${api.join}`,
+          {
+            church: item._id,
+          },
+          {headers: {'x-auth-token': token}},
+        );
+
+        console.log('join', join);
+
         navigate('Dashboard');
         return;
       }
@@ -151,6 +161,16 @@ const SearchChurch = ({navigation: {navigate}}) => {
       // dispatch(churchAction.churchListData(churchDataList));
 
       dispatch(feedbackAction.launch({loading: false}));
+
+      const join = await axios.post(
+        `${api.join}`,
+        {
+          church: item._id,
+        },
+        {headers: {'x-auth-token': token}},
+      );
+
+      console.log('join', join);
 
       navigate('Dashboard');
 

@@ -9,10 +9,10 @@ const User = ({item, selected}) => {
   return (
     <View style={classes.root}>
       <View style={classes.left}>
-        <Avatar.Image source={{uri: api.img + item.img}} size={30} />
+        <Avatar.Image source={{uri: `${api.img}${item.img}`}} size={30} />
         <Subheading style={classes.text}>{item.name}</Subheading>
       </View>
-      <Radio selected />
+      <Radio selected={selected} />
     </View>
   );
 };
