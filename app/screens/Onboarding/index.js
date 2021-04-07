@@ -28,12 +28,12 @@ const {height} = Dimensions.get('window');
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const {loading} = useSelector(({feedback}) => feedback);
-  const {church} = useSelector(({church}) => church);
+  const {church, churchList} = useSelector(({church}) => church);
   const [text, setText] = React.useState('');
   const hasUnsavedChanges = Boolean(text);
   const [value, setValue] = React.useState({
-    email: 'abundanceoshianor@gmail.com',
-    password: 'opendoor12345',
+    email: '',
+    password: '',
   });
 
   React.useEffect(
@@ -105,10 +105,7 @@ const Login = ({navigation}) => {
         return;
       }
 
-      await AsyncStorage.setItem(
-        'token',
-        login.headers['x-auth-token'],
-      );
+      await AsyncStorage.setItem('token', login.headers['x-auth-token']);
       await AsyncStorage.setItem('user', JSON.stringify(login.data.data));
 
       dispatch(accountAction.setToken(login.headers['x-auth-token']));
@@ -128,12 +125,15 @@ const Login = ({navigation}) => {
         password: '',
       });
 
-
       if (church) {
         navigation.navigate('Dashboard');
       } else {
-        navigation.goBack();
-      } 
+        if (typeof churchList[0] === 'undefined') {
+          navigation.navigate('findChurch');
+        } else {
+          navigation.goBack();
+        }
+      }
     } catch (error) {
       console.log('error', error);
       console.log('error', error.response);

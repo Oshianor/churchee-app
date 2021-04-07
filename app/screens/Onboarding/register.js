@@ -36,9 +36,9 @@ const Register = ({navigation: {navigate, goBack}}) => {
   // const account = useSelector(({account}) => account);
   const {loading} = useSelector(({feedback}) => feedback);
   const [value, setValue] = React.useState({
-    name: 'Josh welback',
-    email: 'abundanceoshianor@gmail.com',
-    password: 'opendoor12345',
+    name: '',
+    email: '',
+    password: '',
   });
 
   const handleLogin = async () => {

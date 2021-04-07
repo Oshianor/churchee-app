@@ -25,7 +25,6 @@ import {
 } from '../../store/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {moveElement} from "../../utils";
-import { ChurchFilter } from "../../components/Modal"
 import {Chip} from 'react-native-paper';
 
 // let interval;
@@ -42,33 +41,14 @@ const SearchChurch = ({navigation: {navigate}}) => {
   //   return () => clearInterval(interval);
   // }, []);
 
-  const handleSearch = async () => {
+  const handleSearch = async (text) => {
     try {
-      if (value === '') {
-        dispatch(
-          feedbackAction.launch({
-            open: true,
-            msg: 'Please provide a church name',
-            severity: 'w',
-          }),
-        );
+      setValue(text);
 
-        return;
-      }
-
-      dispatch(feedbackAction.launch({loading: true}));
-
-      const churchFind = await axios.get(`${api.searchChurch}?name=${value}`);
+      const churchFind = await axios.get(`${api.searchChurch}?name=${text}`);
 
       console.log('churchFind', churchFind);
       setChurches(churchFind.data.data);
-
-      dispatch(feedbackAction.launch({loading: false}));
-
-      // interval = setTimeout(() => {
-      //   console.log("ran");
-      //   dispatch(churchAction.setChurchData({isFilter: true}));
-      // }, 7000);
 
     } catch (error) {
       console.log('error', error);
@@ -85,8 +65,6 @@ const SearchChurch = ({navigation: {navigate}}) => {
         navigate('Onboarding', {screen: 'Login'});
         return
       }
-
-      // clearInterval(interval);
 
       dispatch(feedbackAction.launch({loading: true}));
 
@@ -162,16 +140,6 @@ const SearchChurch = ({navigation: {navigate}}) => {
 
       dispatch(feedbackAction.launch({loading: false}));
 
-      const join = await axios.post(
-        `${api.join}`,
-        {
-          church: item._id,
-        },
-        {headers: {'x-auth-token': token}},
-      );
-
-      console.log('join', join);
-
       navigate('Dashboard');
 
       return;
@@ -179,6 +147,7 @@ const SearchChurch = ({navigation: {navigate}}) => {
       dispatch(feedbackAction.launch({loading: false}));
     }
     await getLive(item.publicToken);
+    await joinChurch(item._id);
   };
 
 
@@ -204,6 +173,21 @@ const SearchChurch = ({navigation: {navigate}}) => {
     }
   };
 
+  const joinChurch = async (church) => {
+    try {
+      const join = await axios.post(
+        `${api.join}`,
+        {
+          church,
+        },
+        {headers: {'x-auth-token': token}},
+      );
+    } catch (error) {
+      console.log('error', error);
+      console.log('error', error.response);
+    }
+  };
+
   return (
     <View style={classes.root}>
       <View style={classes.headerRoot}>
@@ -212,8 +196,8 @@ const SearchChurch = ({navigation: {navigate}}) => {
           <TextInput
             placeholder="Enter your Church Name"
             style={classes.textField}
-            onChangeText={(text) => setValue(text)}
-            onSubmitEditing={handleSearch}
+            onChangeText={(text) => handleSearch(text)}
+            // onSubmitEditing={handleSearch}
             value={value}
             autoFocus={true}
           />
@@ -251,7 +235,6 @@ const SearchChurch = ({navigation: {navigate}}) => {
           )}
         />
       </View>
-      <ChurchFilter />
     </View>
   );
 };

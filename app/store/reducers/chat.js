@@ -1,7 +1,10 @@
 import {UPDATE_CHAT_DATA} from '../types';
 
 const initialstate = {
-  rooms: []
+  rooms: [],
+  room: null,
+  roomMembers: [],
+  messages: []
 };
 
 export default (state = initialstate, action) => {

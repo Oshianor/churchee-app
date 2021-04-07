@@ -17,7 +17,7 @@ import StateList from '../../screens/Onboarding/stateList';
 const Navigation = () => {
 
   return (
-    <Stack.Navigator initialRouteName="FindChurch" headerMode="screen">
+    <Stack.Navigator initialRouteName="Login" headerMode="screen">
       <Stack.Screen
         name="Login"
         options={{headerShown: false}}
@@ -33,7 +33,7 @@ const Navigation = () => {
         // options={{headerShown: false}}
         options={({route, navigation: {goBack}}) => ({
           headerLeft: () => <BackButton goBack={goBack} />,
-          headerTitle: () => null
+          headerTitle: () => null,
         })}
         component={Verification}
       />

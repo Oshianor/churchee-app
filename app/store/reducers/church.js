@@ -7,7 +7,8 @@ const initialstate = {
   members: [],
   selectedMembers: [],
   selectedMembersIDs: [],
-  isFilter: false
+  isFilter: false,
+  recommend: [],
 };
 
 export default (state = initialstate, action) => {

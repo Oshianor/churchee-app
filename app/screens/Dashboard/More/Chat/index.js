@@ -50,6 +50,11 @@ const ChatHome = ({navigation: {navigate}}) => {
     }
   };
 
+  const selectRoom = (room) => {
+    dispatch(chatAction.setChat({room}));
+    navigate('RoomChat');
+  };
+
   return (
     <View style={classes.root}>
       <FlatList
@@ -59,7 +64,7 @@ const ChatHome = ({navigation: {navigate}}) => {
         columnWrapperStyle={classes.contain}
         renderItem={({item}) => (
           <Room
-            onPress={() => navigate('RoomChat')}
+            onPress={() => selectRoom(item)}
             name={item.roomName}
             img={item.profileImage}
           />

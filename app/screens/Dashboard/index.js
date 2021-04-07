@@ -23,8 +23,8 @@ const Home = ({navigation: {navigate}}) => {
   const [value, setValue] = React.useState(null);
   const {church, live} = useSelector(({account}) => account);
 
-  console.log('open', open);
-  console.log('value', value);
+  // console.log('open', open);
+  // console.log('value', value);
 
   const handleData = async () => {
     try {

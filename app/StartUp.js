@@ -20,9 +20,9 @@ import * as RootNavigation from './RootNavigation';
 import SplashScreen from 'react-native-splash-screen';
 import Geolocation from 'react-native-geolocation-service';
 import WebSocket from './context/websocket';
-// import io from 'socket.io-client';
-import SockJS from 'sockjs-client'; // Note this line
-import Stomp from 'stompjs';
+import StompWS from 'react-native-stomp-websocket';
+// import SockJS from "sockjs-client";
+
 
 const StartUp = () => {
   const dispatch = useDispatch();
@@ -47,50 +47,43 @@ const StartUp = () => {
     getLive();
 
     SplashScreen.hide();
-
-    return () => socket && socket.disconnect();
   }, [token]);
 
-  // React.useEffect(() => {
-  //   connectSocket(token);
-  // }, [token]);
-
-  // const connectSocket = (token) => {
-  //   try {
-
-  //     if (!token) return;
-  //     // const link = `${chatURL}`; 
-  //     const s = io(chatURL, {
-  //       path: '/chatSocket',
-  //       transports: ['websocket'],
-  //     });
-
-  //     s.on('connect', () => {
-  //       console.log('socket connected');
-  //     });
-  //     setSocket(s);
-  //   } catch (error) {
-  //     console.log('error socket', error);
-  //   }
-  // };
-
-
   const connectSocket = (token) => {
-      const socket = new SockJS('http://localhost:8080/chat');
-      const stompClient = Stomp.over(socket);
+    try {
+      if (!token) return;
+
       const headers = {UserAuth: token};
+      const link = `${chatURL}/chatSocket/websocket`;
 
-      stompClient.connect(headers, (frame) => {
+      // var socket = new SockJS(link);
+      // console.log(socket);
+      // const client = StompWS.over(socket);
+      const client = StompWS.client(link);
+      console.log(client);
 
+      client.connect(headers, function (frame) {
+        // setConnected(true);
         console.log('Connected: ' + frame);
-        setSocket(stompClient);
-        // stompClient.subscribe(
-        //   `/user/${user.username}/queue/messages`,
-        //   console.log,
-        //   headers,
+
+        // client.subscribe(
+        //   '/oneOnOneChat/' + '1' + '/sub',
+        //   function (poolData) {
+        //     console.log('data ' + poolData.body);
+        //     // poolMessage(JSON.parse(poolData.body));
+        //   },
+        //   function (error) {
+        //     console.log('Error: ' + error);
+        //   },
         // );
       });
-    };
+
+      setSocket(client);
+
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
 
   const handleGetChurch = async () => {
     const church = await AsyncStorage.getItem('church');
@@ -320,4 +313,59 @@ const fontConfig = {
 //   },
 //   roundness: 2,
 //   fonts: configureFonts(fontConfig),
+// };
+
+
+      // const s = io(link, {
+      //   // path: '/chatSocket',
+      //   transports: ["polling", "websocket"],
+      //   withCredentials: true,
+      //   extraHeaders: {
+      //     UserAuth: token,
+      //   },
+      // });
+
+      // console.log(' s ', s);
+
+      // s.on('connect', () => {
+      //   console.log('socket connected');
+      // });
+      // setSocket(s);
+
+
+
+// const connectSocket = (token) => {
+//   try {
+//     if (!token) return;
+
+//     const headers = {UserAuth: token};
+//     const link =
+//       'https://webspoonsnippets.ajiboduemmanuel.repl.co/chatSocket';
+
+//     var socket = new SockJS(link);
+//     console.log(socket);
+//     const client = StompWS.over(socket);
+//     // stompClient = Stomp.client("ws://localhost:8080/chatSocket/026/kpl0usk2/websocket");
+//     console.log(client);
+
+//     client.connect(headers, function (frame) {
+//       // setConnected(true);
+//       console.log('Connected: ' + frame);
+
+//       client.subscribe(
+//         '/oneOnOneChat/' + '1' + '/sub',
+//         function (poolData) {
+//           console.log('data ' + poolData.body);
+//           // poolMessage(JSON.parse(poolData.body));
+//         },
+//         function (error) {
+//           console.log('Error: ' + error);
+//         },
+//       );
+//     });
+
+
+//   } catch (error) {
+//     console.log('error', error);
+//   }
 // };

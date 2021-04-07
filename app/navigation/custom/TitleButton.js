@@ -15,10 +15,12 @@ const TitleButton = ({navigate = null, label, labelStyle, rootStyle}) => {
           onPress={() => navigate()}>
           <Icon
             name="chevron-left"
-            size={20}
+            size={30}
             color={theme.mode ? colors.white : colors.black}
           />
-          <Title style={classes.label}>{label}</Title>
+          <Title style={[classes.label, labelStyle]} numberOfLines={1}>
+            {label}
+          </Title>
         </TouchableOpacity>
       )}
     </ThemeContext.Consumer>
@@ -32,12 +34,12 @@ export default TitleButton;
 const classes = StyleSheet.create({
   root: {
     marginLeft: 20,
-    flexDirection: "row",
-    alignItems: "center"
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   label: {
     fontSize: 18,
-    lineHeight: 22,
-    fontWeight: "700",
-  },
+    lineHeight: 20,
+    fontWeight: '600',
+  }
 });

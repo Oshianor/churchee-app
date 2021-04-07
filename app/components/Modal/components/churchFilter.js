@@ -14,6 +14,8 @@ import { churchAction } from '../../../store/actions';
 import { Radio } from '../../Radio';
 import {ThemeContext} from '../../../context/ThemeContext';
 import { colors } from '../../../theme';
+import axios from 'axios';
+import {api} from '../../../api';
 
 const Reason = () => {
   const {isFilter} = useSelector(({church}) => church);
@@ -22,6 +24,17 @@ const Reason = () => {
 
   const selectedReason = (reas) => {
     setSelected(reas);
+  }
+
+  const handleSelect = async () => {
+    try {
+
+      const findrecommend = await axios.get(`${api.recommendation}/${selected}`);
+      
+      dispatch(churchAction.setChurchData({isFilter: false, recommend: findrecommend.data.data }));
+    } catch (error) {
+      console.log('error', error);
+    }
   }
 
   return (
@@ -75,9 +88,7 @@ const Reason = () => {
               <Button
                 label="Done"
                 rootStyle={classes.buttonRoot}
-                onPress={() =>
-                  dispatch(churchAction.setChurchData({isFilter: false}))
-                }
+                onPress={handleSelect}
               />
             </View>
           </SafeAreaView>

@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const link =
   'https://secure.gravatar.com/avatar/633a831aae31c6e03393c6bab4681788?s=46&d=identicon';
 
-const Message = () => {
+const Message = ({ item }) => {
   return (
     <View style={classes.root}>
       <View style={classes.avater}>
@@ -23,13 +23,10 @@ const Message = () => {
         </View>
         <View style={classes.textRoot}>
           <Subheading style={classes.textContent}>
-            Hi Kathy, This much is clear: governments that protect these rights
-            are ultimately
+            {item.messageContent}
           </Subheading>
         </View>
-        <View>
-
-        </View>
+        <View></View>
       </View>
     </View>
   );
@@ -42,7 +39,8 @@ const classes = StyleSheet.create({
     paddingHorizontal: 10,
     marginHorizontal: 20,
     marginVertical: 10,
-    justifyContent: 'center',
+    // justifyContent: 'center',
+    justifyContent: "flex-start",
     // alignItems: "center",
     flexDirection: 'row',
     // width: "100%"

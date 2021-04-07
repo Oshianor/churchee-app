@@ -52,6 +52,8 @@ const CountryList = ({navigation: {navigate}}) => {
   const handleSearchText = (search) => {
     let text = search.split(' ');
 
+    setSearch(text);
+
     if (search !== '') {
       const data = localCountry.filter(function (item) {
         return text.every(function (el) {
@@ -65,7 +67,6 @@ const CountryList = ({navigation: {navigate}}) => {
       dispatch(countryAction.setCountry({country: localCountry}));
     }
 
-    setSearch(text);
   };
 
   return (
