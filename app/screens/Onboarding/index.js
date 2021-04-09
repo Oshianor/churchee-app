@@ -111,14 +111,14 @@ const Login = ({navigation}) => {
       dispatch(accountAction.setToken(login.headers['x-auth-token']));
       dispatch(accountAction.setUserData(login.data.data));
 
-      dispatch(
-        feedbackAction.launch({
-          loading: false,
-          open: true,
-          severity: 's',
-          msg: login.data.msg,
-        }),
-      );
+      // dispatch(
+      //   feedbackAction.launch({
+      //     loading: false,
+      //     open: true,
+      //     severity: 's',
+      //     msg: login.data.msg,
+      //   }),
+      // );
 
       setValue({
         email: '',
@@ -129,7 +129,7 @@ const Login = ({navigation}) => {
         navigation.navigate('Dashboard');
       } else {
         if (typeof churchList[0] === 'undefined') {
-          navigation.navigate('findChurch');
+          navigation.navigate('FindChurch');
         } else {
           navigation.goBack();
         }

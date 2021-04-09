@@ -18,7 +18,7 @@ import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Wrapper from '../../../components/Background';
 import {ThemeContext} from '../../../context/ThemeContext';
-import {eventAction, feedbackAction} from '../../../store/actions';
+import {accountAction, eventAction, feedbackAction} from '../../../store/actions';
 const {width, height} = Dimensions.get('screen');
 
 const Event = ({navigation: {navigate}}) => {
@@ -27,7 +27,7 @@ const Event = ({navigation: {navigate}}) => {
   const {
     church: {publicToken},
   } = useSelector(({church}) => church);
-  const {token} = useSelector(({account}) => account);
+  const {token, user} = useSelector(({account}) => account);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [savedEvents, setSavedEvents] = React.useState([]);
@@ -51,46 +51,42 @@ const Event = ({navigation: {navigate}}) => {
     }
   };
 
-  const handleSaveEvent = (eventId) => async () => {
-    if (token) {
-      try {
-        const savedItem = await axios.put(
-          api.savedItem,
-          {
-            type: 'event',
-            value: eventId,
+  const handleSaveEvent = async (eventId) => {
+    try {
+      const savedItem = await axios.patch(
+        api.savedItem,
+        {
+          type: 'event',
+          value: eventId,
+        },
+        {
+          headers: {
+            'x-auth-token': token,
           },
-          {
-            headers: {
-              'x-auth-token': account.token,
-            },
-          },
-        );
+        },
+      );
 
-        const savedEvents = savedItem.data.content
-          ? savedItem.data.content
-          : [];
-        await AsyncStorage.setItem('savedEvents', JSON.stringify(savedEvents));
-        console.log('savedItem.data.content', savedEvents);
+      console.log('savedItem', savedItem);
 
-        this.setState({
-          savedEvents,
-          visible: true,
-          msg: savedItem.data.msg,
-          type: 's',
-        });
-      } catch (error) {
-        console.log('error', error);
-        console.log('error.response', error.response);
+      const userData = await axios.get(api.getMe, {
+        headers: {
+          'x-auth-token': token,
+        },
+      });
 
-        this.setState({
-          visible: true,
-          msg: error.response.data,
-          type: 'w',
-        });
-      }
-    } else {
-      navigate('Onboarding', {screen: 'Login'});
+      console.log('userData', userData);
+
+      dispatch(accountAction.setUserData(userData.data.data));
+      setSavedEvents(userData?.data?.data?.event);
+
+      // const savedEvents = savedItem.data.content
+      //   ? savedItem.data.content
+      //   : [];
+      // await AsyncStorage.setItem('savedEvents', JSON.stringify(savedEvents));
+      // console.log('savedItem.data.content', savedEvents);
+    } catch (error) {
+      console.log('error', error);
+      console.log('error.response', error.response);
     }
   };
 

@@ -48,6 +48,7 @@ const TextInput = () => {
 
   const sendMessage = () => {
     try {
+      Keyboard.dismiss();
       socket.send(
         '/chatApp/oneToGroup',
         {},
@@ -198,9 +199,9 @@ export default TextInput;
 
 const classes = StyleSheet.create({
   root: {
-    flex: 1,
+    // flex: 1,
     elevation: 1,
-    width: width,
+    // width: width,
     alignItems: 'flex-start',
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
@@ -211,7 +212,6 @@ const classes = StyleSheet.create({
     },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
-    elevation: 2,
     // marginBottom: 50
   },
   linkRoot: {

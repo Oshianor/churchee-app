@@ -6,7 +6,20 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const link =
   'https://secure.gravatar.com/avatar/633a831aae31c6e03393c6bab4681788?s=46&d=identicon';
 
+const msgStatus = {
+  SENT: () => {
+    return <Caption style={classes.dot}>.</Caption>;
+  },
+  DELIVERED: () => {
+    return <Icon name="check" size={20} />;
+  },
+  READ: () => {
+    return <Icon name="check-all" size={20} />;
+  },
+};
+
 const Message = ({ item }) => {
+  console.log('item.messageStatus', item.messageStatus);
   return (
     <View style={classes.root}>
       <View style={classes.avater}>
@@ -16,9 +29,13 @@ const Message = ({ item }) => {
         <View style={classes.header}>
           <Caption>Tonia Harvey</Caption>
           <View style={classes.dateMark}>
-            <Icon name="check-all" size={20} />
+            {item.messageStatus === 'READ' && <Icon name="check-all" size={20} color="green" />}
+            {item.messageStatus === 'SENT' && <Icon name="check" size={20} />}
+            {item.messageStatus === 'DELIVERED' && (
+              <Icon name="check-all" size={20} />
+            )}            
             <Caption style={classes.dot}>.</Caption>
-            <Caption style={classes.content}>8:21 AM</Caption>
+            <Caption style={classes.time}>8:21 AM</Caption>
           </View>
         </View>
         <View style={classes.textRoot}>
@@ -26,7 +43,6 @@ const Message = ({ item }) => {
             {item.messageContent}
           </Subheading>
         </View>
-        <View></View>
       </View>
     </View>
   );
@@ -36,27 +52,33 @@ export default Message
 
 const classes = StyleSheet.create({
   root: {
-    paddingHorizontal: 10,
-    marginHorizontal: 20,
+    // paddingHorizontal: 10,
+    marginHorizontal: 10,
     marginVertical: 10,
     // justifyContent: 'center',
-    justifyContent: "flex-start",
+    // justifyContent: '',
     // alignItems: "center",
     flexDirection: 'row',
-    // width: "100%"
+    // width: '100%',
   },
-  avater: {},
+  avater: {
+    // width: '10%',
+  },
   content: {
     marginLeft: 10,
+    flex: 1
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    // width: '100%',
+    // width: '80%',
   },
   dateMark: {
     flexDirection: 'row',
-    alignItems: 'center',
+    // justifyContent: 'flex-end',
+    // alignItems: 'center',
   },
   dot: {
     fontSize: 30,

@@ -160,9 +160,6 @@ const JoinChurch = ({navigation: {navigate, goBack}}) => {
       dispatch(feedbackAction.launch({loading: false}));
 
       
-
-      console.log('join', join);
-
       navigate('Dashboard');
 
       return;
